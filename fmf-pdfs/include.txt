@@ -1,0 +1,46 @@
+# BEGIN YEAR 3
+# ------------------------- #
+contmech-exercises
+contmech-equation-sheet
+
+emp-lecture
+emp-exercises
+emp-oral-notes
+
+fizmer-exercises
+
+meris-lecture
+meris-exercises
+meris-equation-sheet
+
+optics-exercises
+optics-equation-sheet
+
+qm-exercises
+qm-lecture
+qm-oral-notes
+
+ss-exercises
+ss-equation-sheet
+# ------------------------- #
+# END YEAR 3
+
+# BEGIN YEAR 2
+# ------------------------- #
+cm-lecture
+cm-oral-notes
+
+mat3-lecture
+
+mat4-lecture
+mat4-oral-notes
+
+nummet-lecture
+nummet-equation-sheet
+
+std-oral-notes
+# std-hw1
+# std-hw2
+# std-hw3
+# ------------------------- #
+# END YEAR 3

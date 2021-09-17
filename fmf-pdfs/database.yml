@@ -1,0 +1,150 @@
+---
+# BEGIN YEAR 2
+# -------------------------------
+cm-lecture:
+  fmf-path: "year2/cm/cm-lecture/cm-lecture.pdf"
+  site-path: "year2/cm/cm-lecture.pdf"
+
+cm-oral-notes:
+  fmf-path: "year2/cm/cm-oral-notes/cm-oral-notes.pdf"
+  site-path: "year2/cm/cm-oral-notes.pdf"
+
+# -------------------------------
+
+mat3-lecture:
+  fmf-path: "year2/mat3/mat3-lecture/mat3-lecture.pdf"
+  site-path: "year2/mat3/mat3-lecture.pdf"
+
+# -------------------------------
+
+mat4-lecture:
+  fmf-path: "year2/mat4/mat4-lecture/mat4-lecture.pdf"
+  site-path: "year2/mat4/mat4-lecture.pdf"
+
+mat4-oral-notes:
+  fmf-path: "year2/mat4/mat4-oral-notes/mat4-oral-notes.pdf"
+  site-path: "year2/mat4/mat4-oral-notes.pdf"
+
+# -------------------------------
+
+nummet-lecture:
+  fmf-path: "year2/nummet/nummet-lecture/nummet-lecture.pdf"
+  site-path: "year2/nummet/nummet-lecture.pdf"
+
+nummet-equation-sheet:
+  fmf-path: "year2/nummet/nummet-equation-sheet/nummet-equation-sheet.pdf"
+  site-path: "year2/nummet/nummet-equation-sheet.pdf"
+
+# -------------------------------
+
+std-oral-notes:
+  fmf-path: "year2/std/std-oral-notes/std-oral-notes.pdf"
+  site-path: "year2/std/std-oral-notes.pdf"
+
+std-hw1:
+  fmf-path: "year2/std/std-hw1/std-hw1.pdf"
+  site-path: "year2/std/std-hw1.pdf"
+
+std-hw2:
+  fmf-path: "year2/std/std-hw2/std-hw2.pdf"
+  site-path: "year2/std/std-hw2.pdf"
+
+std-hw3:
+  fmf-path: "year2/std/std-hw3/std-hw3.pdf"
+  site-path: "year2/std/std-hw3.pdf"
+
+# -------------------------------
+
+# END YEAR 2
+
+
+# BEGIN YEAR 3
+# -------------------------------
+contmech-lecture:
+  fmf-path: "year3/contmech/contmech-lecture/contmech-lecture.pdf"
+  site-path: "year3/contmech/contmech-lecture.pdf"
+
+contmech-exercises:
+  fmf-path: "year3/contmech/contmech-exercises/contmech-exercises.pdf"
+  site-path: "year3/contmech/contmech-exercises.pdf"
+
+contmech-equation-sheet:
+  fmf-path: "year3/contmech/contmech-equation-sheet/contmech-equation-sheet.pdf"
+  site-path: "year3/contmech/contmech-equation-sheet.pdf"
+
+# -------------------------------
+
+emp-lecture:
+  fmf-path: "year3/emp/emp-lecture/emp-lecture.pdf"
+  site-path: "year3/emp/emp-lecture.pdf"
+
+emp-exercises:
+  fmf-path: "year3/emp/emp-exercises/emp-exercises.pdf"
+  site-path: "year3/emp/emp-exercises.pdf"
+
+emp-oral-notes:
+  fmf-path: "year3/emp/emp-oral-notes/emp-oral-notes.pdf"
+  site-path: "year3/emp/emp-oral-notes.pdf"
+
+# -------------------------------
+
+fizmer-exercises:
+  fmf-path: "year3/fizmer/fizmer-exercises/fizmer-exercises.pdf"
+  site-path: "year3/fizmer/fizmer-exercises.pdf"
+
+# -------------------------------
+
+meris-lecture:
+  fmf-path: "year3/meris/meris-lecture/meris-lecture.pdf"
+  site-path: "year3/meris/meris-lecture.pdf"
+
+meris-exercises:
+  fmf-path: "year3/meris/meris-exercises/meris-exercises.pdf"
+  site-path: "year3/meris/meris-exercises.pdf"
+
+meris-equation-sheet:
+  fmf-path: "year3/meris/meris-equation-sheet/meris-equation-sheet.pdf"
+  site-path: "year3/meris/meris-equation-sheet.pdf"
+
+# -------------------------------
+optics-lecture:
+  fmf-path: "year3/optics/optics-lecture/optics-lecture.pdf"
+  site-path: "year3/optics/optics-lecture.pdf"
+
+optics-exercises:
+  fmf-path: "year3/optics/optics-exercises/optics-exercises.pdf"
+  site-path: "year3/optics/optics-exercises.pdf"
+
+optics-equation-sheet:
+  fmf-path: "year3/optics/optics-equation-sheet/optics-equation-sheet.pdf"
+  site-path: "year3/optics/optics-equation-sheet.pdf"
+
+# -------------------------------
+
+qm-lecture:
+  fmf-path: "year3/qm/qm-lecture/qm-lecture.pdf"
+  site-path: "year3/qm/qm-lecture.pdf"
+
+qm-exercises:
+  fmf-path: "year3/qm/qm-exercises/qm-exercises.pdf"
+  site-path: "year3/qm/qm-exercises.pdf"
+
+qm-oral-notes:
+  fmf-path: "year3/qm/qm-oral-notes/qm-oral-notes.pdf"
+  site-path: "year3/qm/qm-oral-notes.pdf"
+
+# -------------------------------
+
+ss-lecture:
+  fmf-path: "year3/ss/ss-lecture/ss-lecture.pdf"
+  site-path: "year3/ss/ss-lecture.pdf"
+
+ss-exercises:
+  fmf-path: "year3/ss/ss-exercises/ss-exercises.pdf"
+  site-path: "year3/ss/ss-exercises.pdf"
+
+ss-equation-sheet:
+  fmf-path: "year3/ss/ss-equation-sheet/ss-equation-sheet.pdf"
+  site-path: "year3/ss/ss-equation-sheet.pdf"
+# -------------------------------
+# END YEAR 3
