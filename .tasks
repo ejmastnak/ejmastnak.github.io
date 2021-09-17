@@ -1,3 +1,0 @@
-[project-build-serve]
-command=open http://localhost:4000/ && bundle exec jekyll serve
-cwd=<root>
