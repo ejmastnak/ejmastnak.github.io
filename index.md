@@ -2,10 +2,13 @@
 layout: github
 ---
 # Welcome
-You have reached an early version of Elijan J. Mastnak's website. For the time being, you have two options:
+You have reached an early version of Elijan J. Mastnak's website.
 
-### Physics lecture notes and solved exercises
-[Undergraduate physics notes typeset with LaTeX]({% link fmf.md %})
+### Physics notes
+[1500+ pages of undergraduate physics notes typeset with LaTeX]({% link fmf.md %})
+
+### Projects
+- [Seminar]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
 
 ### Résumé
 - [PDF version]({% link cv/cv.pdf %})
