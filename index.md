@@ -2,7 +2,7 @@
 layout: github
 ---
 # Welcome
-You have reached an early version of Elijan J. Mastnak's website.
+You have reached an early version of Elijan J. Mastnak's website. Browseable content appears below.
 
 ### Physics notes
 [1500+ pages of undergraduate physics notes typeset with LaTeX]({% link fmf.md %})

@@ -5,8 +5,9 @@ layout: github
 I made this project in the scope of *Seminar* course requirements at the Faculty of Math and Physics at the University of Ljubljana---see [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below for context. The project explores the use of convolutional neural networks for classifying the products of high-energy collisions produced in particle physics experiments like the Large Hadron Collider at CERN.
 
 You might be interested in...
-- [reading the PDF paper]({% link seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link seminar/presentation.pdf %}) or [Slovene]({% link seminar/presentation.pdf %}))
-- or [browsing the GitHub repo](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
+
+- [**reading the PDF paper**]({% link seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link seminar/presentation.pdf %}) or [Slovene]({% link seminar/presentation-slo.pdf %}))
+- or [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
 
 ## About the project
 The project explores the use of convolutional neural networks for classifying the products of high-energy particle collisions using low-level, image-based detector data. Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you a research group interested in announcing the discovery of a new elementary particle.
