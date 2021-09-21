@@ -6,5 +6,4 @@
 CV_SOURCE_PATH="../../../cv/cv/cv.pdf"
 CV_TARGET_PATH="cv.pdf"
 
-cp "${CV_SOURCE_PATH}" "${CV_TARGET_PATH}"
-echo "SUCCESS: copied ${CV_SOURCE_PATH} to ${CV_TARGET_PATH}"
+cp "${CV_SOURCE_PATH}" "${CV_TARGET_PATH}" && echo "SUCCESS: copied ${CV_SOURCE_PATH} to ${CV_TARGET_PATH}"

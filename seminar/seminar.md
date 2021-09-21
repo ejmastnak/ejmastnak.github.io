@@ -7,24 +7,24 @@ I made this project in the scope of *Seminar* course requirements at the Faculty
 You might be interested in...
 
 - [**reading the PDF paper**]({% link seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link seminar/presentation.pdf %}) or [Slovene]({% link seminar/presentation-slo.pdf %}))
-- or [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
+- [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
 
 ## About the project
-The project explores the use of convolutional neural networks for classifying the products of high-energy particle collisions using low-level, image-based detector data. Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you a research group interested in announcing the discovery of a new elementary particle.
+The project explores the use of convolutional neural networks for classifying the products of high-energy particle collisions using low-level, image-based detector data. Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you are a research group interested in announcing the discovery of a new elementary particle.
 
-This project is distinguished by the focus on performing classification using as raw, low-level data as possible (i.e. the data directly produced by a particle detector's trackers and calorimeters, without further processing). Classification techniques that produce results directly from low-level data are called "end-to-end" classifiers. End-to-end classifiers are interesting because:
-- they eliminate complicated preprocessing steps, and
+This project is distinguished by its focus on performing classification using as raw, low-level data as possible (i.e. the data produced directly by a particle detector's trackers and calorimeters, without further processing). Classification techniques that produce results directly from low-level data are called "end-to-end" classifiers. End-to-end classifiers are interesting because:
+- they eliminate complicated intermediate processing and particle flow reconstruction, and
 - they provide a beautifully general, broadly applicable framework, since a wide range of classification problems share the same type of raw data. This means a scientist could use the same class of algorithms to solve a wide variety of problems.
 
-Raw detector data takes the form of image-like snapshots of the energy and position of particles traveling through a particle detector. Image-like data is best processed using a class of machine learning systems called convolutional neural networks, which is how CNNs get involved in the project.
+And what about convolutional neural networks? Convolutional neural networks (CNNs) are a class of machine learning systems well-suited to processing image-like data. Raw detector data---the type used in end-to-end classification---takes the form of energy and position information distributed on a two- or three-dimensional spatial grid across the detector's volume. This data is essentially a series of image-like snapshots of the energy and position left behind by particles as they fly through the particle detector. Since CNNs are well-suited to image-like data, they find an application in end-to-end particle classification.
 
 #### Summary
-The [paper]({% link seminar/paper.pdf %}) and presentations follow the progression below:
-- present the problem of particle classification
-- describe the physical quantities comprising low-level collision data and explain the physical principles behind a modern particle detector's measurement instruments (using the Compact Muon Solenoid at the LHC as an example)
-- as a foundation for convolutional neural networks, explain the basic principles of fully-connected networks
-- explain the basis working principles of convolutional neural networks
-- as concrete example of CNN-based end-to-end classification, summarize the results of the 2020 paper [*End-to-End Physics Event Classification with CMS Open Data*](https://link.springer.com/article/10.1007/s41781-020-00038-8) by M. Andrews, M. Paulini, S. Gleyzer, and B. Poczos in the Journal **Computing and Software for Big Science**.
+The [paper]({% link seminar/paper.pdf %}) and presentations address the following questions in the progression given below:
+- What is meant by particle classification?
+- What are the physical quantities comprising low-level collision data, and what are the physical principles behind a modern particle detector's measurement instruments? (We use the Compact Muon Solenoid at the LHC as a concrete example).
+- What are fully-connected neural networks and how do they work? (As a foundation for understanding CNNs.)
+- What are convolutional neural networks and how do they work? (At a level within the scope of a 20 page paper.)
+- Show me a concrete example of CNN-based end-to-end classification! (We summarize the results of the 2020 paper [*End-to-End Physics Event Classification with CMS Open Data*](https://link.springer.com/article/10.1007/s41781-020-00038-8) by M. Andrews, M. Paulini, S. Gleyzer, and B. Poczos in the Journal **Computing and Software for Big Science**.)
 
 
 
@@ -34,7 +34,7 @@ The [paper]({% link seminar/paper.pdf %}) and presentations follow the progressi
 The project encompasses two parts:
 
 - a written paper (no more than about 20 pages)
-- a roughly 35 to 40-minute slide-show presentation to the student's classmates, course coordinator, and mentor, followed by questions from the audience and a seminar-style discussion of the topic.
+- a 35 to 40-minute slide-show presentation to the student's classmates, course coordinator, and mentor, followed by questions from the audience and a seminar-style discussion of the topic.
 
-The project is intended primarily as an exercise in clear scientific writing and presentation, a training of sorts for giving presentations at scientific conferences. However, students are not expected (nor encouraged) to produce original research in the scope of the *Seminar* course, simply to clearly present their chosen topic at a level suitable (i.e. not too advanced) for a general final-year undergraduate audience.
+The project is intended primarily as an exercise in clear scientific writing and presentation, a training, in some sense, for giving presentations at scientific conferences. However, undergraduate students are neither expected nor encouraged to produce original research in the scope of the *Seminar* course, simply to clearly present their chosen topic at a level suitable (i.e. not too advanced) for a general final-year undergraduate audience.
 
