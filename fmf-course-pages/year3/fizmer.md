@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Physical measurements
 ---
 # Physical measurements
 

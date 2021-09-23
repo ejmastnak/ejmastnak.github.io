@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Optics
 ---
 # Optics
 
@@ -7,7 +8,7 @@ layout: github
 - [Condensed lecture notes]({% link fmf-pdfs/year3/optics/optics-equation-sheet.pdf %})
 
 ## Course description
-*Optika* is an elective course in wave optics for third-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2020-21 academic year, when the course was taught by professor Irena Drevenšek Olenik (lecture) and dr. Andrej Petelin (exercises). Material covered in the course includes
+*Optika* is an elective course in wave optics for third-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2020-21 academic year, when the course was taught by professor Irena Drevenšek Olenik (lecture) and dr. Andrej Petelin (exercises). Material covered in the course includes:
 - a summary of geometrical optics
 - Maxwell's equations and the wave equation in free space
 - the wave equation in conducting matter

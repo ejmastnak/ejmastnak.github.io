@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Mathematics 3
 ---
 # Mathematics 3
 

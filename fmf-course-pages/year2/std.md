@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Statistical thermodynamics
 ---
 # Statistical thermodynamics
 

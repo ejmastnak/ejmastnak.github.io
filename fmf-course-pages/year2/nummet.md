@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Numerical methods
 ---
 # Numerical methods
 

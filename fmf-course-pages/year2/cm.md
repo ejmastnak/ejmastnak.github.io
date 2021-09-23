@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Classical mechanics
 ---
 # Classical mechanics
 

@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Quantum mechanics
 ---
 # Quantum mechanics
 
@@ -8,7 +9,7 @@ layout: github
 - [Oral exam notes]({% link fmf-pdfs/year3/qm/qm-oral-notes.pdf %})
 
 ## Course description
-*Kvantna mehanika* is a required course for third-year undergraduates in the FMF physics program. These notes are from the winter semester of the 2020-21 academic year, when the course was taught by professor Anton Ramšak (lecture) and asst. professor Tomaž Rejec (exercises). The course covers the Copenhagen interpretation of quantum mechanics at an upper-undergraduate level; specific material includes
+*Kvantna mehanika* is a required course for third-year undergraduates in the FMF physics program. These notes are from the winter semester of the 2020-21 academic year, when the course was taught by professor Anton Ramšak (lecture) and asst. professor Tomaž Rejec (exercises). The course covers the Copenhagen interpretation of quantum mechanics at an upper-undergraduate level; specific material includes:
 - properties of the Schrödinger equation and wave function for a single particle
 - the Dirac formalism; operators and bra-ket notation
 - the quantum harmonic oscillator
