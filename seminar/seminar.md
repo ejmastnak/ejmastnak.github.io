@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Seminar
 ---
 # Convolutional Neural Networks and Particle Physics
 I made this project in the scope of *Seminar* course requirements at the Faculty of Math and Physics at the University of Ljubljana---see [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below for context. The project explores the use of convolutional neural networks for classifying the products of high-energy collisions produced in particle physics experiments like the Large Hadron Collider at CERN.

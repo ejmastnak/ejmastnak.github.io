@@ -1,5 +1,6 @@
 ---
 layout: github
+title: Home
 ---
 # Welcome
 You have reached an early version of Elijan J. Mastnak's website. For the time being, you have three possibilities:

@@ -29,6 +29,7 @@ url:            "https://ejmastnak.github.io"
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 # BEGIN CUSTOM SITE-WIDE VARIABLES
 # ------------------------------------- #

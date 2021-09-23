@@ -1,5 +1,6 @@
 ---
 layout: github
+title: FMF
 ---
 # Lecture notes and solved exercises
 You have reached the collection of typeset notes I have compiled while studying in the physics program at the [Faculty of Mathematics and Physics](https://www.fmf.uni-lj.si/en/) (FMF) at the University of Ljubljana in Slovenia. The notes are probably of interest primarily to FMF students taking the same courses. For orientation, you might also be interested in the course of study in [English](https://www.fmf.uni-lj.si/en/study-physics/programmes/1Fiz/2020/7000777/) or in [Slovene](https://www.fmf.uni-lj.si/sl/studij-fizike/programi/1Fiz/2020/7000777/).
