@@ -1,7 +1,7 @@
 ---
-layout: github
+title: Electromagnetism
 ---
-# Electromagnetic field
+# Electromagnetism
 
 - [Lecture notes]({% link fmf-pdfs/year3/emp/emp-lecture.pdf %})
 - [Solved exercises]({% link fmf-pdfs/year3/emp/emp-exercises.pdf %})

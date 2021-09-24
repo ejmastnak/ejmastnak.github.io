@@ -1,5 +1,4 @@
 ---
-layout: github
 title: Seminar
 ---
 # Convolutional Neural Networks and Particle Physics

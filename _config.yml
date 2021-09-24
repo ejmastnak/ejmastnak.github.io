@@ -64,4 +64,4 @@ defaults:
       path: ""  # applies to all files
       type: "pages"
     values:
-      layout: "github"
+      layout: "default"

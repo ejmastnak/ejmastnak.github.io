@@ -1,5 +1,4 @@
 ---
-layout: github
 title: Mathematics 4
 ---
 # Mathematics 4

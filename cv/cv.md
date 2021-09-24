@@ -1,5 +1,5 @@
 ---
-layout: github
+title: Resume
 ---
 Wow what an awesome resume! Just kidding I haven't added it yet.
 

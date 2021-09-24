@@ -1,5 +1,4 @@
 ---
-layout: github
 title: Measurement of ionizing radiation
 ---
 # Measurement of ionizing radiation

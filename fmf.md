@@ -1,5 +1,4 @@
 ---
-layout: github
 title: FMF
 ---
 # Lecture notes and solved exercises

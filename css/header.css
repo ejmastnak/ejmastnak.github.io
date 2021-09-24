@@ -1,0 +1,41 @@
+/* see https://www.w3schools.com/css/css_navbar_horizontal.asp */
+
+.topnav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #ffffff;
+  
+}
+
+.topnav li {
+  float: left;
+}
+
+.topnav li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+.topnav li a:hover {
+  background-color: #eee;
+}
+
+.topnav hr {
+  display: block;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  border-width: 0;
+
+  height:1px;
+  color: #000;
+  background-color: #000;
+}

@@ -1,5 +1,4 @@
 ---
-layout: github
 title: Physics lab 5
 ---
 # Physics lab 5

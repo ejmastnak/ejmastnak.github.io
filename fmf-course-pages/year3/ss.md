@@ -1,5 +1,4 @@
 ---
-layout: github
 title: Solid state physics
 ---
 # Solid state physics
