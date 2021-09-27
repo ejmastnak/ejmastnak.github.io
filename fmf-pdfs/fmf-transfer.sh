@@ -19,8 +19,12 @@ FMF_PATH="../../../academics/fmf/"
 function copy_file() {
   # arg1: full path to source
   # arg2: full path to target
-  cp "${1}" "${2}"
-  echo "SUCCESS: copied ${FMF_PATH}${path_relto_fmf} to ${path_relto_site}"
+  if cp "${1}" "${2}"
+  then
+    echo "Success: copied ${FMF_PATH}${path_relto_fmf} to ${path_relto_site}"
+  else
+    echo "ERROR: failed to copy ${FMF_PATH}${path_relto_fmf} to ${path_relto_site}"
+  fi
 }
 
 # COPY ALL FILES
