@@ -3,8 +3,8 @@ title: Electromagnetism
 ---
 # Electromagnetism
 
-- [Lecture notes]({% link fmf-pdfs/year3/emp/emp-lecture.pdf %})
 - [Solved exercises]({% link fmf-pdfs/year3/emp/emp-exercises.pdf %})
+- [Lecture notes]({% link fmf-pdfs/year3/emp/emp-lecture.pdf %})
 - [Oral exam notes]({% link fmf-pdfs/year3/emp/emp-oral-notes.pdf %})
 
 ## Course description

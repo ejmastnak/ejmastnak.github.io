@@ -3,8 +3,8 @@ title: Measurement of ionizing radiation
 ---
 # Measurement of ionizing radiation
 
-- [Lecture notes]({% link fmf-pdfs/year3/meris/meris-lecture.pdf %})
 - [Solved exercises]({% link fmf-pdfs/year3/meris/meris-exercises.pdf %})
+- [Lecture notes]({% link fmf-pdfs/year3/meris/meris-lecture.pdf %})
 - [Equation sheet]({% link fmf-pdfs/year3/meris/meris-equation-sheet.pdf %})
 
 ## Course description
