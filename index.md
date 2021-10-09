@@ -10,6 +10,9 @@ You have reached an early version of Elijan J. Mastnak's website. For the time b
 ### Projects
 - [Seminar]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
 
+### Tutorials
+- [Writing LaTeX in real-time with Vim]({% link tutorials/vim-latex/intro.md %})
+
 ### Résumé
 - [PDF version]({% link cv/cv.pdf %})
 - [Web version]({% link cv/cv.md %}) 
