@@ -1,39 +1,62 @@
 ---
 title: Vimscript Theory \| Setting Up Vim for LaTeX Part 1
 ---
-# Part 1: Vimscript Theory for Writing LaTeX
+# Vimscript Theory for Filetype-Specific Workflow
 
-This is part one in a four-part series explaining how to use the Vim text editor to efficiently write LaTeX documents. To navigate to other parts in the series...
-1. [Introduction and series overview]({% link tutorials/vim-latex/intro.md %})
+## About the series
+This is part one in a four-part series explaining how to use the Vim text editor to efficiently write LaTeX documents. This article provides a theoretical background for Vimscript use in filetype-specific workflows and is more general than the other articles, since its contents apply just as well to filetypes other than LaTeX.
+
+Visit [the introduction]({% link tutorials/vim-latex/intro.md %}) for an overview of the series. Use the list below navigate to other parts in the series...
 1. [Vimscript best practices for filetype-specific plugins]({% link tutorials/vim-latex/vimscript.md %})
 1. [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %})
 1. [Integrating Vim and a PDF reader]({% link tutorials/vim-latex/pdf-reader.md %})
 1. [Snippets: the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %})
 
 
-## Contents
+## Contents of this article
 <!-- vim-markdown-toc Marked -->
 
 * [General considerations for file-specific Vim plugins](#general-considerations-for-file-specific-vim-plugins)
+  * [What is a plugin?](#what-is-a-plugin?)
+    * [Runtimepath](#runtimepath)
+  * [Filetype plugins](#filetype-plugins)
   * [Context: Working with filetype plugins](#context:-working-with-filetype-plugins)
   * [Writing Vimscript functions in filetype plugins](#writing-vimscript-functions-in-filetype-plugins)
 
 <!-- vim-markdown-toc -->
 
-`setlocal` instead of `set` is best practice for buffer-local modifications like in `ftplugin`.
-
-**Assumptions**
-- You have used `pip/pip3` before
-- You have a preferred method for installing Vim plugins
-
-**Material**
-- How Vim's `ftplugin` system works; how to write functions and set keybindings in Vimscript
-- Configuring forward and inverse search on a PDF viewer
-- Configuring compilation
-- Understanding and writing snippets
-
 ## General considerations for file-specific Vim plugins
-- A plugin is just a Vim script (or a set of Vim scripts, depending on who you ask) that is automatically loaded into your Vim runtimepath. A plugin is no more mysterious than your `vimrc`.
+
+### What is a plugin?
+A *plugin* is the familiar name for a Vimscript file that is loaded when you start Vim. See `help plugin`. If you have every created a `vimrc` or `init.vim` file, you have technically written a Vim plugin. Just like your `vimrc`, the purpose of plugins is to extend Vim's default functionality.
+
+A *package* is a set of Vimscript files---see `help packages`. To be pedantic, what most people think of as a Vim plugin is technically a package. That's irrelevant; the point is that plugins and packages are the same type of file as your `vimrc`, and if you have every written a `vimrc` it is within your means to write more advanced plugins, too.
+
+#### Runtimepath
+Your Vim runtimepath is a list of directories, both in your home directory and system-wide, that Vim searches for files to load at runtime, i.e. when opening Vim. 
+
+Here is a list of some directories on Vim's default runtimepath, taken from `help runtimepath`---you have probably seen some of them before.
+
+> | Directory or File | Description |
+> | ----------------- | ----------- |
+> | filetype.vim |	filetypes by file name |
+> | autoload |	automatically loaded scripts | 
+> | colors/ | color scheme files             | 
+> | compiler/ | compiler files               | 
+> | doc/ | documentation                    | 
+> | ftplugin/ | filetype plugins             | 
+> | indent/ | indent scripts                 | 
+> | pack/ | packages                       | 
+> | spell/ | spell checking files             | 
+> | syntax/ | syntax files                   | 
+
+If you want your own plugin to load when you open Vim, you need to place the plugin in an appropriate location in your runtimepath.
+
+- `:echo &rtp`
+
+### Filetype plugins
+
+files in certain locations are automatically loaded into your runtimepath when you start Vim. See `help runtimepath`.
 
 - Set `:filetype plugin on` and put `tex` specific mappings and functions in `~/.vim/ftplugin/tex.vim`  and not in `vimrc`. Then these mappings will be used only for `tex` files. Obvious now of course.
   
@@ -46,9 +69,14 @@ This is part one in a four-part series explaining how to use the Vim text editor
   autocommand BufNewFile,BufRead *.srt set filetype=subrip
   ```
 
+- `setlocal` instead of `set` is best practice for buffer-local modifications like in `ftplugin`.
+
+
 ### Context: Working with filetype plugins
 The relevant documentation lives at `:help filetype` and `:help ftplugin`, but is rather long. For our purposes:
-- First set `:filetype on` in your `init.vim` to enable filetype detection.
+
+- Include `:filetype on` in your `init.vim` to enable filetype detection.
+
 - When you open a file with Vim, Vim determines the file's `filetype` by checking the file's extension with a set of autocommands defined in  `$VIMRUNTIME/filetype.vim`. For nearly all files (including LaTeX files with the `.tex` or `.latex` extensions), Vim's filetype detection works out of the box.
 
 - If Vim successfully detects the file's file type, it sets the value of the `filetype` option to indicate the file type. Generally, but not always, the value of `filetype` matches the file's conventional extension; for LaTeX this value is `filetype=tex`. You can check the current value of `filetype` with `:set filetype?`.

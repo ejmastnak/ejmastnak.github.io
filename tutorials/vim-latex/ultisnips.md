@@ -2,9 +2,18 @@
 title: Snippets | Vim and LaTeX Part 1
 ---
 # UltiSnips and LaTeX
-This is part TODO in a series of setting up Vim for efficiently writing LaTeX.
 
-## Contents
+## About the series
+This is part four in a four-part series explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers snippets, which can dramatically speed up your LaTeX writing.
+
+Visit [the introduction]({% link tutorials/vim-latex/intro.md %}) for an overview of the series. Use the list below navigate to other parts in the series...
+1. [Vimscript best practices for filetype-specific plugins]({% link tutorials/vim-latex/vimscript.md %})
+1. [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %})
+1. [Integrating Vim and a PDF reader]({% link tutorials/vim-latex/pdf-reader.md %})
+1. [Snippets: the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %})
+
+
+## Contents of this article
 <!-- vim-markdown-toc Marked -->
 
 * [Getting started with UltiSnips](#getting-started-with-ultisnips)

@@ -24,7 +24,7 @@ The [paper]({% link seminar/paper.pdf %}) and presentations address the followin
 - What are the physical quantities comprising low-level collision data, and what are the physical principles behind a modern particle detector's measurement instruments? (We use the Compact Muon Solenoid at the LHC as a concrete example).
 - What are fully-connected neural networks and how do they work? (As a foundation for understanding CNNs.)
 - What are convolutional neural networks and how do they work? (At a level within the scope of a 20 page paper.)
-- Show me a concrete example of CNN-based end-to-end classification! (We summarize the results of the 2020 paper [*End-to-End Physics Event Classification with CMS Open Data*](https://link.springer.com/article/10.1007/s41781-020-00038-8) by M. Andrews, M. Paulini, S. Gleyzer, and B. Poczos in the Journal **Computing and Software for Big Science**.)
+- Show me a concrete example of CNN-based end-to-end classification! (We summarize the results of the 2020 paper [*End-to-End Physics Event Classification with CMS Open Data*](https://link.springer.com/article/10.1007/s41781-020-00038-8) by M. Andrews, M. Paulini, S. Gleyzer, and B. Poczos in the **Journal of Computing and Software for Big Science**.)
 
 
 

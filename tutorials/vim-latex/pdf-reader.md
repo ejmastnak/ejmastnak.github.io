@@ -1,34 +1,65 @@
 ---
-title: PDF Reader | Vim and LaTeX Part 1
+title: PDF Reader | Vim and LaTeX Part 3
 ---
 
 # Setting Up a PDF Reader for Writing LaTeX with Vim
 
-## Contents
+## About the series
+This is part three in a four-part series explaining how to use the Vim text editor to efficiently write LaTeX documents. This article explains, for both macOS and Linux, how to set up an external PDF reader for displaying the `pdf` file associated with the `tex` source file being edited in Vim and also covers how to configure forward and inverse search.
+
+Visit [the introduction]({% link tutorials/vim-latex/intro.md %}) for an overview of the series. Use the list below navigate to other parts in the series...
+1. [Vimscript best practices for filetype-specific plugins]({% link tutorials/vim-latex/vimscript.md %})
+1. [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %})
+1. [Integrating Vim and a PDF reader]({% link tutorials/vim-latex/pdf-reader.md %})
+1. [Snippets: the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %})
+
+
+## Contents of this article
 <!-- vim-markdown-toc Marked -->
 
-* [Desired functionality](#desired-functionality)
-* [Implementation with Skim](#implementation-with-skim)
-    * [Forward search](#forward-search)
-    * [Backward search](#backward-search)
-      * [Tex](#tex)
-      * [PDF](#pdf)
+* [Functionality implemented in this article](#functionality-implemented-in-this-article)
+* [Choosing a PDF Reader](#choosing-a-pdf-reader)
+  * [On macOS](#on-macos)
+  * [On Linux](#on-linux)
+  * [On Windows](#on-windows)
+* [Setting up Skim (read this on macOS)](#setting-up-skim-(read-this-on-macos))
+  * [Forward search](#forward-search)
+  * [Backward search](#backward-search)
+    * [From the text editor](#from-the-text-editor)
+    * [From the PDF reader](#from-the-pdf-reader)
+* [Setting Up Zathura (read this on Linux)](#setting-up-zathura-(read-this-on-linux))
 
 <!-- vim-markdown-toc -->
 
-## Desired functionality
-An external PDF reader for displaying the `pdf` file associated with the `tex` source file being edited in Neovim.
+## Functionality implemented in this article
+This article covers the following features:
 
-1. The PDF reader should listen for changes to the `pdf` document and automatically update when the document’s contents change after compilation.
+1. My suggestion for a PDF reader (Skim on macOS and Zathura on Linux)
 
-1. Forward search: jump to the PDF position corresponding the current cursor position in the `tex` document. Triggered with a convenient keyboard shortcut from Vim.
+1. Implementing forward search: jump to the PDF position corresponding the current cursor position in the `tex` document, triggered with a convenient keyboard shortcut from Vim.
 
-1. Backward search: move cursor to the line in the `tex` document corresponding to a line in the `pdf` document. Triggered by a simple click or keyboard shortcut in the PDF reader.
+1. Implementing inverse search: move cursor to the line in the `tex` document corresponding to a line in the `pdf` document, triggered by a simple click or keyboard shortcut in the PDF reader.
 
-## Implementation with Skim
-This tutorial covers the [Skim PDF reader](https://skim-app.sourceforge.io/) for macOS. Skim satisfies the first condition above by default; forward and backward search require some configuration.
+## Choosing a PDF Reader
+The basic goal is an external PDF reader for displaying the `pdf` file associated with the `tex` source file being edited in Vim. In addition, your LaTeX experience will dramatically improve if...
+- the PDF reader, in the background, constantly listens for changes to the `pdf` document and automatically updates its display when the document’s contents change (such as after compilation).
+- the PDF reader supports forward search
+- the PDF reader supports SyncTeX integration, which makes inverse search possible
 
-#### Forward search
+### On macOS
+On macOS, to the best of my knowledge, you have basically one option meeting the above three criteria. That is [Skim](https://skim-app.sourceforge.io/). You can download it from the [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/). macOS's default PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it support SyncTeX integration.
+
+### On Linux
+On Linux you are blessed with a variety of options. I will cover Zathura, under the assumption that anyone nerdy enough to be reading a multi-article Vim series will also appreciate Zathura's customizability and Vim-like key bindings.
+
+Many more possibilities are covered in the `vimtex` plugin's documentation at `help g:vimtex_view_method`
+
+### On Windows
+I have not tested it myself and will not cover it in this article, but have heard that the SumatraPDF viewer supports both forward and backward search. Doing so is covered, for example, in the `vimtex` plugin's documentation at `help vimtex_viewer_sumatrapdf`. See also `help g:vimtex_view_method` for other possibilities.
+
+## Setting up Skim (read this on macOS)
+
+### Forward search
 Skim ships with a script providing forward search. The script is called `displayline` and, assuming a default installation of Skim into `/Applications/`, lives at `/Applications/Skim.app/Contents/SharedSupport/displayline`.
 
 The `displayline` call signature is
@@ -61,15 +92,15 @@ nmap <leader>v <Plug>TexForwardShow
 ```
 You should now be able to access forward show with `<leader>v` in normal mode.
 
-#### Backward search
+### Backward search
 Backward search is like asking, "hey PDF viewer, please take me to the position in the `tex` source file that corresponds to my current position in the `pdf` file". Positions in the `pdf` file are linked to the correct corresponding positions in the `tex` source file using a utility called SyncTeX, which is implemented in a binary program called `synctex`; `synctex` should ship by default with a standard TeX installation.
 
 You trigger backward search in Skim using `Command`+`Shift`+`Mouse-Click` on a line in the `pdf` file.
 
-##### Tex
+#### From the text editor
 On the `tex` side, you must compile your `tex` documents *with* `synctex` *enabled* to create the `pdf`-`tex` synchronization needed for backward search to work properly. You enable `synctex` by passing the `-synctex=1` option to `pdflatex` or `latexmk` when compiling your `tex` files. See `man synctex`, or search `man pdflatex` or `man latexmk` for `'synctex'` for more documentation. 
 
-##### PDF
+#### From the PDF reader
 On the `pdf` side, in Skim, you enable SyncTex in `Skim > Preferences > Sync > PDF-TeX Sync Support`. If you use any of the text editors listed in `Preset`, just select your editor and backward search should work out of the box. (I can confirm the MacVim preset works out of the box.) 
 
 Command line editors like Neovim Vim require manual configuration of the `Command` and `Argument` fields. Here are the values I use:
@@ -95,3 +126,4 @@ The server is documented under `:help client-server` or equivalently `:help remo
 
 Yeah so the server thing needs explanation; `%file` is in quotation marks to handle possible spaces in file names. By default, in my experience, Skim does not switch focus back to your terminal editor. I add `&& open -a iTerm` to switch focus back to the application `iTerm` if the `nvr` command executes successfully.
 
+## Setting Up Zathura (read this on Linux)
