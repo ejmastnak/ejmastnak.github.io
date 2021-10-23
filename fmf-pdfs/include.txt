@@ -17,7 +17,6 @@ optics-exercises
 optics-equation-sheet
 
 qm-exercises
-qm-lecture
 qm-oral-notes
 
 ss-exercises

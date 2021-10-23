@@ -22,6 +22,8 @@ Visit [the introduction]({% link tutorials/vim-latex/intro.md %}) for an overvie
   * [latexmk](#latexmk)
   * [You can use other options, too...](#you-can-use-other-options,-too...)
 * [Implementation: compilation scripts and Vim functions](#implementation:-compilation-scripts-and-vim-functions)
+  * [Naive implementation](#naive-implementation)
+  * [Actually useful](#actually-useful)
   * [Main shell script](#main-shell-script)
   * [Supporting Vimscript](#supporting-vimscript)
 * [Implementation: error message parsing](#implementation:-error-message-parsing)
@@ -106,6 +108,16 @@ You should put your `latexmkrc` file at the location `~/.latexmkrc` or `XDG_CONF
 The `pdflatex` and `latexmk` commands and options described above are by no means the best or only way to compile LaTeX documents. Consider them a starting point based on what has served me well during my undergraduate studies. I encourage you to read through the `pdflatex` and `latexmk` documentation and see what works for you.
 
 ## Implementation: compilation scripts and Vim functions
+
+### Naive implementation
+The simplest is just
+```
+:!pdflatex myfile.tex
+:AsyncRun pdflatex myfile.tex
+```
+Just for orientation, so you see that is all that is needed. Then build up from there.
+
+### Actually useful 
 Since `pdflatex` and `latexmk` must be called from the command line, I manage most of my compilation with shell scripts. I then call these shell scripts with one-liner Vimscript functions.
 
 Directory structure:

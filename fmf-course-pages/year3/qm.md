@@ -4,7 +4,6 @@ title: Quantum mechanics
 # Quantum mechanics
 
 - [Solved exercises]({% link fmf-pdfs/year3/qm/qm-exercises.pdf %})
-- [Lecture notes]({% link fmf-pdfs/year3/qm/qm-lecture.pdf %})
 - [Oral exam notes]({% link fmf-pdfs/year3/qm/qm-oral-notes.pdf %})
 
 ## Course description
