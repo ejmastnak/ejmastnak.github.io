@@ -3,12 +3,12 @@ title: Setting Up Vim for Efficiently Writing LaTeX
 ---
 # Setting Up Vim for Efficiently Writing LaTeX
 
-This series aims to removes, to a reasonable extent, the nontrivial technical barriers to entry for setting up Vim or Neovim text editors for efficiently writing LaTeX documents. It is intended for anyone who...
+This series aims to removes the nontrivial technical barriers to entry for setting up Vim or Neovim text editors for efficiently writing LaTeX documents. It is intended for anyone who...
 
 - already knows LaTeX but is relatively new to Vim, and is unsure how to proceed
 - is interested in taking real-time notes in mathematics or physics lectures using LaTeX, à la [Gilles Castel](https://castel.dev/)
-- just wants a more pleasant and efficient editing experience, even if not aiming for real-time LaTeX
-- wishes to manually configure Vim-based compilation and PDF viewing without relying on third-party LaTeX plugins like [`vimtex`](https://github.com/vim-latex/vim-latex) or [`vim-latex`](https://github.com/vim-latex/vim-latex) (although [`vimtex`](https://github.com/vim-latex/vim-latex) is an excellent plugin, and is covered in this series)
+- wants a more pleasant and efficient editing experience, even if not aiming for real-time LaTeX
+- wishes to manually configure compilation and PDF viewing without relying on third-party LaTeX plugins like [`vimtex`](https://github.com/vim-latex/vim-latex) or [`vim-latex`](https://github.com/vim-latex/vim-latex) (although [`vimtex`](https://github.com/vim-latex/vim-latex) is an excellent plugin, and is covered in this series)
 - just wants to browse someone else's setup out of curiosity.
 
 ### This series walks you through...
@@ -26,18 +26,18 @@ This series aims to removes, to a reasonable extent, the nontrivial technical ba
 
 
 ### For whom this series is written
-Context: I often find myself thinking how much faster I would have reached proficiency in a technical subject, say Vim and LaTeX, if, with the knowledge I have know, I could travel back in time and explain to an older version of myself the correct documentation to read, the bad habits to avoid and the best practices to follow, what material actually mattered and what was just noise, the theory and purpose behind the code I had copied from others' tutorials and config files, and so on. This series is written in precisely that light. Namely,
+Context: I often find myself thinking how much faster I would have reached proficiency in a technical subject, say Vim and LaTeX, if, with the knowledge I have now, I could travel back in time and explain to an older version of myself the correct documentation to read, the bad habits to avoid and the best practices to follow, what material actually mattered and what was just noise, the theory and purpose behind the code I had copied from others' tutorials and config files, and so on. This series is written in precisely that light. Namely,
 
 > This series is written with the voice, format, notation, and explanation style I would have liked to have access to if I were once again an inexperienced undergraduate learning the material for the first time myself.
 
-All of small discoveries I inefficiently scraped together from online tutorials, YouTube, Stack Overflow, Reddit and forums are compiled here in one place and (hopefully) synthesized into a self-contained work. For material beyond the scope of this piece, I have tried to provide official documentation for the reader interested in learning more.
+All of small discoveries I inefficiently scraped together from online tutorials, YouTube, Stack Overflow, Reddit and forums are compiled here in one place and (hopefully) synthesized into a self-contained work. For material beyond the scope of this piece, I provide references to official documentation for the reader interested in learning more.
 
-
-But I am also not starting a completely from zero and assume the reader has certain existing technical proficiencies. Namely:
 
 **Assumptions**
+
+I assume certain existing technical proficiencies. Namely:
 - You know what LaTeX is, have a working installation, and know how to use it, at least for creating basic documents.
-- You know what Vim is, have a working installation, and know how to use it, at least for basic text editing. If you use Neovim, I assume you can navigate small differences between Neovim and Vim, say Neovim's `init.vim` file replacing Vim's `vimrc` or the user's Neovim files living at `~/.config/nvim` as opposed Vim's `~/.vim`.
+- You know what Vim is, have a working installation, and know how to use it, at least for basic text editing (e.g. at the level of `vimtutor`). If you use Neovim, I assume you can navigate small differences between Neovim and Vim, say Neovim's `init.vim` file replacing Vim's `vimrc` or the user's Neovim files living at `~/.config/nvim` as opposed Vim's `~/.vim`.
 - You have installed Vim plugins before; you have a preferred plugin installation method (for example [`vim-plug`](https://github.com/junegunn/vim-plug), [`packer`](https://github.com/wbthomason/packer.nvim), Vim 8+/Neovim's built-in plugin system, etc...) and you know how to use it.
 - You are comfortable with the idea of calling simple command line programs from a terminal emulator, for example using `pdflatex myfile.tex` to compile the LaTeX file `myfile.tex`.
 - You have a working Python 3+ installation and are able to use `pip/pip3` to install Python packages.
