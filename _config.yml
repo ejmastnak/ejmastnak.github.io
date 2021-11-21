@@ -65,3 +65,8 @@ defaults:
       type: "pages"
     values:
       layout: "default"
+
+# # for highlighted code blocks
+# markdown: kramdown
+# highlighter: rouge
+#     input: GFM
