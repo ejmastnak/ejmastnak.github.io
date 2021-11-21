@@ -4,14 +4,7 @@ title: Snippets | Vim and LaTeX Part 1
 # UltiSnips and LaTeX
 
 ## About the series
-This is part four in a four-part series explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers snippets, which can dramatically speed up your LaTeX writing.
-
-Visit [the introduction]({% link tutorials/vim-latex/intro.md %}) for an overview of the series. Use the list below navigate to other parts in the series...
-1. [Vimscript best practices for filetype-specific plugins]({% link tutorials/vim-latex/vimscript.md %})
-1. [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %})
-1. [Integrating Vim and a PDF reader]({% link tutorials/vim-latex/pdf-reader.md %})
-1. [Snippets: the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %})
-
+This is part four in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers snippets, which can dramatically speed up your LaTeX writing.
 
 ## Contents of this article
 <!-- vim-markdown-toc Marked -->
@@ -43,10 +36,17 @@ The [UltiSnips repository](https://github.com/SirVer/ultisnips)
 ## Getting started with UltiSnips
 
 ### Installation
-UltiSnips follows the default Vim plugin installation procedure. I assume you will be able to install UltiSnips on your own. If you have never installed a Vim plugin before, I suggest you learn to do that first. The official documentation is `:help package`, while tutorials with screenshots and richer format abound on the web.
+UltiSnips follows the default Vim plugin installation procedure. I assume you will be able to install UltiSnips on your own. If you have never installed a Vim plugin before, you should learn to do that first. The official documentation is `:help package`, while tutorials with pictures and other bells and whistles abound on the web.
+
+Note: UltiSnips comes without snippets---you have to write your own or use an existing snippet database. The canonical source of existing snippets is GitHub user `honza`'s [`vim-snippets`](https://github.com/honza/vim-snippets) repository. But before you run off and download someone else's snippets, I encourage you to ask yourself:
+
+1. Do I know where snippets live on my file system?
+1. Do I know how to write and edit snippets to suit my particular needs?
+
+Whether you write your own snippets, use someone else's, or a mix of both, your experience will be better in the long run if the answer to both questions is a definitive "yes". Avoid the trap of blindly copying from the Internet without understanding what's going on under the hood.
 
 ### First steps
-UltiSnips comes without snippets---you have to write your own or use an existing snippet database. The canonical source of existing snippets is GitHub user `honza`'s [`vim-snippets` repository](https://github.com/honza/vim-snippets). Even if you use someone else's snippets, I encourage you to understand (i) where snippets live on your file system and (ii) how to write and edit snippets to suit your particular needs.
+**TODO** write a snippet for writing snippets.
 
 After installing UltiSnips you should configure...
 1. the key you use to trigger (expand) snippets (linked to  `g:UltiSnipsExpandTrigger`),
@@ -66,7 +66,7 @@ This topic's official documentation lives at `:help UltiSnips-how-snippets-are-l
 
 You store snippets in text files with the `.snippets` extension. The file's base name (as in `base-name.snippets`) determines which Vim `filetype` the snippets apply to. For example, snippets inside the file `tex.snippets` would apply to files with `filetype=tex`. Want certain snippets to apply globally to *all* file types? No problem---put global snippets in the file `all.snippets`, which is covered towards the bottom of `:help UltiSnips-how-snippets-are-loaded`.
 
-By default, UltiSnips expects your `.snippet` files to live in directories called `UltiSnips`, which, if you wanted, you could place anywhere in your Vim `runtimepath`. The snippet directory name is controled with the the global variable `g:UltiSnipsSnippetDirectories`. If, addition to `UltiSnips`, you wanted (for example) `MySnippets` to be a valid snippet directory, you would use the Vimscript
+By default, UltiSnips expects your `.snippet` files to live in directories called `UltiSnips`, which, if you wanted, you could place anywhere in your Vim `runtimepath`. The snippet directory name is controlled with the the global variable `g:UltiSnipsSnippetDirectories`. If, in addition to `UltiSnips`, you wanted (for example) `MySnippets` to be a valid snippet directory, you would use the Vimscript
 ```
  let g:UltiSnipsSnippetDirectories=["UltiSnips", "MySnippets"]
 ```
@@ -273,7 +273,7 @@ A formal explanation of regular expressions falls beyond the scope of this work.
   These two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
 
 You can do much fancier stuff than this. See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
-  
+
 ## (Subjective) practical tips for fast editing
 I'm talking math-heavy LaTeX in real-time university lectures, where speed is crucial. The tips below might be overkill for more easygoing use cases.
 

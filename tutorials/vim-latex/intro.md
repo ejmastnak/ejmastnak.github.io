@@ -38,6 +38,8 @@ All of the small discoveries I inefficiently scraped together from online tutori
 - You have a working Python 3+ installation and are able to use `pip/pip3` to install Python packages.
 - You are working on macOS or Linux (although many ideas here should be useful on Windows as well).
 
+- Common abbreviations/macros for files like `.` for CWD, `..` for one directory up, `~` for the home directory
+
 
 ### References
 The seminal work on the subject of Vim and LaTeX, and the original inspiration for this series, is Gilles Castel's [*How I'm able to take notes in mathematics lectures using LaTeX and Vim*](https://castel.dev/post/lecture-notes-1/). Anyone interested in combining LaTeX and Vim should read it.
