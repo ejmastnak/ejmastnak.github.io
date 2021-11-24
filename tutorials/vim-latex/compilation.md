@@ -12,28 +12,30 @@ This is part two in a [four-part series]({% link tutorials/vim-latex/intro.md %}
 * [Material covered in this article](#material-covered-in-this-article)
 * [What options to use with `pdflatex` and `latexmk`](#what-options-to-use-with-`pdflatex`-and-`latexmk`)
   * [About pdflatex and latexmk](#about-pdflatex-and-latexmk)
-  * [Options for pdflatex](#options-for-pdflatex)
-  * [Options for latexmk](#options-for-latexmk)
+  * [Possible options for pdflatex](#possible-options-for-pdflatex)
+  * [Possible options for latexmk](#possible-options-for-latexmk)
   * [You can use other options, too...](#you-can-use-other-options,-too...)
-* [Implementing compilation scripts and Vim functions](#implementing-compilation-scripts-and-vim-functions)
-  * [Naive implementation](#naive-implementation)
-  * [Asynchronous commands with AsyncRun](#asynchronous-commands-with-asyncrun)
-  * [Outsourcing compilation to shell scripts](#outsourcing-compilation-to-shell-scripts)
-  * [My compilation shell script](#my-compilation-shell-script)
-  * [Supporting Vimscript...](#supporting-vimscript...)
-    * [...and a verbose explanation](#...and-a-verbose-explanation)
-  * [Toggling compilation with `latexmk`](#toggling-compilation-with-`latexmk`)
-  * [Implementing detecting `minted` and using `--shell-escape`](#implementing-detecting-`minted`-and-using-`--shell-escape`)
+  * [Warning: compiling when using the minted package](#warning:-compiling-when-using-the-minted-package)
+* [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin)
+  * [Plan](#plan)
+  * [File structure](#file-structure)
+  * [Aside: Vim's file macros](#aside:-vim's-file-macros)
+  * [Setting Vim's makeprg](#setting-vim's-makeprg)
+  * [Toggling between pdflatex and latexmk compilation](#toggling-between-pdflatex-and-latexmk-compilation)
   * [Implementing error message parsing](#implementing-error-message-parsing)
+  * [Bonus: implementing detecting `minted` and using `--shell-escape`](#bonus:-implementing-detecting-`minted`-and-using-`--shell-escape`)
+    * [A simple way to automaticlly detect minted](#a-simple-way-to-automaticlly-detect-minted)
+* [Making compilation asynchronous](#making-compilation-asynchronous)
+* [Appendix: Complete compiler plugin](#appendix:-complete-compiler-plugin)
 
 <!-- vim-markdown-toc -->
 
 ## Material covered in this article
-- The `pdflatex` and `latexmk` commands and what options to use with each
+- The basics of the `pdflatex` and `latexmk` commands and suggested options to use with each
 
-- Custom Vimscript functions for compiling the current `tex` source file using either `pdflatex` or `latexmk`, controlled from within Vim with a keyboard shortcut of your choice
+- How to set up custom compilation, with either `pdflatex` or `latexmk`,  using Vim's built `compiler` feature; how to trigger compilation from withing Vim with a convenient keyboard shortcut of your choice
 
-- How to make compilation run as an *asynchronous* process, keeping focus in Vim throughout compilation (so you don't have to wait until compilation finishes to be able to type.)
+- How to make compilation run as an *asynchronous* process, keeping focus in Vim throughout compilation (so you don't have to wait until compilation finishes to restart your editing)
 
 - A way to display compilation error messages, with line number, in Vim's QuickFix menu, allowing you to jump directly to the error with Vim's `:cnext` command; how to filter out irrelevant log messages with an approriate Vim `errorformat` string customized for LaTeX compilation.
 
@@ -53,9 +55,9 @@ Both `pdflatex` and `latexmk` are command line programs that read a plain-text `
 
 Online and GUI LaTeX editors you might already know, such as Overleaf, TeXShop or TeXStudio, also compile `tex` documents with `latexmk` or `pdflatex` (or similar command line programs) under the hood. You just don't see this directly because the `pdflatex` calls are hidden behind a graphical interface.
 
-  To get useful functionality from `pdflatex` and `latexmk` you'll need to specify some command options. In the two sections below, I explain the options for both `pdflatex` and `latexmk` that have served me well over the past few years---these could be a good starting point if you are new to command line compilation yourself.
+  To get useful functionality from `pdflatex` and `latexmk` you'll need to specify some command options. In the two sections below, I explain the options for both `pdflatex` and `latexmk` that have served me well over the past few years---these could be a good starting point if you are new to command line compilation.
 
-### Options for pdflatex
+### Possible options for pdflatex
 The full `pdflatex` command I use to compile `tex` files, with all options shown, is
   ```
   pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir={output-directory} -synctex=1 {sourcefile.tex}
@@ -83,7 +85,7 @@ You can find full documentation of `pdflatex` options by running `man pdflatex` 
 
   Using `synctex=1` saves the `synctex` data in a `gz` archive with the extension `.synctex.gz`. Possible values of the `synctex` argument other than `1` are documented under `man synctex`
 
-### Options for latexmk
+### Possible options for latexmk
 When compiling `tex` files with `latexmk` instead of with `pdflatex`, I use the command
 ```
 latexmk -pdf -output-directory={output-directory}
@@ -110,203 +112,260 @@ The `latexmkrc` file's usage is documented in `man latexmkrc` under the section 
 ### You can use other options, too...
 The `pdflatex` and `latexmk` commands and options described above are just the tip of the iceberg, and by no means the definitive way to compile LaTeX documents. Consider them a starting point based on what has served me well during my undergraduate studies. I encourage you to read through the `pdflatex` and `latexmk` documentation and experiment with what works for you.
 
-## Implementing compilation scripts and Vim functions
+### Warning: compiling when using the minted package
+The [`minted` package](https://github.com/gpoore/minted) provides expressive syntax highlighting for LaTeX documents, which is useful when you include samples of computer code in your LaTeX documents. (If you don't use `minted`, feel free to skip this section.)
+
+**TODO** image of a code block highlighted with `minted`.
+
+The `minted` package works by leveraging the [Pygments syntax highlighting library](https://github.com/pygments/pygments). *For `minted` to be able to use Pygments during compilation, you must compile with `pdflatex` or `latexmk`'s `-shell-escape` option*. A `pdflatex` call with `-shell-escape` enabled might look like this:
+```sh
+pdflatex -shell-escape myfile.tex
+```
+However, as warned in Section 3.1 (Basic Usage/Prelminary) of the [`minted` documentation](http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf), using `-shell-escape` is a security risk:
+
+> using `-shell-escape` allows LaTeX to run potentially
+arbitrary commands on your system. It is probably best to use `-shell-escape`
+only when you need it, and to use it only with [LaTeX] documents from trusted sources.
+
+Basically the lessons here are:
+- for `minted` to work, you must enable `-shell-escape` during compilation
+- only use `-shell-escape` if you're sure your LaTeX document doesn't contain or call malicious code, and enable `-shell-escape` if you don't need it. (If you wrote the LaTeX document yourself, you should have nothing to worry about, of course.)
+
+The second point might sound silly (why would anyone include malicious code in a LaTeX document?) but keep it in mind anyway.
+
+## Writing a simple LaTeX compiler plugin
+
 Here is the big picture:
 
 > We need a convenient way to call `pdflatex` or `latexmk`, which are *command-line programs* (and are usually run as shell commands from a terminal emulator), from *within Vim*.
 
-Vim, being a good Unix citizen, offers a variety of options for running shell commands from within Vim---some of these are explained in the sections below.
+Vim has a built-in `compiler` feature for doing just that. For full documentation, you can read through `:help :compiler`, `:help make_makeprg`, `:help makeprg` and `:help write-compiler-plugin`. For our purposes, at least for getting started,
+- Vim has a built-in system for easily compiling documents using shell commands of your choice.
+- You use Vim's `makeprg` option to store the shell command you want to use to compile a document.
+- You use Vim's `errorformat` option to specify how to parse the compilation command's output log for errors.
+- You use Vim's `:make` command to trigger the compilation command stored in `makeprg`
+- You can view the command's output, along with any errors, in an IDE-style QuickFix menu built in to Vim, which you can open with `:copen`.
 
-### Naive implementation
-The simplest way to execute shell commands from Vim is Vim's `:!{command}` functionality, which is documented at `:help :!cmd`. The process is straightforward: 
+Here is a GIF showing what this looks like in practice: **TODO** definitely a GIF showing `:make` and how the Quickfix menu opens.
 
-1. in normal mode, enter `:` to enter Vim's command mode
-1. type `!`
-1. type a shell command and press Enter.
+### Plan
+Here's what we will cover in this section:
+- How to translate the `pdflatex` and `latexmk` commands from **TODO** reference into something understood by Vim's `makeprg` option
+- A Vimscript function for easily switching between `pdflatex` and `latexmk` compilation
 
-For example, running `:!pdflatex myfile.tex` from Vim's command-line mode has the same effect as running `pdflatex myfile.tex` in a terminal emulator.
+- set Vim's `errorformat` option to correctly parse LaTeX errors, and
+- For `minted` package users, a Vimscript function for easily toggling `-shell-escape` compilation on and off; also, a simple way to detect the `minted` package in a file's preamble and enable `-shell-escape` compilation if `minted` is detected
 
-### Asynchronous commands with AsyncRun
-- Problem: Vim's built-in `:!{command}` functionality runs synchronously---this means Vim freezes until the shell command finishes executing. Compiling LaTeX documents can take several seconds, and this delay is unacceptable. Try running `:!pdflatex %` on a LaTeX file and see for yourself (`%` is a Vim macro for the current file).
+- How to map the `latexmk`/`pdflatex` and `-shell-escape` toggle functions to convenient keyboard shortcuts using Vim key mappings
 
-- Hacked solution: run the command in the background with `:!{command}&`. This works only on Unix systems and won't show any output. 
+If you just want to see the final script, it is available at **TODO** link.
 
-- Actual solution: use an *asynchronous build plugin*.
+### File structure
+Compiler plugins should be stored in Vim's `.vim/compiler` directory---you might need to create a `compiler` directory if you don't have one yet. For a LaTeX compiler plugin, create a file called `tex.vim` inside `vim/compiler` (you could name it whatever you want, e.g. `mytex.vim`, but the target file type---in this case `tex`---is conventional).
 
-Asynchronous build plugins allow you to run shell commands asynchronously from within Vim without freezing up your editor. The most famous is probably Tim Pope's [`vim-dispatch`](https://github.com/tpope/vim-dispatch), but in this series I will use [skywind300](https://github.com/skywind3000)'s [asyncrun.vim](https://github.com/skywind3000/asyncrun.vim).
+**TODO** add my directory tree.
 
-You install AsyncRun, with the installation method of your choice, just like any other Vim plugin (see **TODO** prequisites). AsyncRun provides the `:AsyncRun` command, which is an asynchronous equivalent of `:!`. For example:
+
+### Aside: Vim's file macros
+To compile a file, you need to specify the file's name, ideally with a convenient macro that expands to the current file name instead of having to manually type out the file name for each compilation. Vim provides a set of macros and modifiers that makes referencing the current file straightforward, but the syntax is a little weird if you haven't seen it before. It might be easiest with a concrete example: consider a LaTeX file with the path `~/Documents/demo/myfile.tex`, and suppose Vim was launched from inside `~/Documents/demo/` to edit `myfile.tex` (so that Vim's CWD is `~/Documents/demo`). In this case...
+
+| Macro | Meaning | Example result |
+| ----- | ------- | -------------- |
+| `%` | the current file relative to Vim's CWD | `myfile.tex` |
+| `%:p` | the current file expressed as a full path | `~/Documents/demo/myfile.tex` |
+| `%:h` | the file's parent directory relative to Vim's CWD | `.` |
+| `%:r` | the file's root (last extension removed) | `myfile` |
+
+The macros and their modifiers can also be combined:
+
+| Macro | Meaning | Example result |
+| ----- | ------- | -------------- |
+| `%:p:h` | full path to file's parent directory | `~/Documents/demo` |
+| `%:p:r` | full path to file's parent directory | `~/Documents/demo/myfile` |
+
+There's quite a few more modifiers than listed above, but these are all we need for this series. You can read more about `%` in `:kelp cmdline-special` and the various modifiers in `:help filename-modifiers`. For orientation, you can evaluate the macro expressions yourself with, for example, `:echo expand('%')` or `:echo expand(%:p:h)`.
+
+
+
+### Setting Vim's makeprg
+For review, `makeprg` is a Vim option used to store shell-style compilation commands. You have two ways to set `makeprg`:
+1. Set `makeprg` directly, in which case you must escape spaces with `\`. For example, to set `makeprg` to the command `latexmk -pdf -output-directory=%:h %` you would add the following code to `compiler/tex.vim`
+   ```vim
+   " This code would go in compiler/tex.vim
+   setlocal makeprg=latexmk\ -pdf\ -output-directory=%:h\ %
+   ```
+
+2. Store the desired value of `makeprg` in a literal (single-quote) Vimscript string (in which you don't need to escape spaces), then set `makeprg` programatically using Vim's `:let &{option}` feature:
+   ```vim
+   " This code would go in compiler/tex.vim
+
+   " Create a script-local variable `s:latexmk` to store the latexmk command
+   let s:latexmk = 'latexmk -pdf -output-directory=%:h %'
+
+   " set makeprg to the value of 'latexmk'
+   let &l:makeprg = expand(s:latexmk)
+   ```
+   Using `let &l:{option}` is the buffer-local equivalent of `:let &{option}` (just like `:setlocal` is the buffer-local equivalent of `:set`). See `:help :let-&` for documentation.
+
+In either case, once you have set `makeprg`, you can compile the current LaTeX document with the Vim command `:make`. (I recommend checking the value of `makeprg` with `:echo &makeprg` to see that it has changed from its default value of `make` to whatever you set.)
+   
+### Toggling between pdflatex and latexmk compilation
+If you only want to use `latexmk`, feel free to skip this section. Here's why you might want to switch between the two:
+- `pdflatex` always performs a single pass. This is fast, but generally won't correctly link or label cross references. I use `pdflatex` when I want quick visual feedback of text I just edited, but don't need all `\label`, `\ref`, and `\cite` commands to work correctly (I might see a `?` symbol instead of the correct equation number for a `\ref` command, for example).
+- `latexmk` performs as many compilation passes as needed to perfectly resolve all cross-references. This is slow if all you just want some visual feedback, but vital if you're about to send a paper out for publication.
+
+If you want to toggle between compilation commands, first store the current buffer's `pdflatex`/`latexmk` state in a buffer-local, boolean-like variable, for example `b:tex_compile_use_latexmk`. You can then implement toggle logic as follows:
 ```vim
-:! pdflatex myfile.tex         " runs synchronously
-:AsyncRun pdflatex myfile.tex  " runs asynchronously
-```
-That's it, more or less---the compilation commands later in this article are either variations on `:AsyncRun pdflatex myfile.tex` with a few more options thrown in, or calls to a shell script, as in `:AsyncRun sh my-compile-script.sh my-file.tex`.
+" This code would go in compiler/tex.vim
 
-### Outsourcing compilation to shell scripts
-Since `pdflatex` and `latexmk` are command line programs at home in the shell, I manage most of my compilation with shell scripts. I then call these shell scripts asynchronously with one-liner Vimscript functions using `:AsyncRun`.
+" `makeprg` command values for both pdflatex or latexmk
+let s:pdflatex = 'pdflatex -file-line-error -interaction=nonstopmode ' .
+      \ '-halt-on-error -synctex=1 -output-directory=%:h %'
+let s:latexmk = 'latexmk -pdf -output-directory=%:h %'
 
-First, here is my directory structure:
-```
-nvim/
-├── ...
-├── ftplugin/
-│   ├── ...
-│   └── tex/
-│       ├── errorformat.vim
-│       ├── tex.vim
-│       └── tex-compile.vim
-└── personal/
-    ├── ...
-    └── tex-scripts
-        ├── compile.sh
-        └── forward-show.sh
-```
-The script `compile.sh` implements compilation; `forward-show.sh` is explained in **TODO** reference PDF reader.
+" A variable to store pdflatex/latexmk state
+" 1 for latexmk and 0 for pdflatex
+let b:tex_compile_use_latexmk = 0
 
-### My compilation shell script
-My compilation script appears below. Like the rest of my config, it is by no means the best or definitive way to compile LaTeX documents, but it should be a good starting point for new users. I keep this file at `nvim/personal/tex-compile-scripts/compile.sh`, but the location is arbitrary as long as you can specify a path to the script. All I suggest is keeping it somewhere in your Vim directory.
-```sh
-#!/bin/sh
-# This script lives at nvim/personal/tex-compile-scripts/compile.sh
-
-# A simple shell script for compiling LaTeX files.
-# The script essentially builds up a pdflatex or latexmk command 
-# stored in a string variable, then executes ${command} "myfile.tex".
-
-# Arguments:
-# $1: path to file's parent directory (without a trailing forward slash) 
-      relative to Vim's current working directory.
-#     Use "." if compiled file is in Vim's cwd 
-# $2: file name with extension but without path
-#     e.g. "myfile.tex" if editing ~/Documents/demo/myfile.tex
-# $3: boolean 0/1 controlling latexmk or pdflatex compile
-#     1 for latexmk
-#     0 for pdflatex (anything other than 1 also uses pdflatex)
-# $4: boolean 0/1 controlling shell escape compilation
-#     1 for shell-escape enabled
-#     0 for shell-escape disabled (anything other than 1 also works)
-
-# Set options for pdflatex and latexmk
-# Note that most latexmk options are already specified in ~.config/latexmk/latexmkrc
-pdflatex_options="-file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 -output-dir=${1}"
-latexmk_options="-pdf -output-directory=${1}"
-
-# test script's argument $3 for compilation with latexmk
-# --------------------------------------------- #
-if [ ${3} -eq 1 ]  # use latexmk
-then
-  command="latexmk ${latexmk_options}"
-else  # use pdflatex
-  command="pdflatex ${pdflatex_options}"
-fi
-# --------------------------------------------- #
-
-# append shell-escape option to command if ${4} == 1
-[ ${4} -eq 1 ] && command="${command} -shell-escape"
-
-# run the compilation command on the tex source file
-${command} "${1}/${2}"
-```
-If you are familiar with shell scripting, the script should be fairly straightforward. 
-
-And some pointers for those totally new to shell scripting:
-
-- a variable's value is accessed with `${variable-name}`, e.g. `${3}` gives the value of the script's third argument, and `${command}` gives the value of the `command` variable
-- `if [ condition ]`, e.g. `if [ ${3} -eq 1 ]`, is the shell analog of the `if(condition)` statements you might be familiar with from other languages
-- `~` is shorthand for the current user's home directory
-- `.` is shorthand for the current working directory
-
-### Supporting Vimscript...
-The following Vimscript, which I keep in `nvim/ftplugin/tex/tex-compile.vim`, calls the `compile.sh` script from within Vim.
-```vim
-" This code lives in ~/.config/nvim/ftplugin/tex/tex-compile.vim
-
-let s:compile_script_path = "$HOME/.config/nvim/personal/tex-scripts/compile.sh"
-
-function! s:TexCompile() abort
-  update
-  execute "AsyncRun sh " . expand(s:compile_script_path) . 
-        \ " $(VIM_RELDIR)" .
-        \ " $(VIM_FILENAME) " . 
-        \ expand(b:tex_compile_use_latexmk) . " " . 
-        \ expand(b:tex_compile_use_shell_escape)
-endfunction
-
-" key mapping to call TexCompile; I use <leader>r for "run"
-nmap <leader>r <Plug>TexCompile
-noremap <script> <Plug>TexCompile <SID>TexCompile
-noremap <SID>TexCompile :call <SID>TexCompile()<CR>
-```
-#### ...and a verbose explanation
-In the hope of making this accessible even to new Vim users, here is a detailed explanation of the above Vimscript:
-- `update` writes the buffer if there are any unsaved changes.
-- I store the path to `compile.sh` in the script-local variable `s:compile_script_path`. This is just for cleaner code, and to make it easier to access `compile.sh` from other places in the `tex-compile.vim` file.
-- `.` is the Vimscript string concatenation operator---the analog of `+` in Python or Java, for example.
-- `\` continues an existing expression on a new line. I use it to keep each `compile.sh` argument on its own line for better readability. For example: the following two expressions are equivalent, but the latter is easier to read, I think:
-  ```vim
-  " one long line
-  execute "AsyncRun sh " . expand(s:compile_script_path) . " $(VIM_RELDIR)" . " $(VIM_FILENAME) " . expand(b:tex_compile_use_latexmk) . " " . expand(b:tex_compile_use_shell_escape)
-
-  " one argument per line
-  execute "AsyncRun sh " . expand(s:compile_script_path) . 
-        \ " $(VIM_RELDIR)" .
-        \ " $(VIM_FILENAME) " . 
-        \ expand(b:tex_compile_use_latexmk) . " " . 
-        \ expand(b:tex_compile_use_shell_escape)
-  ```
-  Each line provides one of the arguments for the `compile.sh` script---scroll back up to [**My compilation shell script**](#my-compilation-shell-script) for a refresher of these arguments if needed.
-
-  The variables `b:tex_compile_use_latexmk` and `b:tex_compile_use_shell_escape` control `latexmk` and shell-escaped compilation, and are described below in **TODO** reference.
-
-- `expand({expression})` expands the Vimscript `{expression}` into (in this use case) a string; for example, `expand(s:compile_script_path)` returns the string value of the `s:compile_script_path` variable.
-
-- `$(VIM_RELDIR)` and `$(VIM_FILENAME)` are examples of convenient macros provided by AsyncRun. They expand to:
-
-  - `$(VIM_FILENAME)`: the name, with extension but without path, of the file currently edited in Vim.
-    
-    Example: `myfile.tex` if editing `~/Documents/demo/myfile.tex`
-
-  - `$(VIM_RELDIR)`: path to the file currently edited in Vim *relative to* Vim's current working directory. This is Vim's CWD if editing a file in the directory you launched Vim, but will be something else if you navigate to some other file in an existing Vim instance.
-
-    Example: `.` if the current file is in Vim's CWD, and, say, `../other-folder` if, after launching Vim, you called `:edit ../other-folder/file2.tex` and began editing `file2.tex`.
-
-  All `AsyncRun` macros are documented at `:help asyncrun-run-shell-command`---just scroll a few paragraphs down.
-
-  **Note:** *the* `$(VIM_*)` *macros are provided by AsyncRun and not by default Vim, so if you want to follow this tutorial exactly, you will need to install AsyncRun.*
-
-
-- The Vimscript block
-  ```vim
-  nmap <leader>r <Plug>TexCompile
-  noremap <script> <Plug>TexCompile <SID>TexCompile
-  noremap <SID>TexCompile :call <SID>TexCompile()<CR>
-  ```
-  makes it possible to call the `TexCompile()` function using the key combination `<leader>r` in normal mode. Roughly, the use of `<Plug>` and `<SID>` is a best practice recommended by the Vim documentation in `:help write-plugin` to prevent the (unlikely) possibility of `TexCompile()` conflicting with a function name of the same name in some other script. See **TODO** for an explanation of the underlying theory.
-
-### Toggling compilation with `latexmk`
-```
-let b:tex_compile_use_latexmk = 0  " declare boolean-style variable
-
-" function for toggling latexmk
-function! tex_compile#toggle_latexmk() abort
+" Toggles between latexmk and pdflatex
+function! s:TexToggleLatexmk() abort
   if b:tex_compile_use_latexmk  " if latexmk is on, turn it off
     let b:tex_compile_use_latexmk = 0
   else  " if latexmk is off, turn it on
     let b:tex_compile_use_latexmk = 1
   endif
+  call s:TexSetMakePrg()  " update makeprg
 endfunction
 
-" create a <Plug>-style mapping
-noremap <Plug>TexToggleLatexmk :call tex_compile#toggle_latexmk()<CR>
+" Sets value of makeprg based on current value of b:tex_compile_use_latexmk
+function! s:TexSetMakePrg() abort
+  if b:tex_compile_use_latexmk
+    let &l:makeprg = expand(s:latexmk)
+  else
+    let &l:makeprg = expand(s:pdflatex)
+  endif
+endfunction
+```
+The code is a lot of lines, but the logic is hopefully straightforward. And here is some Vimscript to map the toggle function to a keyboard shortcut, for example `<leader>tl`:
+```vim
+" This code would go in compiler/tex.vim
+
 nmap <leader>tl <Plug>TexToggleLatexmk
+nnoremap <script> <Plug>TexToggleLatexmk <SID>TexToggleLatexmk
+nnoremap <SID>TexToggleLatexmk :call <SID>TexToggleLatexmk()<CR>
 ```
 
-### Implementing detecting `minted` and using `--shell-escape`
-Note: feel free to skip this section if you don't use `minted` for code highlighting and have no needed for `shell-escape` compilation.
+### Implementing error message parsing
+Vim filters the log output of the `makeprg` command through the Vim `errorformat` option, which can detect relevant error messages and turns them into a format that makes it easy to jump to the error location in the offending source file.
+
+You can see the details of the `:make` cycle with `:help :make`.
+
+Error format uses a similar format to the C function `scanf`, which is rather cryptic to new users. I have opted to designate the `errorformat` option's usage as beyond the scope of this series---I will simply quote some `errorformat` values (taken from the `vimtex` plugin) that should serve most use cases. If inspired, see `help errorformat` for documentation.
+
+The following `errorformat` is taken from GitHub user [`lervag`](https://github.com/lervag)'s [`vimtex`](https://github.com/lervag/vimtex) plugin. If your interested, the original source code can be found on the `vimtex` GitHub page on [line 25 of `vimtex/autoload/vimtex/qf/latexlog.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/qf/latexlog.vim#L25), although the line number may change in future `vimtex` releases.
+
+```vim
+" This code would go in compiler/tex.vim
+" Important: The errorformat used below assumes the tex source file is 
+" compiled with pdflatex's -file-line-error option enabled.
+
+" Match file name
+setlocal errorformat=%-P**%f
+setlocal errorformat+=%-P**\"%f\"
+
+" Match LaTeX errors
+setlocal errorformat+=%E!\ LaTeX\ %trror:\ %m
+setlocal errorformat+=%E%f:%l:\ %m
+setlocal errorformat+=%E!\ %m
+
+" More info for undefined control sequences
+setlocal errorformat+=%Z<argument>\ %m
+
+" More info for some errors
+setlocal errorformat+=%Cl.%l\ %m
+
+" Catch-all to ignore unmatched lines
+setlocal errorformat+=%-G%.%#
 ```
+
+
+### Bonus: implementing detecting `minted` and using `--shell-escape`
+Feel free to skip this section if you don't use `minted` for code highlighting and have no needed for `shell-escape` compilation. The logic for toggling `-shell-escape` on and off is the same as for toggling between `pdflatex` and `latexmk`.
+```vim
+" variable to store shell-escape state
+let b:tex_compile_use_shell_escape = 0
+
+" Toggles shell escape compilation on and off
+function! s:TexToggleShellEscape() abort
+  if b:tex_compile_use_shell_escape  " turn off shell escape
+    let b:tex_compile_use_shell_escape = 0
+  else  " turn on shell escape
+    let b:tex_compile_use_shell_escape = 1
+  endif
+  call s:TexSetMakePrg()  " update makeprg
+endfunction
+```
+The `TexSetMakePrg` function would need to be generalized to
+```vim
+" Sets the value of makeprg based on current values of both
+" b:tex_compile_use_latexmk and b:tex_compile_use_shell_escape.
+function! s:TexSetMakePrg() abort
+  if b:tex_compile_use_latexmk
+    let &l:makeprg = expand(s:latexmk)
+  else
+    let &l:makeprg = expand(s:pdflatex)
+  endif
+  if b:tex_compile_use_shell_escape
+    let &l:makeprg = &makeprg . ' -shell-escape'
+  endif
+endfunction
+```
+
+#### A simple way to automaticlly detect minted
+Finally, here is a (naive but functional) way to detect `minted` using the Unix utilities `sed` and `grep`:
+```
+" initialize to zero (i.e. shell escape off)
 let b:tex_compile_use_shell_escape = 0
 
 " Enable b:tex_compile_use_shell_escape if the minted package is detected in the tex file's preamble
+silent execute '!sed "/\\begin{document}/q" ' . expand('%') . ' | grep "minted" > /dev/null'
+if v:shell_error  " 'minted' not found in preamble
+  let b:tex_compile_use_shell_escape = 0  " disable shell escape
+else  " search was successful; 'minted' found in preamble
+  let b:tex_compile_use_shell_escape = 1  " enable shell escape
+endif
+```
+On the command line, without all the extra Vimscript jargon, the `sed` and `grep` call would read
+```
+sed "/\\begin{document}/q" myfile.tex | grep "minted" > /dev/null
+```
+The `sed` call reads the file's preamble (and quits at `\begin{document}`), and the output is piped into a `grep` search for the string `"minted"`. I then use Vim's `v:shell_error` variable to check the `grep` command's exit status---if the search is successful, I update `b:tex_compile_use_shell_escape`'s value to enable shell escape.
+
+This command is naive, I'm sure. It's probably inefficient and won't work, for example, if you keep your preamble in a separate file and access it with the `\input` command. If you know a better way, e.g. using `awk`, please tell me and I'll update this article.
+
+## Making compilation asynchronous
+
+## Appendix: Complete compiler plugin
+```vim
+" Settings for compiling LaTeX documents
+if exists("current_compiler")
+	finish
+endif
+let current_compiler = "tex"
+
+" make programs using pdflatex or latexmk
+let s:pdflatex = 'pdflatex -file-line-error -interaction=nonstopmode ' .
+      \ '-halt-on-error -synctex=1 -output-directory=%:h %'
+let s:latexmk = 'latexmk -pdf -output-directory=%:h %'
+
+" used to toggle latexmk and shell-escape compilation on and off
+let b:tex_compile_use_latexmk = 0
+let b:tex_compile_use_shell_escape = 0
+
+
+" Search for the minted package in the document preamble.
+" Enable b:tex_compile_use_shell_escape if the minted package
+" is detected in the tex file's preamble.
 " --------------------------------------------- "
 silent execute '!sed "/\\begin{document}/q" ' . expand('%') . ' | grep "minted" > /dev/null'
 if v:shell_error  " 'minted' not found in preamble
@@ -314,44 +373,83 @@ if v:shell_error  " 'minted' not found in preamble
 else  " 'minted' found in preamble
   let b:tex_compile_use_shell_escape = 1  " enable shell escape
 endif
-" --------------------------------------------- "
-```
-On the command line, without all the extra Vimscript quotes and stuff, the `sed` and `grep` call would read
-```
-sed "/\\begin{document}/q" myfile.tex | grep "minted" > /dev/null
-```
 
-Toggling shell escape
-```
-let b:tex_compile_use_shell_escape = 0  " declare boolean-style variable
 
-" function for toggling shell escape
-function! tex_compile#toggle_shell_escape() abort
-  if b:tex_compile_use_shell_escape  " if shell escape is on, turn it off
+" User-defined functions
+" ------------------------------------------- "
+" Toggles between latexmk and pdflatex
+function! s:TexToggleLatexmk() abort
+  if b:tex_compile_use_latexmk  " turn off latexmk
+    let b:tex_compile_use_latexmk = 0
+  else  " turn on latexmk
+    let b:tex_compile_use_latexmk = 1
+  endif
+  call s:TexSetMakePrg()  " update makeprg
+endfunction
+
+" Toggles shell escape compilation on and off
+function! s:TexToggleShellEscape() abort
+  if b:tex_compile_use_shell_escape  " turn off shell escape
     let b:tex_compile_use_shell_escape = 0
-  else  " if shell escape is off, turn it on
+  else  " turn on shell escape
     let b:tex_compile_use_shell_escape = 1
+  endif
+  call s:TexSetMakePrg()  " update makeprg
+endfunction
+
+" Sets correct value of makeprg based on current values of 
+" b:tex_compile_use_latexmk and b:tex_compile_use_shell_escape
+function! s:TexSetMakePrg() abort
+  if b:tex_compile_use_latexmk
+    let &l:makeprg = expand(s:latexmk)
+  else
+    let &l:makeprg = expand(s:pdflatex)
+  endif
+  if b:tex_compile_use_shell_escape
+    let &l:makeprg = &makeprg . ' -shell-escape'
   endif
 endfunction
 
-" create a <Plug>-style mapping
-noremap <Plug>TexToggleShellEscape :call tex_compile#toggle_shell_escape()<CR>
+
+" Key mappings for functions
+" ---------------------------------------------
+" TexToggleShellEscape
 nmap <leader>te <Plug>TexToggleShellEscape
+nnoremap <script> <Plug>TexToggleShellEscape <SID>TexToggleShellEscape
+nnoremap <SID>TexToggleShellEscape :call <SID>TexToggleShellEscape()<CR>
+
+" TexToggleLatexmk
+nmap <leader>tl <Plug>TexToggleLatexmk
+nnoremap <script> <Plug>TexToggleLatexmk <SID>TexToggleLatexmk
+nnoremap <SID>TexToggleLatexmk :call <SID>TexToggleLatexmk()<CR>
+
+
+" Set makeprg and errorformat
+" ---------------------------------------------
+call s:TexSetMakePrg()
+
+" Note: The errorformat used below assumes the tex source file is 
+" compiled with pdflatex's -file-line-error option enabled.
+setlocal errorformat=%-P**%f
+setlocal errorformat+=%-P**\"%f\"
+
+" Match errors
+setlocal errorformat+=%E!\ LaTeX\ %trror:\ %m
+setlocal errorformat+=%E%f:%l:\ %m
+setlocal errorformat+=%E!\ %m
+
+" More info for undefined control sequences
+setlocal errorformat+=%Z<argument>\ %m
+
+" More info for some errors
+setlocal errorformat+=%Cl.%l\ %m
+
+" Ignore unmatched lines
+setlocal errorformat+=%-G%.%#
 ```
 
 
-### Implementing error message parsing
-- Folder structure is `nvim/personal/tex-compile-scripts/errorformat.vim`. I keep `errorformat` functionality in a dedicated file to declutter `ftplugin/tex.vim`. Your choice.
+<!-- - Note `let g:asyncrun_trim = 1` to avoid empty lines in the quickfix list -->
 
-- Theory: `errorformat` was originally designed to work with Vim's compilation functionality (see `help compiler`). A compiler's logging output is filtered through with `errorformat`, which detects relevant error messages and turns them into a format that makes it easy to jump to the error location in the offending source file. Error format uses the same function as the C function `scanf`.
-  
-  See `help errorformat` for documentation.
 
-- Source: this `errorformat` is taken from GitHub user [`lervag`](https://github.com/lervag)'s [`vimtex`](https://github.com/lervag/vimtex) plugin.
-  
-  The original values are found in the Vimscript function `s:qf.set_errorformat()` in the file `vimtex/autoload/vimtex/qf/latexlog.vim`. At the time of writing, the exact source code can be found on the [`vimtex` GitHub page](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/qf/latexlog.vim#L25), although the line number I have linked could change in future `vimtex` releases.
-
-- Note `let g:asyncrun_trim = 1` to avoid empty lines in the quickfix list
-
-- The `%` is documented at `:help cmdline-special`
 

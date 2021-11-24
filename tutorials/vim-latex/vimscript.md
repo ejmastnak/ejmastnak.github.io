@@ -4,7 +4,7 @@ title: Vimscript Theory \| Setting Up Vim for LaTeX Part 1
 # Vimscript Theory for Filetype-Specific Workflows
 
 ## About the series
-This is part one in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article provides a theoretical background for use of Vimscript in filetype-specific workflows. Feel free to skip to [part two]({% link tutorials/vim-latex/compilation.md %}) if you are familiar with Vimscript or find theory boring, and return later to brush up on anything you might have skipped.
+This is part one in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article provides a theoretical background for use of Vimscript in filetype-specific workflows. Feel free to skip to [part two]({% link tutorials/vim-latex/compilation.md %}) if you are familiar with Vimscript or find theory boring, or return later to brush up on anything you might have skipped over.
 
 ## Contents of this article
 <!-- vim-markdown-toc Marked -->
@@ -23,9 +23,10 @@ This is part one in a [four-part series]({% link tutorials/vim-latex/intro.md %}
   * [Function definition syntax](#function-definition-syntax)
   * [Script-local functions](#script-local-functions)
     * [Why to use script-local functions](#why-to-use-script-local-functions)
+    * [Scope of script-local functions](#scope-of-script-local-functions)
     * [Calling script-local functions using \<SID\> key mappings](#calling-script-local-functions-using-\<sid\>-key-mappings)
-  * [Mappings](#mappings)
-* [Notes: mapping](#notes:-mapping)
+  * [Mappings: Safety mechanisms](#mappings:-safety-mechanisms)
+  * [Notes: mapping](#notes:-mapping)
   * [Map arguments](#map-arguments)
   * [Script-local mappings](#script-local-mappings)
   * [Recipe: mapping to script-local functions](#recipe:-mapping-to-script-local-functions)
@@ -36,11 +37,9 @@ This is part one in a [four-part series]({% link tutorials/vim-latex/intro.md %}
 <!-- vim-markdown-toc -->
 
 ## How to read this article
-This article is long. You don't have to read everything---I suggest skimming through on a first reading, remembering this article exists, and then referring back to it, if desired, for a theoretical understanding of the Vimscript functions and key mappings used later in the series.
+This article is long. You don't have to read everything---I suggest skimming through on a first reading, remembering this article exists, and then referring back to it, if desired, for a theoretical understanding of the Vimscript functions and key mappings used later in the series. Note that this article is not a comprehensive Vimscript tutorial, just a coherent explanation---aimed at beginners---of a few Vimscript techniques that turn out to be useful later in the series.
 
-For whom this article is written: not a comprehensive tutorial, blah blah, just a coherent explanation of Vimscript basics, which many Vim users never learn and just hack together, but probably would be happy to see if it were put together in one place.
-
-By the way, nothing in this particular article is LaTeX-specific and would generalize perfectly to Vim workflows completely unrelated to LaTeX.
+By the way, nothing in this article is LaTeX-specific and would generalize perfectly to Vim workflows with other file types.
 
 ## General considerations for file-specific Vim plugins
 
@@ -79,20 +78,21 @@ Say you want to write a plugin that applies only to LaTeX files. Here's what to 
    filetype plugin on      " load file-specific plugins
    filetype indent on      " load file-specific indentation
    ```
-   These lines enable filetype detection and filetype-specific plugins and indentation; see `:help filetype` for more information. To get an overview of your current filetype status, use the `:filetype` command; you want an output that reads:
+   These lines enable filetype detection and filetype-specific plugins and indentation. To get an overview of your current filetype status, use the `:filetype` command; you want an output that reads:
    ```
    filetype detection:ON  plugin:ON  indent:ON
    ```
+  See `:help filetype` for more information on filetype plugins.
 
-1. Create the file structure `~/.vim/ftplugin/tex.vim`. Your `tex` specific mappings and functions will go in `~/.vim/ftplugin/tex.vim`. That's it! Anything in `tex.vim` will be loaded only when editing files with the `tex` filetype, and will not interfere with your `vimrc` or other filetype plugins.
+1. Create the file structure `~/.vim/ftplugin/tex.vim`. Your `tex` specific mappings and functions will go in `~/.vim/ftplugin/tex.vim`. That's it! Assuming you followed step 1, anything in `tex.vim` will be loaded only when editing files with the `tex` filetype, and will not interfere with your `vimrc` or other filetype plugins.
 
    You can also split up your `tex` customizations among multiple files (instead of having a single, cluttered `tex.vim` file). To do this, create the file structure `~/.vim/ftplugin/tex/*.vim`. Any Vimscript files inside `~/.vim/ftplugin/tex/` will load automatically when editing files with the `tex` filetype.
    
-The following sections explain what happens under the hood.
+The following sections explain how loading filetype plugins works under the hood.
 <!-- See `h: add-filetype-plugin` and `h: write-filetype-plugin` for further information. -->
 
 #### Automatic filetype detection
-- Vim keeps track of a file's filetype using the `filetype` variable. You can view a file's `filetype`, according to Vim, with the commands `:echo &filetype` or `:set filetype?`.
+- Vim keeps track of a file's type using the `filetype` option. You can view a file's `filetype`, according to Vim, with the commands `:echo &filetype` or `:set filetype?`.
 
 - Once you set `:filetype on`, Vim automatically detects common filetypes (LaTeX included) based on the file's extension using a Vimscript file called `filetype.vim` that ships with Vim. You can view the source code at the path `$VIMRUNTIME/filetype.vim` (use `:echo $VIMRUNTIME` in Vim to determine `$VIMRUNTIME`).
 
@@ -149,7 +149,7 @@ In this series we'll be interested in user functions. From `:help E124`, the nam
 
   <!-- > [a user] function name must start with an uppercase letter, to avoid confusion with built-in functions. A good habit is to start the function name with the name of the script, e.g., `HTMLcolor()`. -->
 
-The Vim documentation makes the capital letter requirement sound more severe than it is---capital user functions, to the best of my knowledge, are really a sensible best practice to avoid conflicts with built-in Vim functions, which are always lowercase. But your user functions will work fine if they start with a lower-case letter and don't conflict with existing Vim functions. (For example, Tim Pope's excellent [`vim-commentary`](https://github.com/tpope/vim-commentary) and [`vim-surround`](https://github.com/tpope/vim-surround) plugins include lowercase function names.) And a special class of functions called *autoload functions* often start with lowercase letters. But by using uppercase function names, you *ensure* your functions won't conflict with built-in Vim functions.
+The Vim documentation makes the capital letter requirement sound more severe than it is---starting functions with capital letters, to the best of my knowledge, is just a sensible best practice to avoid conflicts with built-in Vim functions, which are always lowercase. Your user functions will work fine if they start with a lower-case letter, as long as they don't conflict with existing Vim functions. (For example, Tim Pope's excellent [`vim-commentary`](https://github.com/tpope/vim-commentary) and [`vim-surround`](https://github.com/tpope/vim-surround) plugins include lowercase function names.) But by using uppercase function names, you *ensure* your functions won't conflict with built-in Vim functions. (Note that a special class of functions called *autoload functions* often intentionally start with lowercase letters, but that is another story.)
 
 The general syntax for defining Vimscript functions, defined at `:help E124`, is
 ```vim
@@ -232,11 +232,7 @@ Lesson: using script-local functions avoids name conflict with functions in othe
 
 Note that using script-local functions is not a hard and fast rule. If you don't want to go through the bother of script-local functions and are certain your function names won't conflict with other scripts or plugins---especially if you don't intend to distribute your plugin to others---you don't need to make every function script-local. Even well-known filetype plugins from reputable authors can include global functions, such as `MarkdownFold` and `MarkdownFoldText` in Tim Pope's [`vim-markdown`](https://github.com/tpope/vim-markdown), and everything works just fine.
 
-**The big picture**
-
-To implement the functions and key maps used later in this series, you basically need to know:
-- how to write a Vimscript function (described above)
-- how to define a key mapping that makes the function accessible outside the script it was defined in (described below).
+#### Scope of script-local functions
 
 From `:help local-function`, a script-local function can be called from the following scopes:
 
@@ -250,12 +246,16 @@ From `:help local-function`, a script-local function can be called from the foll
 \* assuming you use the `<SID>` (script ID) mapping syntax, explained below.
 
 #### Calling script-local functions using \<SID\> key mappings
-The big picture is to make script-local functions usable outside of the script in which they were written, without interfering with mappings in other plugins. Safely defining key mappings that call script-local functions requires a three-step process:
+The goal here is to make script-local functions usable outside of the script in which they were written, without interfering with mappings in other plugins. To implement the functions and key maps used later in this series, you basically need to know:
+- how to write a Vimscript function (described above)
+- how to define a key mapping that makes the function accessible outside the script it was defined in
+
+Safely defining key mappings that call script-local functions is a three-step process:
   1. Map the desired key combination, i.e. the key combo you will actually call the function with, to a `<Plug>` mapping
   2. Map the `<Plug>` mapping to a `<SID>` mapping
   3. Use the `<SID>` mapping to call the function.
 
-Here is a hello-world style example, adapted from the official documentation in the `PIECES` section of `:help write-plugin`. Suppose you wanted to use the key sequence `,c` to call the function `TexCompile` (defined as a script-local function at, say, `ftplugin/tex.vim`) in normal mode. Here's how you would do it:
+Here is a hello-world style example, adapted from the official documentation. You can see the original source in the `PIECES` section of `:help write-plugin`. Suppose you wanted to use the key sequence `,c` to call the function `TexCompile` (defined as a script-local function at, say, `ftplugin/tex.vim`) in normal mode. Here's how you would do it:
   ```vim
   " in the file ftplugin/tex.vim (for example), define...
 
@@ -270,12 +270,16 @@ Here is a hello-world style example, adapted from the official documentation in 
   ```
   You could then use `,c` in normal mode to call the `s:TexCompile` function from *any* file with the `tex` filetype.
 
-And here's an explanation of what the above Vimscript does:
-- `nmap ,c <Plug>TexCompileMapping` maps the key combination `,c` to the string `<Plug>TexCompile` (in normal mode only because of `nmap`)
-- which maps to `<SID>Compile`
-- which maps to `:call <SID>TexCompile`. 
+Here's an explanation of what the above Vimscript does:
+- `nmap ,c <Plug>TexCompile` maps (in normal mode because of `nmap`) the key combination `,c` to the literal string `<Plug>TexCompile`. Appending `<Plug>` is conventional in this context, but `<Plug>` is just a string of characters like `TexCompile`.
 
-Note: it's important that `nmap <leader>c <Plug>TexCompile` uses `nmap` and not `nnoremap`, since it is *intended* that `<Plug>TexCompile` maps to `<SID>Compile`. Using `nmap ,c <Plug>TexCompileMapping` would make `,c` the equivalent of literally typing the key sequence `<Plug>TexCompile` in normal mode.
+- `nnoremap <script> <Plug>TexCompile <SID>TexCompile` maps the string `<Plug>TexCompile` to the string `<SID>Compile`. 
+
+- ...which maps to `:call <SID>TexCompile`. 
+
+  It's important that `nmap <leader>c <Plug>TexCompile` uses `nmap` and not `nnoremap`, since it is *intended* that `<Plug>TexCompile` maps to `<SID>Compile`. Using `nmap ,c <Plug>TexCompile` would make `,c` the equivalent of literally typing the key sequence `<Plug>TexCompile` in normal mode.
+
+Loosely: `,c` maps to `<Plug>TexCompile`, which maps to `<SID>TexCompile`, which maps to `:call <SID>TexCompile`
 
 Kind of a bother, right? Oh well, consider it a peculiarity of Vim. And, if followed, this technique ensure functions from different scripts won't conflict, which is important for maintaining a healthy plugin ecosystem.
 
@@ -290,20 +294,7 @@ nnoremap <script> <Plug>ABC <SID>XYZ
 nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 ```
 
-
-If you want to be REALLY conservative, the Vim docs (see `:help write-filetype-plugin`) recommend the following:
-```
-if !exists("g:no_plugin_maps") && !exists("g:no_tex_plugin_maps")
-  if !hasmapto('<Plug>TexCompile')
-    nmap <buffer> <LocalLeader>c <Plug>TexCompile
-  endif
-  nnoremap <buffer> <script> <Plug>TexCompile <SID>TexCompile
-  nnoremap <SID>Compile  :call <SID>TexCompile()<CR>
-endif
-```
-The variable `g:no_plugin_maps` disables mappings for all filetype plugins while `g:no_tex_plugin_maps` disables mappings specific to the `tex` filetype plugin. 
-  
-### Mappings
+### Mappings: Safety mechanisms
 - Use the two-step `<Plug>{DescriptiveName}` method for defining mappings in plugins that others might use. The choice of `<Plug>{DescriptiveName}` should be something that would be unique (within reasonable expectations).
 
 - Then for a useful mapping use 
@@ -325,9 +316,21 @@ The variable `g:no_plugin_maps` disables mappings for all filetype plugins while
   ```
   I recommend learning from the experts: check for example the very bottom to Tim Pope's `surround.vim` or `commentary.vim`.
 
-  - Note that these are hardcore safety mechanisms and are needed only if the plugin will be distributed to other people, to avoid overwriting their existing mappings and whatnot. You can be sloppier (or I guess less cautious) if you are writting only for yourself.
+- Note that these are hardcore safety mechanisms and are needed only if the plugin will be distributed to other people, to avoid overwriting their existing mappings and whatnot. You can be sloppier (or I guess less cautious) if you are writting only for yourself.
+
+- Another take: If you want to be REALLY conservative, the Vim docs (see `:help write-filetype-plugin`) recommend the following:
+  ```
+  if !exists("g:no_plugin_maps") && !exists("g:no_tex_plugin_maps")
+    if !hasmapto('<Plug>TexCompile')
+      nmap <buffer> <LocalLeader>c <Plug>TexCompile
+    endif
+    nnoremap <buffer> <script> <Plug>TexCompile <SID>TexCompile
+    nnoremap <SID>Compile  :call <SID>TexCompile()<CR>
+  endif
+  ```
+  The variable `g:no_plugin_maps` disables mappings for all filetype plugins while `g:no_tex_plugin_maps` disables mappings specific to the `tex` filetype plugin. 
   
-## Notes: mapping
+### Notes: mapping
 - `:help mapmodes` for documentation of map modes; in practice: the meaning of `nmap`, `imap`, `map`, and so on.
 
 - `:help script-local` for script-local mappings and functions
