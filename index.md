@@ -15,4 +15,4 @@ You have reached an early version of Elijan J. Mastnak's website. For the time b
 
 ### Résumé
 - [PDF version]({% link cv/cv.pdf %})
-- [Web version]({% link cv/cv.md %}) 
+- [Web version]({% link cv/cv.md %}) (read the PDF version though---it looks much nicer)

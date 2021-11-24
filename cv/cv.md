@@ -2,7 +2,7 @@
 title: Résumé
 ---
 # Résumé
-**Note**: the résumé also comes in a [**PDF version**]({% link cv/cv.pdf %}), which is better suited to printing, more compact, and has nicer formatting given LaTeX's capabilities compared to Markdown's.
+**Note**: as you've probably been warned already, the résumé also comes in a [**PDF version**]({% link cv/cv.pdf %}), which is better suited to printing, more compact, and just looks nicer given LaTeX's document formatting capabilities compared to Markdown's.
 
 ## General Information
 - **Citizenship:** United States and Slovenia (an EU member state)
