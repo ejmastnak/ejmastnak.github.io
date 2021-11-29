@@ -14,4 +14,4 @@ title: Continuum mechanics
 - elastic waves
 - the dynamics of ideal fluids
 - the dynamics of viscous fluids
-- and introduction to the theory of the boundary layer and hydrodynamic instabilities
+- an introduction to the theory of the boundary layer and hydrodynamic instabilities
