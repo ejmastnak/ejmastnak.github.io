@@ -151,9 +151,14 @@ That's it! In either case, you should now be able to access forward show with `<
 
 
 ### Backward search
-Backward search is like asking, "hey, PDF viewer, please take me to the position in the `tex` source file corresponding to my current position in the PDF file". Positions in the PDF file can be linked to positions in the `tex` source file using a utility called SyncTeX, which is implemented in a binary program called `synctex`; `synctex` should ship by default with a standard TeX installation. 
+Backward search is like asking, "hey, PDF viewer, please take me to the position in the `tex` source file corresponding to my current position in the PDF file". Backward search looks something like this: **TODO** GIF.
+
+
+Positions in the PDF file can be linked to positions in the `tex` source file using a utility called SyncTeX, which is implemented in a binary program called `synctex`; `synctex` should ship by default with a standard TeX installation. 
 
 You trigger backward search in Skim using `Command`+`Shift`+`Mouse-Click` on a line in the PDF file.
+
+**Note** Neovim will not create a listen address at `/tmp/texsocket` if a file `/tmp/texsocket` already exists there from a different LaTeX document. In this case `v:servername` will default to something random and it will seem like backward search won't work. Deleting the existing `/tmp/texsocket` should solve the problem.
 
 #### Compiling with SyncTex
 Backwards search requires that your `tex` documents are compiled *with `synctex` enabled*. This is as simple as passing the `-synctex=1` option to the `pdflatex` or `latexmk` programs when compiling your `tex` files, which is covered in the previous article, [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}). **TODO** link to section.
@@ -238,5 +243,8 @@ Of course replace `iTerm` with the terminal application of your choice, e.g. `op
 **Another approach:** For another take on the same problem, check out [jdhao's nice guide on setting up backward search in Neovim](https://jdhao.github.io/2021/02/20/inverse_search_setup_neovim_vimtex/) on both macOS and Windows. This guide stores Neovim's server address differently than I described above: instead of launching Neovim with the `--listen /tmp/texsocket` option, it uses Neovim's default, randomly-generated server address and writes `v:servername` to a text file at `/tmp/vimtexserver.txt`, which it then reads from Skim using the `cat /tmp/vimtexserver.txt`.
 
 #### Backward search with Vim and Skim
+Vim must be compiled with the `clientserver` option for this to work. On a command line enter `vim --version` and ensure you have `+clientserver`. You probably won't. I don't understand all of this, but you should use MacVim or NeoVim.
+
+Possible workaround: uninstall Vim, install MacVim, and run `vim`. See [https://vi.stackexchange.com/a/3078](https://vi.stackexchange.com/a/3078) in the context of the `+clipboard` option.
 
 ## Setting Up Zathura (read this on Linux)

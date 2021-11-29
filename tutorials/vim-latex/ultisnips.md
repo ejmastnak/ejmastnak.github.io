@@ -7,33 +7,36 @@ title: Snippets | Vim and LaTeX Part 1
 This is part four in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers snippets, which can dramatically speed up your LaTeX writing.
 
 ## Contents of this article
-<!-- vim-markdown-toc Marked -->
+<!-- vim-markdown-toc GFM -->
 
+* [What snippets look like](#what-snippets-look-like)
 * [Getting started with UltiSnips](#getting-started-with-ultisnips)
   * [Installation](#installation)
   * [First steps](#first-steps)
   * [A home for your snippets](#a-home-for-your-snippets)
     * [Snippet folders](#snippet-folders)
     * [Refreshing snippets](#refreshing-snippets)
-* [Watch the screencasts!](#watch-the-screencasts!)
+* [Watch the screencasts!](#watch-the-screencasts)
 * [Writing Snippets](#writing-snippets)
   * [Anatomy of an UltiSnippets snippet](#anatomy-of-an-ultisnippets-snippet)
   * [Options](#options)
   * [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)
   * [Tabstops](#tabstops)
-    * [Useful: tabstop placeholders](#useful:-tabstop-placeholders)
-    * [Useful: mirrored tabstops](#useful:-mirrored-tabstops)
-    * [Useful: the visual placeholder](#useful:-the-visual-placeholder)
+    * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
+    * [Useful: mirrored tabstops](#useful-mirrored-tabstops)
+    * [Useful: the visual placeholder](#useful-the-visual-placeholder)
   * [Dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)
-    * [Custom context expansion and `vimtex`'s syntax detection](#custom-context-expansion-and-`vimtex`'s-syntax-detection)
+    * [Custom context expansion and `vimtex`'s syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
     * [Regex snippet triggers](#regex-snippet-triggers)
-* [(Subjective) practical tips for fast editing](#(subjective)-practical-tips-for-fast-editing)
+* [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
 
 <!-- vim-markdown-toc -->
 
-The [UltiSnips repository](https://github.com/SirVer/ultisnips)
+## What snippets look like
 
 ## Getting started with UltiSnips
+
+The [UltiSnips repository](https://github.com/SirVer/ultisnips)
 
 ### Installation
 UltiSnips follows the default Vim plugin installation procedure. I assume you will be able to install UltiSnips on your own. If you have never installed a Vim plugin before, you should learn to do that first. The official documentation is `:help package`, while tutorials with pictures and other bells and whistles abound on the web.
