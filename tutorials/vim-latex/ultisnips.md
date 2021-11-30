@@ -37,6 +37,8 @@ This is part four in a [four-part series]({% link tutorials/vim-latex/intro.md %
 ## What snippets do
 **TODO** Gifs of e.g. `itemize` environment followed by items, `figure` environment with tabstops, Greek letters
 
+**TODO** also provide reference to [https://castel.dev/post/lecture-notes-1/#snippets](https://castel.dev/post/lecture-notes-1/#snippets)
+
 ## Getting started with UltiSnips
 
 The [UltiSnips repository](https://github.com/SirVer/ultisnips)
@@ -244,95 +246,151 @@ The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and
 
 
 ### Dynamically-evaluated code inside snippets
-It is possible to include dynamically-evaluated code in your snippet bodies (UltiSnips calls this "interpolation"). Shell scripting, Vimscript, and Python are all supported. Interpolation is covered in `:help UltiSnips-interpolation` and in UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/). I will only cover two examples I subjectively find to be most useful:
-1. Custom context for triggering snippet expansion, which I use to make certain snippets expand only in LaTeX math environments
-1. Access to characters captured by the regular expression capture groups I use in regex snippets
+It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "interpolation"). Shell scripting, Vimscript, and Python are all supported. Interpolation is covered in `:help UltiSnips-interpolation` and in UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/). I will only cover two examples I subjectively find to be most useful:
+1. making certain snippets expand only the trigger is typed in LaTeX math environments, which is called *custom contex* expansion, and
+1. accessing characters captured by regular expression trigger's capture groups.
 
 #### Custom context expansion and `vimtex`'s syntax detection
-UltiSnips custom context capabilities (see `:help UltiSnips-custom-context-snippets`) give you highly-configurable control over which snippets expand in what context. I will only show one practical use case: expanding a snippet only if its trigger is typed in a LaTeX math context. 
+UltiSnips' custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand. I will only show one practical use case: expanding a snippet only if its trigger is typed in a LaTeX math context. Here is an example of why this is useful:
 
-Motivation: good snippet triggers tend to interfere with words typed in regular text. For example, you might map `ff` to a `\fraction{}{}` snippet, but you probably wouldn't want `ff` to expand if you typed the word 'off' in regular text. Many context problems can be resolved with well-designed regex triggers alone, but math-only expansion can solve troublesome corner cases. You will need to install GitHub user `lervag`'s [VimTeX plugin](https://github.com/lervag/vimtex) for this to work.
+- Problem: good snippet triggers tend to interfere with words typed in regular text. For example, `ff` is a great choice for a `\frac{}{}` snippet, but you wouldn't want `ff` to expand if you typed the word "off" in regular text.
+- Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
 
-The VimTeX plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise. This function is defined in `vimtex/autoload/vimtex/syntax.vim`, but I have not seen it in the `vimtex` documentation.
+You will need GitHub user `lervag`'s [`vimtex` plugin](https://github.com/lervag/vimtex) to do this. The `vimtex` plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise. This function isn't explicitly mentioned in the `vimtex` documentation, but you can find it in the `vimtex` source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
-You can integrate `vimtex#syntax#in_mathzone()` with UltiSnips' `context` feature as follows:
+You can integrate `vimtex`'s math zone detection with UltiSnips' `context` feature as follows:
 ```
 # include this code block at the top of a .snippets file...
 # ----------------------------- #
 global !p
 def math():
-	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+  return vim.eval('vimtex#syntax#in_mathzone()') == '1'
 endglobal
 # ----------------------------- #
 # ...then place 'context "math()"' above any snippets you want to expand only in math mode
 
 context "math()"
-snippet ff "an example \frac{}{} snippet to illustrate custom context"
+snippet ff "This \frac{}{} snippet expands only a LaTeX math context"
 \frac{$1}{$2}$0
 endsnippet
 ```
+My original source for the implementation of math-context expansion: [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context)
 
-Source [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context)
+
+**TODO** examples. Also switch the `ff` and `frac` example because that is solved with a regex trigger.
 
 #### Regex snippet triggers
-A formal explanation of regular expressions falls beyond the scope of this work. I offer the examples below in a "cookbook" style.
+For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers. You could use a regular expression trigger, for example, to do something like "make `^` expand to the superscript snippet `^{$1}$0`, but only if the `^` trigger immediately follows an alphanumeric character".
 
-1. Snippet does *not* expand if trigger follows alphanumeric text and expands otherwise
+A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
+
+1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
    ```
-   snippet "([^a-zA-Z])trigger" "expands if 'trigger' is typed after anything other than a-z, or A-Z" r
+   snippet "([^a-zA-Z])trigger" "Expands if 'trigger' is typed after characters other than a-z or A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
 
-   snippet "(^|[^a-zA-Z])trigger" "expands on a new line or after anything other than a-z, or A-Z" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-   ```
-   A variation excluding numbers:
-   ```
-   snippet "([\W])trigger" "expands if 'trigger' is typed after anything other than 0-9, a-z, or A-Z" r
+   snippet "(^|[^a-zA-Z])trigger" "Expands on a new line or after characters other than a-z or A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
 
-   snippet "(^|[\W])trigger" "expands on a new line or after anything other than 0-9, a-z, or A-Z" r
+   # This trigger suppresses numbers, too
+   snippet "(^|[\W])trigger" "Expands on a new line or after characters other than 0-9, a-z, or A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
    ```
-   The line `` `!p snip.rv = match.group(1)` `` ensures the regex group captured by the trigger parentheses doesn't disappear from the text after expanding the snippet. Try omitting `` `!p snip.rv = match.group(1)` `` and see what happens.
+   This is by far my most-used class of regex triggers. Here are some example use cases:
+   - Make `mm` expand to `$ $` (inline math), including on new lines, but not in words like "communication", "command", etc...
+   ```
+   snippet "(^|[^a-zA-Z])mm" "Inline LaTeX math" rA
+   `!p snip.rv = match.group(1)`\$ ${1:${VISUAL:}} \$$0
+   endsnippet
+   ```
+   Note that the dollar signs used for the inline math must be escaped (i.e. written `\$` instead of just `$`) to avoid conflict with UltiSnips tabstops.
 
-1. Two variations that expand after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`
-  ```
-  snippet "([\w])trigger" "expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
-  `!p snip.rv = match.group(1)`snippet body
-  endsnippet
+   - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, `(`, `{`, and other delimiters, but not in words like "see", "feel", etc...
+   ```
+   snippet "([^a-zA-Z])ee" "e^{} supercript" rA
+   `!p snip.rv = match.group(1)`e^{${1:${VISUAL:}}}$0
+   endsnippet
+   ```
 
-  snippet "([\w]|[\}\)\]\|])trigger" "expands after 0-9, a-z, A-Z and }, ), ], and |" r
-  `!p snip.rv = match.group(1)`snippet body
-  endsnippet
-  ```
-  These two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
+   - Make `ff` expand to `frac{}{}` but not in words like "off", etc...
+   ```
+   snippet "(^|[^a-zA-Z])ff" "\frac{}{}" rA
+   `!p snip.rv = match.group(1)`\frac{${1:${VISUAL:}}}{$2}$0
+   endsnippet
+   ```
 
-You can do much fancier stuff than this. See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
+   The line `` `!p snip.rv = match.group(1)` `` ensures the regex group captured by the trigger parentheses doesn't disappear from the text after expanding the snippet. Since that might sound vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens.
+
+1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
+   ```
+   snippet "([\w])trigger" "Expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
+   `!p snip.rv = match.group(1)`snippet body
+   endsnippet
+
+   # Of course, modify the }, ), ], and | characters as you wish
+   snippet "([\w]|[\}\)\]\|])trigger" "Expands after 0-9, a-z, A-Z and }, ), ], and |" r
+   `!p snip.rv = match.group(1)`snippet body
+   endsnippet
+
+   # This trigger suppresses expansion after numbers
+   snippet "([a-zA-Z]|[\}\)\]\|])trigger" "Expands after a-z, A-Z and }, ), ], and |" r
+   `!p snip.rv = match.group(1)`snippet body
+   endsnippet
+   ```
+   I don't use this one much, but here is an example I really like:
+   - Make `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
+   ```
+   snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
+   `!p snip.rv = match.group(1)`_{0}
+   endsnippet
+   ```
+   
+Combined with math-contex expansion, these two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own. Note that you can do much fancier stuff than this. See the UltiSnips documentation, check out  or look through the snippets in `vim-snippets` for inspiration.
 
 ### Tip: Refreshing snippets
-The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory. Use case: you're editing text in one Vim instance, update your snippets in another window, and want to continue using the initial Vim instance, with updated snippets, without having to restart Vim. The function call `:call UltiSnips#RefreshSnippets()` is your friend here. If you do this often, it might pay to define a key binding such as
-```
-nnoremap <leader>U :call UltiSnips#RefreshSnippets()<CR>  # use <leader>U in normal mode to refresh snippets
-```
+The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory. 
 
+Use case: you're editing `myfile.tex` in one Vim instance, make some changes `tex.snippets` in a separate Vim instance, and want the updates to be immediately available in `myfile.tex` without having to restart Vim. This workflow comes up regularly if you use snippets a lot---I suggest writing a key binding in your `vimrc` for `:call UltiSnips#RefreshSnippets()`, for example
+```vim
+" Use <leader>u in normal mode to refresh UltiSnips snippets
+nnoremap <leader>u :call UltiSnips#RefreshSnippets()<CR>
+```
 
 ## (Subjective) practical tips for fast editing
-I'm talking math-heavy LaTeX in real-time university lectures, where speed is crucial. The tips below might be overkill for more easygoing use cases.
+I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
 
-- Use automatic completion where ever possible. (As mentioned in `:help UltiSnips-autotrigger`, UltiSnips will use more resources if automatic completion is enabled, but in my experience this is hardly noticeable on modern hardware.)
+- Use automatic completion whenever possible. This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware. For example, I regularly use 100+ auto-trigger snippets on a 2.5 GHz dual-core i5 processor and 8 gigabytes of RAM without any problems.
 
-- Use short snippet triggers. Like one-, two-, or maybe three-character triggers.
+- Use *short* snippet triggers. Like one-, two-, or and *maybe* three-character triggers.
 
-- Use ergonomic triggers. Depending on your capacity to develop muscle memory, it can do wonders, especially for commonly-used snippets, to optimize trigger efficiency at the expense of semantics. I'm talking wierd combinations of home row keys like `j`, `k`, `l`, `s`, `d`, and `f` that smoothly roll off your fingers.
+- Repeated-character triggers offer a good balance between efficiency and good semantics. For example, I use: `ff` (fraction), `mm` (inline math), `nn` (new equation environment). Although `frac`, `$$`, and `eqn` would be even clearer, `ff`, `mm`, and `nn` still get the message across and are also much faster.
 
-  For example: I don't use the obvious choices `^^` and `__` to trigger superscript and subscript but instead use `jl` and `j;`. Like, TF, `jl`, what does that have to do with subscripts, right? But it works.
+- Use math-contex expansion and regular expressions to free up desirable triggers that would otherwise conflict with common words.
 
-- Repeated-character triggers offer a good balance between efficiency and semantics. For example, I use: `ff` (fraction), `mm` (inline math), `nn` (new equation environment). Although `frac`, `$$`, and `eqn` could be even more semantically clear, `ff`, `mm`, and `nn` still get the message across and are much faster.
+- Use ergonomic triggers on or near the home row. Depending on your capacity to develop muscle memory, you can dramatically improve efficiency if you sacrifice meaningful trigger names for convenient trigger locations. I'm talking wierd combinations of home row keys like `j`, `k`, `l`, `s`, `d`, and `f` that smoothly roll off your fingers. For example, `sd`, `df`, `jk`, and `kl`, if you can get used to them, are very convenient to type and also don't conflict with many words in English or Romance languages.
 
-- Use `context` and regular expression triggers to control snippet expansion.
+  Here are two examples I use all the time:
+  1. I first define the LaTeX macro `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
+     ```
+     snippet "([^a-zA-Z0-9])df" "\diff (a personal macro I universally use for differentials)" rA
+     `!p snip.rv = match.group(1)`\diff 
+     endsnippet
+     ```
+     This `df` snippet makes typing differentials a breeze, with correct spacing, upright font, and all that. Happily, in this case using `df` for a differential actually makes semantic sense.
 
-<!-- ## LaTeX Snippets -->
+     As a side note, using a `\diff` macro also makes redefinition very easy---for example to adapt an article to fit a journal that uses italic differentials, I could just replace `\operatorname{d}\!` with `\,d` in the macro definition instead of rummaging through my LaTeX source code changing individual differentials.
+
+  2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
+     ```
+     snippet "([\w]|[\}\)\]\|])sd" "Subscript with upright text" rA
+     `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
+     endsnippet
+     ```
+     The snippet triggers after alphanumeric characters and closing delimiters, and includes a visual placeholder.
+
+   Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me. The point here is just to get you thinking about home-row keys as efficient snippet triggers. Try experimenting for yourself---you might significantly speed up your editing. Or maybe this tip doesn't work for you, and that's fine, too.
+
+- Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops. The other obvious choice is the Tab key; I found resulting pinky reach away from the home row to be a hinderance in real-time LaTeX editing. Of course `jk` is an extra key press, but `jk` rolls of the fingers so quickly that I don't notice a slowdown. (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
