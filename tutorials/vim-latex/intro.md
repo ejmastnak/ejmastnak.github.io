@@ -16,14 +16,15 @@ Note: The seminal work on the subject of Vim and LaTeX, and my inspiration for a
 Since Castel's article leaves out a few technical details of implementation---things like writing Vimscript functions and key mappings, Vim's `ftplugin` system, how LaTeX compilation works, how to set up a PDF reader with forward and inverse search using Vim's client-server model, and so on---I decided to write a series more approachable to beginners that attempts to explain every step of the configuration process.
 
 ### This series walks you through...
-1. [**Vimscript best practices** for filetype-specific workflows]({% link tutorials/vim-latex/vimscript.md %}): how Vim's `ftplugin` system works; how to write and call Vimscript functions; how to set Vim key maps and call Vimscript functions with convenient keyboard shortcuts.
+1. [**Snippets**, the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %}): how to use [the `UltiSnips` plugin](https://github.com/SirVer/ultisnips) for writing snippets; suggestions for efficient snippet triggers; example snippets
+
+1. [Getting started with the **`vimtex` plugin**]({% link tutorials/vim-latex/vimtex.md %}):
 
 1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): Vimscript functions and shell scripts for compiling `tex` files from within Vim; asynchronous compilation; mapping compilation functionality to convenient keyboard shortcuts; an introduction to the preconfigured compilation functions provided by [the `vimtex` plugin](https://github.com/lervag/vimtex).
 
 1. [Integrating a **PDF reader** and Vim]({% link tutorials/vim-latex/pdf-reader.md %}): configuring forward and inverse search on a PDF viewer on macOS and Linux.
 
-1. [**Snippets**, the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %}): how to use [the `UltiSnips` plugin](https://github.com/SirVer/ultisnips) for writing snippets; suggestions for efficient snippet triggers; example snippets
-
+1. [**Vimscript best practices** for filetype-specific workflows]({% link tutorials/vim-latex/vimscript.md %}): how Vim's `ftplugin` system works; how to write and call Vimscript functions; how to set Vim key maps and call Vimscript functions with convenient keyboard shortcuts.
 
 ### For whom this series is written
 This series is written with the voice, format, notation, and explanation style I would have liked to have had access to if I were once again an inexperienced undergraduate learning the material for the first time myself. All of the small discoveries I inefficiently scraped together from online tutorials, YouTube, Stack Overflow, Reddit and other online forums are compiled here in one place and (hopefully) synthesized into a self-contained work. References to official documentation are provided for any material deemed beyond the scope of this series.

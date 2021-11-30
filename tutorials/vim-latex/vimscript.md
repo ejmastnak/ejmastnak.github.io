@@ -1,10 +1,10 @@
 ---
-title: Vimscript Theory \| Setting Up Vim for LaTeX Part 1
+title: Vimscript Theory \| Setting Up Vim for LaTeX Part 5
 ---
 # Vimscript Theory for Filetype-Specific Workflows
 
 ## About the series
-This is part one in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article provides a theoretical background for use of Vimscript in filetype-specific workflows. Feel free to skip to [part two]({% link tutorials/vim-latex/compilation.md %}) if you are familiar with Vimscript or find theory boring, or return later to brush up on anything you might have skipped over.
+This is part five in a [five-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article provides a theoretical background for use of Vimscript in filetype-specific workflows. Feel free to skip this article if you are familiar with Vimscript or find theory boring, or return when needed to brush up on concepts used elsewhere in the series.
 
 ## Contents of this article
 <!-- vim-markdown-toc Marked -->

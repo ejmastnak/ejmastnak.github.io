@@ -1,10 +1,10 @@
 ---
-title: Compilation | Vim and LaTeX Part 1
+title: Compilation \| Setting up Vim for LaTeX Part 3
 ---
 # Compiling LaTeX Documents in a Vim-Based Workflow
 
 ## About the series
-This is part two in a [four-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers compilation and should explain everything you need to get started compiling LaTeX documents from within Vim, either with customized scripts or using the `vimtex` plugin's compilation features.
+This is part three in a [five-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article covers compilation and should explain everything you need to get started compiling LaTeX documents from within Vim, either with customized scripts or using the `vimtex` plugin's compilation features.
 
 ## Contents of this article
 
@@ -19,7 +19,7 @@ This is part two in a [four-part series]({% link tutorials/vim-latex/intro.md %}
   * [Warning: compiling when using the minted package](#warning-compiling-when-using-the-minted-package)
 * [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin)
   * [File structure](#file-structure)
-  * [Aside: Vim's file macros](#aside-vims-file-macros)
+  * [Aside: Specifying file names with Vim's file macros](#aside-specifying-file-names-with-vims-file-macros)
   * [Setting Vim's makeprg](#setting-vims-makeprg)
   * [Toggling between pdflatex and latexmk compilation](#toggling-between-pdflatex-and-latexmk-compilation)
   * [Implementing error message parsing](#implementing-error-message-parsing)
@@ -30,6 +30,7 @@ This is part two in a [four-part series]({% link tutorials/vim-latex/intro.md %}
 
 <!-- vim-markdown-toc -->
 
+Motivation: before doing anything else, you need to be able to compile documents.
 
 ## Material covered in this article
 - The basics of the `pdflatex` and `latexmk` commands and suggested options to use with each
@@ -152,7 +153,7 @@ Vim has a built-in `compiler` feature for doing just that. For full documentatio
 Here is a GIF showing what this looks like in practice: **TODO** definitely a GIF showing `:make` and how the Quickfix menu opens.
 
 Here's what we will cover in this section:
-- How to translate the `pdflatex` and `latexmk` commands from **TODO** reference into something understood by Vim's `makeprg` option
+- How to translate the `pdflatex` and `latexmk` commands from the section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) into something understood by Vim's `makeprg` option
 - Writing a Vimscript function for easily switching between `pdflatex` and `latexmk` compilation, and mapping this to a convenient keyboard shortcut
 - Setting Vim's `errorformat` option to correctly parse LaTeX errors
 - For `minted` package users, a Vimscript function for easily toggling `-shell-escape` compilation on and off; also, a simple way to detect the `minted` package in a file's preamble and enable `-shell-escape` compilation if `minted` is detected
@@ -164,9 +165,17 @@ Compiler plugins should be stored in Vim's `.vim/compiler` directory---you might
 
 **TODO** add my directory tree.
 
+```sh
+${HOME}/.config/nvim/
+├── compiler/
+│   └── tex.vim
+└── ftplugin/
+    └── tex.vim
+# other directories ommitted...
+```
 
-### Aside: Vim's file macros
-To compile a file, you need to specify the file's name. Vim provides a set of macros and modifiers that makes it easy to reference the current file, but the syntax is a little weird if you haven't seen it before. It might be easiest with a concrete example: consider a LaTeX file with the path `~/Documents/demo/myfile.tex`, and suppose Vim was launched from inside `~/Documents/demo/` to edit `myfile.tex` (so that Vim's working directory is `~/Documents/demo`). In this case...
+### Aside: Specifying file names with Vim's file macros
+Of course to compile a file, you need to specify the file's name. Vim provides a set of macros and modifiers that makes it easy to reference the current file, but the syntax is a little weird if you haven't seen it before. It might be easiest with a concrete example: consider a LaTeX file with the path `~/Documents/demo/myfile.tex`, and suppose Vim was launched from inside `~/Documents/demo/` to edit `myfile.tex` (so that Vim's working directory is `~/Documents/demo`). In this case...
 
 | Macro | Meaning | Example result |
 | ----- | ------- | -------------- |
@@ -186,7 +195,7 @@ There's quite a few more modifiers than listed above, but these are all we need 
 
 **Compilation commands using Vim filename macros**
 
-Original values from **TODO** reference
+For review, here are the compilation commands suggested earlier in [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk)
 ```sh
 pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir={output-directory} -synctex=1 {sourcefile.tex}
 latexmk -pdf -output-directory={output-directory} {sourcefile.tex}
@@ -256,26 +265,30 @@ function! s:TexSetMakePrg() abort
   endif
 endfunction
 ```
-The code is a lot of lines, but the logic is hopefully straightforward. And here is some Vimscript to map the toggle function to a keyboard shortcut, for example `<leader>tl`:
+And here is some Vimscript to map the toggle function to a keyboard shortcut, for example `<leader>tl`:
 ```vim
 " This code would go in compiler/tex.vim
 
+" Use <leader>tl to switch between pdflatex and latexmk compilation
 nmap <leader>tl <Plug>TexToggleLatexmk
 nnoremap <script> <Plug>TexToggleLatexmk <SID>TexToggleLatexmk
 nnoremap <SID>TexToggleLatexmk :call <SID>TexToggleLatexmk()<CR>
 ```
 
 ### Implementing error message parsing
-Vim filters the log output of the `makeprg` command through the Vim `errorformat` option, which can detect relevant error messages and turns them into a format that makes it easy to jump to the error location in the offending source file. You can see the details of the `:make` cycle with `:help :make`.
+Vim turns the `makeprg` command's log output into useful error messages using the `errorformat` option. A properly configured `errorformat` can show you file name, line number, and error description, and also makes it easy to jump to the error location in the offending source file. You can find the details of the `:make` and error-parsing cycle with `:help :make`.
+
+**TODO** GIF: here is an example of error message parsing in action.
 
 Vim's `errorformat` uses a similar format to the C function `scanf`, which is rather cryptic to new users. I won't cover `errorformat` design in this series, and will only quote some `errorformat` values (taken from the `vimtex` plugin) that should serve most use cases. If inspired, see `:help errorformat` for documentation.
 
-The following `errorformat` is taken from the [`vimtex`](https://github.com/lervag/vimtex) plugin. If you're interested, the original source code can be found on the `vimtex` GitHub page on [line 25 of `vimtex/autoload/vimtex/qf/latexlog.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/qf/latexlog.vim#L25), although the line number may change in future `vimtex` releases.
+The following `errorformat` is a trimmed-down version of the [`vimtex`](https://github.com/lervag/vimtex) plugin's `errorformat`. If you're interested, the original source code can be found on the `vimtex` GitHub page on [line 25 of `vimtex/autoload/vimtex/qf/latexlog.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/qf/latexlog.vim#L25), although the line number may change in future `vimtex` releases.
 
 ```vim
-" This code sets errorformat and would go in compiler/tex.vim
-" Important: The errorformat used below assumes the tex source file is 
-" compiled with pdflatex's -file-line-error option enabled.
+" This code would go in compiler/tex.vim
+" The code code sets Vim's errorformat for compiling LaTeX
+" Important: The errorformat used below works only if the tex source 
+" file is compiled with pdflatex's -file-line-error option enabled.
 
 " Match file name
 setlocal errorformat=%-P**%f
@@ -295,37 +308,27 @@ setlocal errorformat+=%Cl.%l\ %m
 " Catch-all to ignore unmatched lines
 setlocal errorformat+=%-G%.%#
 ```
-**Important:** this errorformat will only work if `pdflatex` or `latexmk` are used with the `-file-line-error` option, as suggested in **TODO** reference.
-
-Note, also, if you want to remove output from QuickFix while using Dispatch, in `/after/ftplugin/tex.vim` add
-```vim
-" This is a hack to force the catch-all %-G%.%# that removes unmatched lines
-" There are two problems:
-" 1. vim-dispatch intentionally removes the original catch-all; see https://github.com/tpope/vim-dispatch/issues/76#issuecomment-50210286
-" 2. Vim "helpfully" filters out errorformat duplicates; setting errorformat+=%-G%.%#
-"    wouldn't work, so errorformat+=%-G%.%#,. where the appending ,. does nothing is
-"    a hack to force in an extra catchall.
-setlocal errorformat+=%-G%.%#,.
-```
-
+**Important:** this errorformat will only work if `pdflatex` or `latexmk` are used with the `-file-line-error` option, as suggested earlier in [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk)
 
 ## Asynchronous compilation with `vim-dispatch`
-It's simple: because of how Dispatch is written, the compiler plugin can stay as is.
+This is the final step, and thankfully the implementation is quite simple.
 
-- Inside `ftplugin/tex.vim` include the line
+- Install Tim Pope's [`vim-dispatch` plugin](https://github.com/tpope/vim-dispatch).
+
+- Somewhere inside `ftplugin/tex.vim` include the line
   ```vim
-  compiler tex              " load my user-defined tex compiler
+  compiler tex
   ```
-  Just ensure the argument passed to `:compiler`, in this case `tex`, matches the base filename of your LaTeX compiler plugin in `vim/compiler/`.
+  This line loads the compiler settings implemented earlier in the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin). Ensure the argument passed to `compiler` matches the base filename of your LaTeX compiler plugin in `vim/compiler/`, e.g. if you named your compiler plugin `nvim/compiler/mytex.vim` usd `compiler mytex`.
 
-- After this use `:Make` in place of `:make` and you're done. Dispatch will pick up your `compiler` settings.
+- In Vim, use the `vim-dispatch` command `:Make` to compile LaTeX documents. Loosely, `:Make` is an asynchronous version of `:make`, and will automatically pick up your `compiler` settings.
 
-- Optionally create a convenient key mapping
+  Optionally, create a convenient key mapping to call `:Make`, for example
   ```vim
-  nnoremap <leader>r :Make<CR>
+  nnoremap <leader>m :Make<CR>  " Use <leader>m in normal mode to call :Make
   ```
+  Of course change `<leader>m` to whatever key combination you prefer.
   
-
 ## Appendix
 ### Implementing `minted` detection and using `--shell-escape`
 Feel free to ignore this section if you don't use `minted` for code highlighting and have no needed for `shell-escape` compilation. The logic for toggling `-shell-escape` on and off is the same as for toggling between `pdflatex` and `latexmk`.

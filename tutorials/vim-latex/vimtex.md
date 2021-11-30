@@ -1,10 +1,10 @@
 ---
-title: Vimscript Theory \| Setting Up Vim for LaTeX Part 1
+title: The vimtex Plugin \| Setting Up Vim for LaTeX Part 2
 ---
-# Vimscript Theory for Filetype-Specific Workflows
+# Getting started with the `vimtex` plugin
 
 ## About the series
-This is part ? in a [five-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article explains how the `vimtex` plugin can appreciably improve your LaTeX experience.
+This is part two in a [five-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article explains how the `vimtex` plugin can appreciably improve your LaTeX experience.
 
 ## Contents of this article
 <!-- vim-markdown-toc Marked -->
