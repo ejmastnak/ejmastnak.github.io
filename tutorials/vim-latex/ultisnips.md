@@ -154,7 +154,7 @@ endsnippet
 $0
 endsnippet
 ```
-but this would make the UltiSnips parser think that the line `snippet ${1:trigger}...` starts a new snippet definition, when the goal is to insert the literal string `snippet ${1:trigger}...` into another file. In any case, this problem specific to using the text `snippet` inside a snippet, and most snippets are much easier to write than this.
+but this would make the UltiSnips parser think that the line `snippet ${1:trigger}...` starts a new snippet definition, when the goal is to insert the literal string `snippet ${1:trigger}...` into another file. In any case, this problem is specific to using the string `snippet` inside a snippet, and most snippets are much easier to write than this.
 
 ### Options
 You'll need to use a few options to get the full UltiSnips experience. All options are clearly documented at `:help UltiSnips-snippet-options`, and I'll summarize here only what is necessary for understanding the snippets that appear later in this document. Based on my (subjective) experience, mostly with LaTeX files, here are some options to know:
@@ -172,16 +172,16 @@ You'll need to use a few options to get the full UltiSnips experience. All optio
 
 - According to `:help UltiSnips-character-escaping`, the characters `'`, `{`, `$`, and `\` need to be escaped by prepending a backslash `\`. That said, I'm generally able to use `'`, `{`, and `\` in snippet bodies without escaping them---your mileage may vary.
 
-- Include the line
+- Including the line
   ```
   extends filetype
   ```
-  anywhere in a `*.snippets` file to load all snippets from `filetype.snippets` into the current snippets file. Example use case from `:help UltiSnips-basic-syntax`: you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
+  anywhere in a `*.snippets` file will load all snippets from `filetype.snippets` into the current snippets file. Example use case from `:help UltiSnips-basic-syntax`: you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
 
 - The line `priority {N}`, where `N` is an integer number (e.g. `priority 5`), placed *anywhere* in `.snippets` file on its own line will set the priority of all snippets below that line to `N`. When multiple snippets have the same `trigger`, only the highest-priority snippet is expanded. Using `priority` can be useful to override global snippets defined in `all.snipets`. If `priority` is not specified anywhere in a file, the implicit value is `priority 0`
 
 ### Tabstops
-Tabstops are predefined positions within a snippet body to which you can move the cursor by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`. Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content. Since that might sound vague, here is an example:
+Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`. Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content. You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`. Since that might sound vague, here is an example:
 
 **TODO** GIF jumping through a figure or table environment.
 
@@ -206,7 +206,6 @@ snippet ff "The LaTeX \frac{}{} macro"
 \frac{$1}{$2}$0
 endsnippet
 ```
-You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
 
 **TODO** show example used in above GIF.
 
@@ -288,7 +287,7 @@ Note that the `frac` expansion problem can also be solved with a regex snippet, 
 #### Regex snippet triggers
 For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers. You could use a regular expression trigger, for example, to do something like "make `^` expand to a superscript snippet like `^{$1}$0`, but only if the `^` trigger immediately follows an alphanumeric character".
 
-A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
+A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases. Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial](https://www.youtube.com/watch?v=sa-TUpSx1JA).
 
 1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
    ```
@@ -345,7 +344,7 @@ A formal explanation of regular expressions falls beyond the scope of this work,
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
    ```
-   I don't use this one much, but here is an example I really like:
+   I don't use this one often, but here is one example I really like:
    - Make `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
    ```
    snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
@@ -375,7 +374,7 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
 
 - Use *short* snippet triggers. Like one-, two-, or and *maybe* three-character triggers.
 
-- Repeated-character triggers offer a good balance between efficiency and good semantics. For example, I use: `ff` (fraction), `mm` (inline math), `nn` (new equation environment). Although `frac`, `$$`, and `eqn` would be even clearer, `ff`, `mm`, and `nn` still get the message across and are also much faster.
+- Repeated-character triggers offer a good balance between efficiency and good semantics. For example, I use `ff` (fraction), `mm` (inline math), and `nn` (new equation environment). Although `frac`, `$`, and `eqn` would be even clearer, `ff`, `mm`, and `nn` still get the message across and are also much faster to type
 
 - Use math-contex expansion and regular expressions to free up short, convenient triggers that would otherwise conflict with common words.
 
@@ -404,4 +403,4 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
 
    Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me. The point here is just to get you thinking about home-row keys as efficient snippet triggers. Try experimenting for yourself---you might significantly speed up your editing. Or maybe this tip doesn't work for you, and that's fine, too.
 
-- Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops. The other obvious choice is the Tab key; I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing. Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown. (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
+- Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops. The other obvious choice is the Tab key, but I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing. Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown. (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)

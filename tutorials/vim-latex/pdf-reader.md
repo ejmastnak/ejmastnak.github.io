@@ -62,6 +62,8 @@ I have not tested it myself and will not cover it in this article, but supposedl
 
 ## Setting up Skim (read this on macOS)
 
+First, Skim > `Preference` > `Sync` and select `Check for file changes` and `Reload automatically`.
+
 ### Forward search
 Here's what forward search looks like: **TODO** GIF
 
