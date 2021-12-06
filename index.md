@@ -12,5 +12,4 @@ You have reached an early version of Elijan J. Mastnak's website. For the time b
 ### Projects
 [Undergraduate thesis]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
 
-### Résumé
-[Link: résumé PDF]({% link cv/cv.pdf %})
+### [Résumé]({% link cv/cv.pdf %})
