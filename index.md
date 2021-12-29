@@ -10,6 +10,6 @@ You have reached an early version of Elijan J. Mastnak's website. For the time b
 [*Classical Physics*]({% link klf/klf.md %}), a general physics textbook in the making
 
 ### Projects
-[Undergraduate thesis]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
+[Undergraduate "mini-thesis"]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
 
 ### [Résumé]({% link cv/cv.pdf %})
