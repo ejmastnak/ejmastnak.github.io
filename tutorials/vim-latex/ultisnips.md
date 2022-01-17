@@ -44,7 +44,7 @@ This is part one in a [five-part series]({% link tutorials/vim-latex/intro.md %}
 The [UltiSnips repository](https://github.com/SirVer/ultisnips)
 
 ### Installation
-Install UltiSnips like any other Vim plugin using your method of choice. Because the UltiSnips plugin uses Python,
+Install UltiSnips like any other Vim plugin using your method of choice. Because the UltiSnips plugin uses Python...
 - you need a working installation of Python 3 on your system (see `:help UltiSnips-requirements`)
 - your Vim must be compiled with the `python3` feature enabled---you can test this with `:echo has("python3)`, which will return `1` if `python3` is enabled and `0` otherwise. Note that Neovim comes with `python3` enabled by default.
 

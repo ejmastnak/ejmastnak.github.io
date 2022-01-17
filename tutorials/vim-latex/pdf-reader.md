@@ -7,14 +7,14 @@ title: PDF Reader \| Setting up Vim for LaTeX Part 4
 This is part four in a [five part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article explains, for both macOS and Linux, how to set up an external PDF reader for displaying the PDF file associated with the `tex` source file being edited in Vim. The article also covers how to configure forward and backward search.
 
 ## Contents of this article
-<!-- vim-markdown-toc Marked -->
+<!-- vim-markdown-toc GFM -->
 
 * [Functionality implemented in this article](#functionality-implemented-in-this-article)
 * [Choosing a PDF Reader](#choosing-a-pdf-reader)
   * [On macOS](#on-macos)
   * [On Linux](#on-linux)
   * [On Windows](#on-windows)
-* [Setting up Skim (read this on macOS)](#setting-up-skim-(read-this-on-macos))
+* [Setting up Skim (read this on macOS)](#setting-up-skim-read-this-on-macos)
   * [Forward search](#forward-search)
     * [Running shell scripts from Vim](#running-shell-scripts-from-vim)
       * [Naive implementation](#naive-implementation)
@@ -22,11 +22,11 @@ This is part four in a [five part series]({% link tutorials/vim-latex/intro.md %
     * [Implementing forward show](#implementing-forward-show)
   * [Backward search](#backward-search)
     * [Compiling with SyncTex](#compiling-with-synctex)
-    * [The big idea: using Vim with remote procedure calls](#the-big-idea:-using-vim-with-remote-procedure-calls)
+    * [The big idea: using Vim with remote procedure calls](#the-big-idea-using-vim-with-remote-procedure-calls)
     * [Backward search with MacVim and Skim](#backward-search-with-macvim-and-skim)
     * [Backward search with Neovim and Skim](#backward-search-with-neovim-and-skim)
     * [Backward search with Vim and Skim](#backward-search-with-vim-and-skim)
-* [Setting Up Zathura (read this on Linux)](#setting-up-zathura-(read-this-on-linux))
+* [Setting Up Zathura (read this on Linux)](#setting-up-zathura-read-this-on-linux)
 
 <!-- vim-markdown-toc -->
 
@@ -50,7 +50,8 @@ The big picture here is to configure an external PDF reader to display the PDF f
 - supports SyncTeX integration, which makes backward search possible (More on this in **TODO**)
 
 ### On macOS
-On macOS, to the best of my knowledge, you have basically one option meeting the above three criteria: [Skim](https://skim-app.sourceforge.io/). You can download Skim from the [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/). macOS's default PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it support SyncTeX.
+On macOS, to the best of my knowledge, you have basically one option meeting the above three criteria: [Skim](https://skim-app.sourceforge.io/). You can download Skim from the [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/). 
+The default macOS PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it support SyncTeX.
 
 ### On Linux
 On Linux you have a variety of options. In this article I will cover Zathura, under the assumption that anyone reading a multi-article Vim series will also appreciate Zathura's Vim-like key bindings and text-based configurability. Many more possibilities are covered in the `vimtex` plugin's documentation at `help g:vimtex_view_method`.

@@ -20,7 +20,7 @@ Since Castel's article leaves out a few technical details of implementation---th
 
 1. [Getting started with the **`vimtex` plugin**]({% link tutorials/vim-latex/vimtex.md %}):
 
-1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): Vimscript functions and shell scripts for compiling `tex` files from within Vim; asynchronous compilation; mapping compilation functionality to convenient keyboard shortcuts; an introduction to the preconfigured compilation functions provided by [the `vimtex` plugin](https://github.com/lervag/vimtex).
+1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): Vimscript functions and shell scripts for compiling LaTeX files from within Vim; asynchronous compilation; mapping compilation functionality to convenient keyboard shortcuts; an introduction to the preconfigured compilation functions provided by [the `vimtex` plugin](https://github.com/lervag/vimtex).
 
 1. [Integrating a **PDF reader** and Vim]({% link tutorials/vim-latex/pdf-reader.md %}): configuring forward and inverse search on a PDF viewer on macOS and Linux.
 
