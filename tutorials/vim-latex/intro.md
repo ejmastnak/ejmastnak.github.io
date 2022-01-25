@@ -13,13 +13,15 @@ This series aims to make it easier for new users to set up the Vim or Neovim tex
 
 This series is written with the voice, format, notation, and explanation style I would have liked to have had access to if I were once again an inexperienced undergraduate learning the material for the first time myself. All of the small discoveries I inefficiently scraped together from online tutorials, YouTube, Stack Overflow, Reddit and other online forums are compiled here in one place and (hopefully) synthesized into a self-contained work. References to official documentation are provided for any material deemed beyond the scope of this series.
 
-
 ### This series walks you through...
-1. [**Snippets**, the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %}): how to use [the `UltiSnips` plugin](https://github.com/SirVer/ultisnips) for writing snippets; suggestions for efficient snippet triggers; example snippets
+0. Suggested [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of this series, along with references that should get you up to speed if needed.
+   Most readers can probably skip this, and jump directly to...
+
+1. [**Snippets**, the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %}): how to use the [`UltiSnips`](https://github.com/SirVer/ultisnips) plugin for writing snippets; suggestions for efficient snippet triggers; example snippets.
 
 1. [Getting started with the **`vimtex` plugin**]({% link tutorials/vim-latex/vimtex.md %}):
 
-1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): Vimscript functions and shell scripts for compiling LaTeX files from within Vim; asynchronous compilation; mapping compilation functionality to convenient keyboard shortcuts; an introduction to the preconfigured compilation functions provided by [the `vimtex` plugin](https://github.com/lervag/vimtex).
+1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): Vimscript functions and shell scripts for compiling LaTeX files from within Vim; asynchronous compilation; mapping compilation functionality to convenient keyboard shortcuts; an introduction to the preconfigured compilation functionality provided by [the `vimtex` plugin](https://github.com/lervag/vimtex).
 
 1. [Integrating a **PDF reader** and Vim]({% link tutorials/vim-latex/pdf-reader.md %}): configuring forward and inverse search on a PDF viewer on macOS and Linux.
 
@@ -32,4 +34,4 @@ Since Castel's article leaves out a few technical details of implementation---th
 
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
-To get the most out of this series, you should be comfortable with the material in the [**prerequisites** article]({% link tutorials/vim-latex/prerequisites.md %}), which offers either a mini-tutorial or provides external references to all important prerequisites.
+To get the most out of this series, you should be comfortable with the material in the [**prerequisites** article]({% link tutorials/vim-latex/prerequisites.md %}), which offers external references or brief explanations to get you up to speed with all suggested prerequisites.
