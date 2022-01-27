@@ -40,7 +40,7 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
   - To get started with Vim, try the interactive Vim tutorial (usually called the *Vim tutor*) that ships with Vim.
   You access the Vim tutor differently depending on your choice of Vim and Neovim.
     - If you have Vim installed: open a terminal emulator and enter `vimtutor`.
-    - If you have Neovim installed: open Neovim by typing `nvim` in a terminal. 
+    - If you have Neovim installed: open Neovim by typing `nvim` in a terminal.
       Then, from inside Neovim, type `:Tutor` and press the Enter key.
 
     There is also a well-regarded third-party interactive Vim tutor available at [www.openvim.com/tutorial.html](https://www.openvim.com/tutorial.html).
@@ -117,4 +117,4 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
   - `.` is shorthand for the current working directory
   - `..` is shorthand for one directory above the current working directory
   - `~` is shorthand for the home directory
-  - `*` is the match-all wildcard character used in [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming)). 
+  - `*` is the match-all wildcard character used in [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming)).

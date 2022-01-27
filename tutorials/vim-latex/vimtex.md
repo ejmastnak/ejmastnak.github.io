@@ -4,12 +4,14 @@ title: The vimtex Plugin \| Setting Up Vim for LaTeX Part 2
 # Getting started with the `vimtex` plugin
 
 ## About the series
-This is part two in a [five-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents. This article explains how the `vimtex` plugin can appreciably improve your LaTeX experience.
+This is part three in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This article explains how the `vimtex` plugin can appreciably improve your LaTeX experience.
 
 ## Contents of this article
 <!-- vim-markdown-toc Marked -->
 
 * [Features](#features)
+    * [Requirements](#requirements)
   * [Features](#features)
   * [Disabling things](#disabling-things)
     * [Mappings](#mappings)
@@ -33,26 +35,27 @@ This is part two in a [five-part series]({% link tutorials/vim-latex/intro.md %}
 <!-- vim-markdown-toc -->
 
 ## Features
+VimTeX is a modular Vimscript plugin for efficiently writing LaTeX using Vim.
+This article offers an overview of the features `vimtex` provides, gives some ideas of how to use these features in practice, and shows where to look in the documentation for details.
+Nothing in this article is particularly original, and comes either directly or indirectly from the `vimtex` plugin's excellent documentation.
 
-[Screencast](https://github.com/lervag/vimtex#quick-start)
+The fact that you can find everything here in the `vimtex` documentation raises the question of whether this article is superfluous.
+Perhaps it is.
+My thinking is that many people---myself included---just have a hard time reading documentation, and perhaps the Markdown syntax and occasional GIFs in this article will make it easier for new users to digest what `vimtex` offers than the 6000-line plain-text documentation.
 
-The documentation is over 6000 lines.
+My goal is not to replace the `vimtex` documentation, which remains essential reading for any serious `vimtex` user.
+The goal is to show where to look in `vimtex` documentation for implementing a given feature, since it can be difficult to navigate the documentation if you don't know what you're looking for.
 
-VimTeX is a modular LaTeX plugin written in Vimscript
-
-The `vimtex` plugin has excellent documentation.
-Nothing you will read here is original.
-People just have a hard time reading documentation, and maybe the Markdown syntax helps
-And I guess I show references to where to look in the `vimtex` docs, which can be difficult to navigate if you don't know what you're looking for
-
-Use `:VimtexInfo` to see system information and project information (base file name, project root)
+#### Requirements
+The documentation secion `:help vimtex-requirements` states the requirements needed to run `vimtex`.
+This is mostly basic stuff: a reasonably up-to-date version of Vim or Neovim, filetype plugins enabled (place the line `:filetype-plugin-on` in you `vimrc`), and UTF8 character encoding enabled.
+Naturally, you will need a LaTeX compilation program installed (e.g. `latexmk`) installed on your computer to be able use VimTeX's compilation features.
+You need a Vim version compiled with the `+clientserver` feature to use VimTeX's inverse search feature (note that `+clientserver` ships by default with Neovim).
+See `:help vimtex-requirements` for more information on requirements for using VimTeX.
 
 ### Features
-The VimTeX plugin offers more than any one user will reasonably require.
-
-See `:vimtex-features` or equivalently [https://github.com/lervag/vimtex#features](https://github.com/lervag/vimtex#features).
-
-You should read `:help vimtex-requirements`
+The VimTeX plugin offers more than any one user will probably ever require.
+See `:vimtex-features` or equivalently [https://github.com/lervag/vimtex#features](https://github.com/lervag/vimtex#features) for an overview of `vimtex`'s features.
 
 Among other things:
 - LaTeX-specific text objects (environments, commands, etc...)
@@ -64,11 +67,14 @@ Among other things:
 - Syntax highlighting, including support for common packages
 - Snippet-like insert mode mappings
 
-The better approach is "I will cover the following". So:
+The better approach is "I will cover the following".
+So:
 
 Motivation I guess is actually quoting the docs
 
-> The documentation is understandably too long for a full read through. It is recommended that new users read or skim the entire introduction, as it should give a clear idea of what VimTeX is and is not. The remaining part of the documentation should then be considered a reference for the various parts of the plugin.
+> The documentation is understandably too long for a full read through.
+> It is recommended that new users read or skim the entire introduction, as it should give a clear idea of what VimTeX is and is not.
+> The remaining part of the documentation should then be considered a reference for the various parts of the plugin.
 
 So I guess the purpose here is just to make it easier to skim
 
@@ -83,10 +89,11 @@ So I guess the purpose here is just to make it easier to skim
 - Compilation
 - PDF integration
 - Insert mode mappings
+- Concealment of LaTeX commands with their Unicode symbol equivalents 
 
-For concealment (e.g. replacing greek letter commands with their unicode equivalents) see [https://castel.dev/post/lecture-notes-1/#vim-and-latex](https://castel.dev/post/lecture-notes-1/#vim-and-latex)
+  For concealment (e.g. replacing greek letter commands with their unicode equivalents) see [https://castel.dev/post/lecture-notes-1/#vim-and-latex](https://castel.dev/post/lecture-notes-1/#vim-and-latex)
 
-See `:help vimtex-syntax-conceal` and `:help g:vimtex_syntax_conceal` 
+  See `:help vimtex-syntax-conceal` and `:help g:vimtex_syntax_conceal` 
 
 ### Disabling things
 Disable concealment: `g:vimtex_syntax_conceal_disable = 1`
@@ -94,7 +101,8 @@ Disable concealment: `g:vimtex_syntax_conceal_disable = 1`
 #### Mappings
 Documented at `:help vimtex-default-mappings`
 
-All default mappings are documented at `:help vimtex-default-mappings`---scroll down a bit to the table. Every single entry in the table's right-hand side can be jumped to with `C-]`
+All default mappings are documented at `:help vimtex-default-mappings`---scroll down a bit to the table.
+Every single entry in the table's right-hand side can be jumped to with `C-]`
 
 They are defined in the source code `vimtex/autoload/vimtex.vim` starting around line 125 in the function `s:init_default_mappings()`.
 
@@ -142,33 +150,40 @@ Think of this chapter as "hey, this exists, I can come back here when I want to 
 - Defined in `g:vimtex_imaps_list` and are triggered with the prefix defined in `g:vimtex_imaps_leader`, which is the backtick `` ` `` by default.
 - Can be disabled with `g:vimtex_imaps_enabled = 0` and listed with `:VimtexImapsList` (which is only defined if `g:vimtex_imaps_enabled = 1`)
 
-- `vimtex` offers a lot of room for configuration. If you are interested in insert mode mappings, read through `:help vimtex-imaps` in detail. Note that snippets **TODO** reference provide similar functionality.
+- `vimtex` offers a lot of room for configuration.
+  If you are interested in insert mode mappings, read through `:help vimtex-imaps` in detail.
+  Note that snippets **TODO** reference provide similar functionality.
 
 #### Text objects
 See `:help vimtex-text-objects`
 
 Actual definitions are in `vimtex-mappings` and `vimtex-default-mappings`, since `vimtex` text objects are defined as mappings
 
-If you don't know what text objects are, stop what you're doing and learng about them.  As suggested in `:help vimtex-text-objects`, a good place to start would be `:help text-objects` and [*Your problem with Vim is that you don't grok vi*](http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118)
+If you don't know what text objects are, stop what you're doing and learng about them.
+As suggested in `:help vimtex-text-objects`, a good place to start would be `:help text-objects` and [*Your problem with Vim is that you don't grok vi*](http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118)
 
 #### Syntax highlighting
-See `:help vimtex-syntax`. There is a lot to read here if you're interested, but for most use cases `vimtex`'s syntax features should "just work" out of the box, and you don't need to do anything.
+See `:help vimtex-syntax`.
+There is a lot to read here if you're interested, but for most use cases `vimtex`'s syntax features should "just work" out of the box, and you don't need to do anything.
 
 See also `:help vimtex-syntax-packages` and `g:vimtex_syntax_packages` for packages
 
 #### Other features
 - Completion at `:help vimtex-completion`
 
-- Folding at `:help vimtex-folding`. You have a lot of power here if you like folding, but you'll probably have to configure some things to make it useful;  `:help vimtex-folding` and the references therein are the place to look
+- Folding at `:help vimtex-folding`.
+  You have a lot of power here if you like folding, but you'll probably have to configure some things to make it useful;  `:help vimtex-folding` and the references therein are the place to look
 
 - Indentation `:help vimtex-indent`
   
   This is just a list of references to associated configuration settings
 
 ### My notes
-- The `vimtex` plugin works fine with a user-defined `tex` filetype plugin. Just be sure not so set `did_ftplugin` in the user-defined plugin or `vimtex` won't load.
+- The `vimtex` plugin works fine with a user-defined `tex` filetype plugin.
+  Just be sure not so set `did_ftplugin` in the user-defined plugin or `vimtex` won't load.
 
-  Suggested (find reference): is that place all user-defined `ftplugin` stuff in `nvim/after/ftplugin` instead of `nvim/ftplugin`. Or is this only for things you want to load after Vimtex?
+  Suggested (find reference): is that place all user-defined `ftplugin` stuff in `nvim/after/ftplugin` instead of `nvim/ftplugin`.
+  Or is this only for things you want to load after Vimtex?
 
   (Reference?) `vimtex` overrides Vim's internal `ftplugin`, i.e. the one in `$VIMRUNTIME/ftplugin`
 
@@ -197,36 +212,44 @@ See `:help vimtex-options`, it's clear and helpful.
 
 - You can completely disable `vimtex` with `let g:vimtex_enabled = 0`, e.g. in your `vimrc` or in your `ftplugin/tex.vim`?
 
-- Use the `g:vimtex_mappings_enabled` option to control mapping. 1 by default.
+- Use the `g:vimtex_mappings_enabled` option to control mapping.
+  1 by default.
 
   Use `g:vimtex_mappings_disable` to disable specific mappins.
 
-  Use `g:vimtex_imaps_enabled` to control insert mode mappins. 1 by default.
+  Use `g:vimtex_imaps_enabled` to control insert mode mappins.
+  1 by default.
 
-- `g:vimtex_compiler_enabled`. Set to 0 to disable compilation interface.
+- `g:vimtex_compiler_enabled`.
+  Set to 0 to disable compilation interface.
 
-- `g:vimtex_view_enabled` to control the viewing interface. (**TODO** pdf reader?) 1 by default.
+- `g:vimtex_view_enabled` to control the viewing interface.
+  (**TODO** pdf reader?) 1 by default.
 
-- `g:vimtex_complete_enabled`. Set to 0 to disable Vimtex completion features.
+- `g:vimtex_complete_enabled`.
+  Set to 0 to disable Vimtex completion features.
 
 - `g:vimtex_complete_ref` for label completion in custom reference commands.
 
-- See if you like `g:g:vimtex_complete_close_braces`. Off by default.
+- See if you like `g:g:vimtex_complete_close_braces`.
+  Off by default.
 
-- Use `g:vimtex_fold_enabled` to control folding. 0 by default.
+- Use `g:vimtex_fold_enabled` to control folding.
+  0 by default.
 
   See also `vimtex-folding`
 
   Set `g:vimtex_fold_manual` to 1 for faster folding using the `fold-manual` folding method.
 
-- Use `g:vimtex_indent_enabled` to control indent. 1 by default.
+- Use `g:vimtex_indent_enabled` to control indent.
+  1 by default.
 
-- Use `g:vimtex_syntax_enabled` to control syntax highlighting. 1 by default.
-
-
+- Use `g:vimtex_syntax_enabled` to control syntax highlighting.
+  1 by default.
 
 ## Reference
-Nothing in here is original! Everything can be found in the documentation. It might just be easier to read in markdown instead of plain text.
+Nothing in here is original! Everything can be found in the documentation.
+It might just be easier to read in markdown instead of plain text.
 
 ### Text objects
 
@@ -259,11 +282,12 @@ Default mapping is given on left and `<Plug>` mapping on right.
 
 - `dse` `<plug>(vimtex-env-delete)` 
 
-  Deletes  the `\begin` and `\end` declaration of the surrounding environment. Does not change the contents.
+  Deletes  the `\begin` and `\end` declaration of the surrounding environment.
+  Does not change the contents.
 
 - `cse` `<Plug>(vimtex-env-change)` 
 
-  Brings up a prompt to changes the type of surrounding environment; does not change environment contents. 
+  Brings up a prompt to changes the type of surrounding environment; does not change environment contents.
 
   Example: `cse align` inside an `equation` environment produces:
   ```
@@ -300,7 +324,7 @@ Default mapping is given on left and `<Plug>` mapping on right.
   % as opposed to [ x + y ]
   ```
   
-- `dsc` `<Plug>(vimtex-cmd-delete)` deletes the surrounding command. 
+- `dsc` `<Plug>(vimtex-cmd-delete)` deletes the surrounding command.
 
   Example: typing `dsc` anywhere inside `\textit{Hello world!}` produces
   ```
@@ -322,7 +346,7 @@ Default mapping is given on left and `<Plug>` mapping on right.
 ### Toggle-style commands
 - `tsf` `<Plug>(vimtex-cmd-toggle-frac)` toggles between `\frac{a}{b}` and `a/b`
 
-- `tsc` `<Plug>(vimtex-cmd-toggle-star)` and `tse` `<Plug>(vimtex-env-toggle-star)` toggle a starred command or environment. 
+- `tsc` `<Plug>(vimtex-cmd-toggle-star)` and `tse` `<Plug>(vimtex-env-toggle-star)` toggle a starred command or environment.
 
   Example: `cse align` inside an `equation` environment produces:
   ```
@@ -333,7 +357,7 @@ Default mapping is given on left and `<Plug>` mapping on right.
   \ket{\psi}  -->  \ket*{\psi}
   ```
 
-- `tsd` `<Plug>(vimtex-delim-toggle-modifier)` changes between plain and `\left`/`\right` versions of delimiters. 
+- `tsd` `<Plug>(vimtex-delim-toggle-modifier)` changes between plain and `\left`/`\right` versions of delimiters.
 
   Example: `tsd` on the `(x + y)` text below would produce:
   ```
@@ -343,13 +367,15 @@ Default mapping is given on left and `<Plug>` mapping on right.
 
   **TODO** my example maybe.
 
-  `tsD` `<Plug>(vimtex-delim-toggle-modifier-reverse)` works like `tsd`, but searches in reverse through the delimiter list. The observed behavior is identical to `tsd` when the delimiter list stored in `g:vimtex_delim_toggle_mod_list` contains only one entry.
+  `tsD` `<Plug>(vimtex-delim-toggle-modifier-reverse)` works like `tsd`, but searches in reverse through the delimiter list.
+  The observed behavior is identical to `tsd` when the delimiter list stored in `g:vimtex_delim_toggle_mod_list` contains only one entry.
 
 
 ### Cool motion commands
 All of the following motion commands accept a count and apply to Vim's normal, operator-pending, and visual modes.
 
-- `%` `<plug>(vimtex-%)` when used with the cursor on a delimiter, moves the cursor to the matching delimiter. Works for regular delimiters like `(...)` and `[...]`, but also LaTeX specific delimiters like `\$...\$` and environment `\begin{}` and `\end{}` commands.
+- `%` `<plug>(vimtex-%)` when used with the cursor on a delimiter, moves the cursor to the matching delimiter.
+  Works for regular delimiters like `(...)` and `[...]`, but also LaTeX specific delimiters like `\$...\$` and environment `\begin{}` and `\end{}` commands.
 
 - `]]` `<plug>(vimtex-]])` and `[[` `<plug>(vimtex-[[)` jumps to the beginning of the next or current `\section`, `\subsection` or `\subsubsection`, whichever comes first.
 
@@ -377,6 +403,13 @@ All of the following motion commands accept a count and apply to Vim's normal, o
 ### Commands
 - `vimtex` comes with a few useful status commands that display information about `vimtex`'s current status
 
-- Useful are `:VimtexTocOpen`, `:VimtexTocToggle` (open or toggle a navigable table of contents inside Vim). The table of contents comes with self-explanatory help text.
+- Useful are `:VimtexTocOpen`, `:VimtexTocToggle` (open or toggle a navigable table of contents inside Vim).
+  The table of contents comes with self-explanatory help text.
 
 - See also `:VimtexCountLetters` and `:VimtexCountWords`
+
+- Use `:VimtexInfo` to see system information and project information (base file name, project root)
+
+<!-- [Screencast](https://github.com/lervag/vimtex#quick-start) -->
+
+

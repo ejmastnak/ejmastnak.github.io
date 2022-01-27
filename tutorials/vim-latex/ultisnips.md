@@ -161,7 +161,8 @@ Based on my (subjective) experience, mostly with LaTeX files, here are some opti
 
 - `b` expands snippets only if `trigger` is typed at the beginning of a line---this option was used above in the [snippet for writing snippets](#tip-a-snippet-for-writing-snippets).
 
-- `i` (for "in-word" expansion) expands snippets regardless of where `trigger` is typed. (By default snippets expand only if `trigger` begins a new line or is preceded by whitespace.)
+- `i` (for "in-word" expansion) expands snippets regardless of where `trigger` is typed.
+  (By default snippets expand only if `trigger` begins a new line or is preceded by whitespace.)
 
 
 ### Assorted snippet syntax rules
@@ -247,7 +248,7 @@ $0
 endsnippet
 ```
 The `b` options ensures the snippet only expands at the start of line; see the [Options](#options) section.
-Mirrored tabstops are documented at `:help UltiSnips-mirrors`. 
+Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
 
 #### Useful: the visual placeholder
 The visual placeholder enables you to use text selected in Vim's visual mode as the content of a snippet body.
@@ -448,7 +449,8 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
 
 - Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops.
   The other obvious choice is the Tab key, but I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing.
-  Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown. (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
+  Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown.
+  (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
 
 ### Tip: A snippet for writing snippets
 I suggest starting with a snippet that makes it easier to write more snippets.
