@@ -29,7 +29,7 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
 
   
 ### Vim knowledge
-- Prerequisite: you know what Vim is, have a working local installation on your computer, and know how to use it, at least for basic text editing (for example at the level of `vimtutor`). 
+- Prerequisite: you know what Vim is, have a working local installation of Vim or Neovim on your computer, and know how to use it, at least for basic text editing (for example at the level of `vimtutor`). 
   
   Suggestions:
   - Installation: Vim should come installed on most of the Unix-based systems this series is written for.

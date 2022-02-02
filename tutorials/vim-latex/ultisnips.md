@@ -58,7 +58,7 @@ Whether you download someone else's snippets, write your own, or use a mixture o
 1. where the text files storing your snippets are located on your file system, and
 1. how to write and edit snippets to suit your particular needs.
 
-Both questions are answered in this article
+Both questions are answered in this article.
 <!-- avoid the trap of blindly copying from the Internet without understanding what's going on under the hood. -->
 
 ### First steps: snippet trigger and tabstop navigation keys
