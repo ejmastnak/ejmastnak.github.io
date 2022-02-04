@@ -3,7 +3,7 @@ title: Continuum mechanics
 ---
 # Continuum mechanics
 
-- [Solved exercises]({% link fmf-pdfs/year3/contmech/contmech-exercises.pdf %})
+- [Solved exercises]({% link fmf-pdfs/year3/contmech/contmech-exercises.pdf %}) (quite raw; needs editing)
 - [Condensed lecture notes]({% link fmf-pdfs/year3/contmech/contmech-equation-sheet.pdf %})
 
 ## Course description
