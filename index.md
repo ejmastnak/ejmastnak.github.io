@@ -2,7 +2,8 @@
 title: Home
 ---
 # Welcome
-You have reached an early version of Elijan J. Mastnak's website. For the time being, you have three possibilities:
+You have reached an early version of Elijan J. Mastnak's website.
+For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or read through the following:
 
 ### Physics notes
 [1500+ pages of undergraduate physics notes typeset with LaTeX]({% link fmf.md %})
@@ -11,5 +12,3 @@ You have reached an early version of Elijan J. Mastnak's website. For the time b
 
 ### Projects
 [Undergraduate "mini-thesis"]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
-
-### [Résumé]({% link cv/cv.pdf %})
