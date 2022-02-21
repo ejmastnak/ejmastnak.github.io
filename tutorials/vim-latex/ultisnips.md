@@ -5,7 +5,7 @@ title: Snippets \| Setting up Vim for LaTeX Part 1
 
 ## About the series
 This is part two in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
-This article covers snippets, which can dramatically speed up your LaTeX writing.
+This article covers snippets, which are templates of commonly reused code that can dramatically speed up your LaTeX writing.
 
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
@@ -22,7 +22,7 @@ This article covers snippets, which can dramatically speed up your LaTeX writing
   * [Options](#options)
   * [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)
   * [Tabstops](#tabstops)
-    * [Some examples](#some-examples)
+    * [Some example LaTeX snippets](#some-example-latex-snippets)
     * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
     * [Useful: mirrored tabstops](#useful-mirrored-tabstops)
     * [Useful: the visual placeholder](#useful-the-visual-placeholder)
@@ -31,31 +31,36 @@ This article covers snippets, which can dramatically speed up your LaTeX writing
     * [Regex snippet triggers](#regex-snippet-triggers)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
 * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
-  * [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
+* [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
 
 <!-- vim-markdown-toc -->
 
 ## What snippets do
+Snippets are templates of commonly used code patterns (think LaTeX environments and commands) that, when inserted into text dynamically using short (e.g. two- or three-character) triggers, will dramatically speed up the writing of LaTeX code.
+Without wishing to overstate the case, snippets are the single most important tool in the process of writing LaTeX efficiently and painlessly.
+
 **TODO** Gifs of e.g. `itemize` environment followed by items, `figure` environment with tabstops, Greek letters
 
-**TODO** also provide reference to [https://castel.dev/post/lecture-notes-1/#snippets](https://castel.dev/post/lecture-notes-1/#snippets)
+Snippets in the specific context of efficient, Vim-written LaTeX were probably first introduced to the Internet by Gilles Castel, and I encourage you to [read his snippet article](https://castel.dev/post/lecture-notes-1/#snippets) as well as this one.
 
 ## Getting started with UltiSnips
-
-The [UltiSnips repository](https://github.com/SirVer/ultisnips)
+This tutorial will use the most mature of the many Vim snippet plugins: [the UltiSnips plugin](https://github.com/SirVer/ultisnips).
+If you use Neovim, note that UltiSnips' support of Neovim is "best-effort only".
+Don't let this discourage you---I and many other Neovim users daily drive Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
+If you use regular Vim, you should be fine in any case.
 
 ### Installation
-Install UltiSnips like any other Vim plugin using your method of choice.
+Install UltiSnips like any other Vim plugin using your plugin installation method of choice.
 Because the UltiSnips plugin uses Python...
 - you need a working installation of Python 3 on your system (see `:help UltiSnips-requirements`)
 - your Vim must be compiled with the `python3` feature enabled---you can test this with `:echo has("python3)`, which will return `1` if `python3` is enabled and `0` otherwise.
   Note that Neovim comes with `python3` enabled by default.
 
-UltiSnips intentionally ships without snippets---you have to write your own or use an existing snippet database.
+UltiSnips is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
 The canonical source of existing snippets is GitHub user `honza`'s [`vim-snippets`](https://github.com/honza/vim-snippets) repository.
 Whether you download someone else's snippets, write your own, or use a mixture of both, you should know:
 
-1. where the text files storing your snippets are located on your file system, and
+1. where the text files holding your snippets are located on your file system, and
 1. how to write and edit snippets to suit your particular needs.
 
 Both questions are answered in this article.
@@ -77,7 +82,7 @@ let g:UltiSnipsJumpForwardTrigger = '<Tab>'     " use Tab to move forward throug
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'  " use Shift-Tab to move backward through tabstops
 ```
 This code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops, and make the combination `<Shift>`+`<Tab>` navigate backward through tabstops.
-Yes, UltiSnips lets you use the same key for both expansion and tabstop navigation! (Although using the `<Tab>` key for both expansion and tabstop navigation might conflict with default mappings from certain autocomplete plugins---your mileage may vary.) For efficiency, I personally use `let g:UltiSnipsJumpForwardTrigger = 'jk'`---more on this in the section on [(subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the end of this article.
+Yes, UltiSnips lets you use the same key for both expansion and tabstop navigation! (Although using the `<Tab>` key for both expansion and tabstop navigation might conflict with default mappings from certain autocomplete plugins---your mileage may vary.)
 
 See `:help UltiSnips-trigger-key-mappings` for relevant documentation.
 For fine-grained control one can also work directly with functions controlling expand and jump behavior; for more information on this see `:help UltiSnips-trigger-functions`.
@@ -85,7 +90,7 @@ For most users just setting the three global trigger key variables, as in the ex
 
 ### A home for your snippets
 You store snippets in text files with the `.snippets` extension.
-The file's base name (as in `base-name.snippets`) determines which Vim `filetype` the snippets apply to.
+The file's base name determines which Vim `filetype` the snippets apply to.
 For example, snippets inside the file `tex.snippets` would apply to files with `filetype=tex`.
 If you want certain snippets to apply globally to *all* file types, place these global snippets in the file `all.snippets`, which is documented towards the bottom of `:help UltiSnips-how-snippets-are-loaded`.
 
@@ -152,7 +157,7 @@ See `:help UltiSnips-authoring-snippets` for the relevant documentation.
 ### Options
 You'll need to use a few options to get the full UltiSnips experience.
 All options are clearly documented at `:help UltiSnips-snippet-options`, and I'll summarize here only what is necessary for understanding the snippets that appear later in this document.
-Based on my (subjective) experience, mostly with LaTeX files, here are some options to know:
+Based on my (subjective) experience, mostly with LaTeX files, here are some good options to know:
 - `A` enables automatic expansion, i.e. a snippet with the `A` option will expand immediately after `trigger` is typed, without you having to press the`g:UltiSnipsExpandTrigger` key.
   If you're aiming for real-time LaTeX, using well thought-out automatic snippet expansion will dramatically increase your efficiency---more on this in [(subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing).
 
@@ -166,7 +171,7 @@ Based on my (subjective) experience, mostly with LaTeX files, here are some opti
 
 
 ### Assorted snippet syntax rules
-- Comments start with `#` and can be used to document snippets
+- Comments start with `#` and can be used to document snippets (see `:help UltiSnips-basic-syntax`)
 
 - According to `:help UltiSnips-character-escaping`, the characters `'`, `{`, `$`, and `\` need to be escaped by prepending a backslash `\`.
   That said, I'm generally able to use `'`, `{`, and `\` in snippet bodies without escaping them---your mileage may vary.
@@ -176,12 +181,13 @@ Based on my (subjective) experience, mostly with LaTeX files, here are some opti
   extends filetype
   ```
   anywhere in a `*.snippets` file will load all snippets from `filetype.snippets` into the current snippets file.
-  Example use case from `:help UltiSnips-basic-syntax`: you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
+  As an example use case from `:help UltiSnips-basic-syntax`, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
 
 - The line `priority {N}`, where `N` is an integer number (e.g. `priority 5`), placed *anywhere* in `.snippets` file on its own line will set the priority of all snippets below that line to `N`.
   When multiple snippets have the same `trigger`, only the highest-priority snippet is expanded.
   Using `priority` can be useful to override global snippets defined in `all.snipets`.
-  If `priority` is not specified anywhere in a file, the implicit value is `priority 0`
+  If `priority` is not specified anywhere in a file, the implicit value is `priority 0`.
+  You can read more about the `priority` keyword in `:help UltiSnips-basic-syntax`.
 
 ### Tabstops
 Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`.
@@ -200,17 +206,17 @@ Paraphrasing from `:help UltiSnips-tabstops`:
 - The `$0` tabstop is special---it is always the last tabstop in the snippet no matter how many tabstops are defined.
 If `$0` is not explicitly defined, the `$0` tabstop is implicitly placed at the end of the snippet.
 
-As far as I'm aware, this is a similar tabstop syntax to that used in Visual Studio Code.
+As far as I'm aware, this is a similar tabstop syntax to that used in the popular IDE Visual Studio Code.
 
-#### Some examples
-For orientation, here are two examples: one maps `tt` to the `\texttt` macro and the other maps `ff` to the `\frac` macro.
+#### Some example LaTeX snippets
+For orientation, here are two examples: one maps `tt` to the `\texttt` command and the other maps `ff` to the `\frac` command.
 Note that (at least for me) the snippet expands correctly without escaping the `\`, `{`, and `}` characters as suggested in `:help UltiSnips-character-escaping` (see the second bullet in [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)).
 ```
-snippet tt "The \texttt{} macro for typewriter-style font"
+snippet tt "The \texttt{} command for typewriter-style font"
 \texttt{$1}$0
 endsnippet
 
-snippet ff "The LaTeX \frac{}{} macro"
+snippet ff "The LaTeX \frac{}{} command"
 \frac{$1}{$2}$0
 endsnippet
 ```
@@ -220,14 +226,13 @@ endsnippet
 #### Useful: tabstop placeholders
 Placeholders are used to enrich a tabstop with a description or default text.
 The syntax for defining placeholder text is `${1:placeholder}`.
-Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` macro:
+Placeholders are documented at `:help UltiSnips-placeholders`.
+Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
 ```
-snippet hr "The hyperref package's \href{}{} macro (for url links)"
+snippet hr "The hyperref package's \href{}{} command (for url links)"
 \href{${1:url}}{${2:display name}}$0
 endsnippet
 ```
-Placeholders are documented at `:help UltiSnips-placeholders`.
-
 **TODO** GIF here is what this looks like in practice:
 
 #### Useful: mirrored tabstops
@@ -238,7 +243,7 @@ Here is an example:
 **TODO** GIF showing an `environment` snippet.
 
 The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
-For example, here is the code for the snippet shown in the above GIF:
+For example, here is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
 ```
 snippet env "New LaTeX environment" b
 \begin{$1}
@@ -252,7 +257,7 @@ Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
 
 #### Useful: the visual placeholder
 The visual placeholder enables you to use text selected in Vim's visual mode as the content of a snippet body.
-The visual placeholder is useful when you want to surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics macro or to surround a word with quotation marks).
+The visual placeholder is useful when you want to surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command or to surround a word with quotation marks).
 Here is an example:
 
 **TODO** GIF with e.g. `textit`
@@ -261,7 +266,7 @@ You can have one visual placeholder per snippet, and you specify it with the `${
 This usually is (but does not have to be) integrated into tabstops.
 Here is the code for the example in the above GIF:
 ```
-snippet tii "The \textit{} macro for italic font"
+snippet tii "The \textit{} command for italic font"
 \textit{${1:${VISUAL:}}}$0
 endsnippet
 ```
@@ -269,20 +274,21 @@ The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and
 
 
 ### Dynamically-evaluated code inside snippets
-It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "interpolation").
-Shell scripting, Vimscript, and Python are all supported.
+It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "code interpolation").
+Shell script, Vimscript, and Python are all supported.
 Interpolation is covered in `:help UltiSnips-interpolation` and in UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
 I will only cover two examples I subjectively find to be most useful:
 1. making certain snippets expand only the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
 1. accessing characters captured by regular expression trigger's capture groups.
 
 #### Custom context expansion and `vimtex`'s syntax detection
-UltiSnips' custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful application is expanding a snippet only if its trigger is typed in a LaTeX math context.
+UltiSnips' custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
 As an example of why this might be useful:
 
 - Problem: good snippet triggers tend to interfere with words typed in regular text.
   For example, `ff` is a great choice for a `\frac{}{}` snippet, but you wouldn't want `ff` to expand to `\frac{}{}` in the middle of the word "offer", for example.
 - Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
+  (Note that the `frac` expansion problem can also be solved with a regex snippet, which is covered in the next section.)
 
 You will need GitHub user `lervag`'s [`vimtex` plugin](https://github.com/lervag/vimtex) for math-context expansion.
 The `vimtex` plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
@@ -304,17 +310,14 @@ snippet ff "This \frac{}{} snippet expands only a LaTeX math context"
 \frac{$1}{$2}$0
 endsnippet
 ```
-My original source for the implementation of math-context expansion: [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context)
-
-
-Note that the `frac` expansion problem can also be solved with a regex snippet, which is covered next.
+My original source for the implementation of math-context expansion: [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context).
 
 #### Regex snippet triggers
 For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers.
 You could use a regular expression trigger, for example, to do something like "make `^` expand to a superscript snippet like `^{$1}$0`, but only if the `^` trigger immediately follows an alphanumeric character".
 
 A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
-Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial](https://www.youtube.com/watch?v=sa-TUpSx1JA).
+Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial on YouTube](https://www.youtube.com/watch?v=sa-TUpSx1JA).
 
 1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
    ```
@@ -401,6 +404,7 @@ nnoremap <leader>u :call UltiSnips#RefreshSnippets()<CR>
 
 ## (Subjective) practical tips for fast editing
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
+In no particular order, here are some tips based on my personal experience:
 
 - Use automatic completion whenever possible.
   This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware.
@@ -411,9 +415,9 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
 
 - Repeated-character triggers offer a good balance between efficiency and good semantics.
   For example, I use `ff` (fraction), `mm` (inline math), and `nn` (new equation environment).
-  Although `frac`, `$`, and `eqn` would be even clearer, `ff`, `mm`, and `nn` still get the message across and are also much faster to type
+  Although `frac`, `$`, and `eqn` would be even clearer, `ff`, `mm`, and `nn` still get the message across and are also much faster to type.
 
-- Use math-contex expansion and regular expressions to free up short, convenient triggers that would otherwise conflict with common words.
+  Use math-context expansion and regular expressions to free up short, convenient triggers that would otherwise conflict with common words.
 
 - Use ergonomic triggers on or near the home row.
   Depending on your capacity to develop muscle memory, you can dramatically improve efficiency if you sacrifice meaningful trigger names for convenient trigger locations.
@@ -421,16 +425,16 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
   For example, `sd`, `df`, `jk`, and `kl`, if you can get used to them, are very convenient to type and also don't conflict with many words in English or Romance languages.
 
   Here are two examples I use all the time:
-  1. I first define the LaTeX macro `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
+  1. I first define the LaTeX command `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
      ```
-     snippet "([^a-zA-Z0-9])df" "\diff (A personal macro I universally use for differentials)" rA
+     snippet "([^a-zA-Z0-9])df" "\diff (A personal command I universally use for differentials)" rA
      `!p snip.rv = match.group(1)`\diff 
      endsnippet
      ```
      This `df` snippet makes typing differentials a breeze, with correct spacing, upright font, and all that.
      Happily, in this case using `df` for a differential also makes semantic sense.
 
-     As a side note, using a `\diff` macro also makes redefinition very easy---for example to adapt an article to fit a journal that uses italic differentials, I could just replace `\operatorname{d}\!` with `\,d` in the macro definition instead of rummaging through my LaTeX source code changing individual differentials.
+     As a side note, using a `\diff` command also makes redefinition of the differential symbols very easy---for example to adapt an article for submission to a journal that uses italic instead of upright differentials, one could just replace `\operatorname{d}\!` with `\,d` in the command definition instead of rummaging through LaTeX source code changing individual differentials.
 
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
      ```
@@ -438,23 +442,23 @@ I'm writing this with math-heavy LaTeX in real-time university lectures in mind,
      `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
      endsnippet
      ```
-     The snippet triggers after alphanumeric characters and closing delimiters, and includes a visual placeholder.
+     This snippet triggers after alphanumeric characters and closing delimiters, and includes a visual placeholder.
 
      **TODO** example LaTeX output of upright-text subscripts.
 
-   Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me.
-   The point here is just to get you thinking about home-row keys as efficient snippet triggers.
-   Try experimenting for yourself---you might significantly speed up your editing.
-   Or maybe this tip doesn't work for you, and that's fine, too.
+     Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me.
+     The point here is just to get you thinking about using the home-row keys as efficient snippet triggers.
+     Try experimenting for yourself---you might significantly speed up your editing.
+     Or maybe this tip doesn't work for you, and that's fine, too.
 
 - Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops.
   The other obvious choice is the Tab key, but I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing.
   Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown.
   (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
 
-### Tip: A snippet for writing snippets
-I suggest starting with a snippet that makes it easier to write more snippets.
-To do this, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
+## Tip: A snippet for writing snippets
+The following snippet makes it easier to write more snippets.
+To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
 ```vim
 snippet snip "A snippet for writing Ultisnips snippets" b
 `!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:options}
@@ -468,10 +472,10 @@ Here's what this looks like in practice:
 
 **TODO** GIF showing the `snip` snippet.
 
-The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature---more on this in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
+The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
 The naive implementation would be to write
 ```
-# This won't work---it's just for explanation
+# THIS SNIPPET WON'T WORK---IT'S JUST FOR EXPLANATION!
 snippet snip "A snippet for writing Ultisnips snippets" b
 snippet ${1:trigger} "${2:Description}" ${3:options}
 $4
