@@ -9,7 +9,7 @@ It is intended for anyone who...
 <!-- - is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed, -->
 - wants a more pleasant and efficient experience writing LaTeX,
 - is interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
-- wants to manually configure compilation and PDF viewing without relying on third-party LaTeX plugins like [`VimTeX`](https://github.com/vim-latex/vim-latex) or [`Vim-LaTeX`](https://github.com/vim-latex/vim-latex) (although [`VimTeX`](https://github.com/vim-latex/vim-latex) is an excellent plugin and I recommend its use in this series), or
+- wants to manually configure compilation and PDF viewing without relying on third-party LaTeX plugins like [VimTeX](https://github.com/vim-latex/vim-latex) or [Vim-LaTeX](https://github.com/vim-latex/vim-latex) (although [VimTeX](https://github.com/vim-latex/vim-latex) is an excellent plugin and I recommend its use in this series), or
 - just wants to browse someone else's workflow and configuration out of curiosity.
 
 This series is written with the voice, format, notation, and explanation style I would have liked to have read if I were once again an inexperienced undergraduate learning the material for the first time myself.

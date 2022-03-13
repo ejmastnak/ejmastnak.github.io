@@ -27,7 +27,7 @@ This article covers snippets, which are templates of commonly reused code that c
     * [Useful: mirrored tabstops](#useful-mirrored-tabstops)
     * [Useful: the visual placeholder](#useful-the-visual-placeholder)
   * [Dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)
-    * [Custom context expansion and `vimtex`'s syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
+    * [Custom context expansion and VimTeX's syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
     * [Regex snippet triggers](#regex-snippet-triggers)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
 * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
@@ -281,7 +281,7 @@ I will only cover two examples I subjectively find to be most useful:
 1. making certain snippets expand only the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
 1. accessing characters captured by regular expression trigger's capture groups.
 
-#### Custom context expansion and `vimtex`'s syntax detection
+#### Custom context expansion and VimTeX's syntax detection
 UltiSnips' custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
 As an example of why this might be useful:
 
@@ -290,11 +290,11 @@ As an example of why this might be useful:
 - Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
   (Note that the `frac` expansion problem can also be solved with a regex snippet, which is covered in the next section.)
 
-You will need GitHub user `lervag`'s [`vimtex` plugin](https://github.com/lervag/vimtex) for math-context expansion.
-The `vimtex` plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
-This function isn't explicitly mentioned in the `vimtex` documentation, but you can find it in the `vimtex` source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
+You will need GitHub user `lervag`'s [VimTeX plugin](https://github.com/lervag/vimtex) for math-context expansion.
+The VimTeX plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
+This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
-You can integrate `vimtex`'s math zone detection with UltiSnips' `context` feature as follows:
+You can integrate VimTeX's math zone detection with UltiSnips' `context` feature as follows:
 ```
 # include this code block at the top of a *.snippets file...
 # ----------------------------- #
