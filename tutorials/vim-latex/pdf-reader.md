@@ -5,31 +5,31 @@ title: PDF Reader \| Setting up Vim for LaTeX Part 4
 # Setting Up a PDF Reader for Writing LaTeX with Vim
 
 This is part five in a [six part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
-This article explains, for both macOS and Linux, how to set up an external PDF reader for displaying the PDF file associated with the `tex` source file being edited in Vim.
-The article also covers how to configure forward and backward search.
+This article explains, for both macOS and Linux, how to set up an external PDF reader for displaying the PDF file associated with the LaTeX source file being edited in Vim.
+<!-- for both the VimTeX plugin's built-in PDF reader interface and custom set-up of your own design. -->
 
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
 
-* [Functionality implemented in this article](#functionality-implemented-in-this-article)
+* [What to read in this article](#what-to-read-in-this-article)
 * [Choosing a PDF Reader](#choosing-a-pdf-reader)
-  * [On macOS](#on-macos)
-  * [On Linux](#on-linux)
-  * [On Windows](#on-windows)
-* [The big picture](#the-big-picture)
-  * [What is forward search?](#what-is-forward-search)
-  * [What is inverse search?](#what-is-inverse-search)
-    * [Compiling with SyncTex](#compiling-with-synctex)
-    * [The big idea: using Vim with remote procedure calls](#the-big-idea-using-vim-with-remote-procedure-calls)
-  * [Desired functionality](#desired-functionality)
-    * [Forward search](#forward-search)
-    * [Inverse search](#inverse-search)
+  * [A PDF reader on Linux](#a-pdf-reader-on-linux)
+  * [A PDF reader on macOS](#a-pdf-reader-on-macos)
+  * [A PDF reader on Windows](#a-pdf-reader-on-windows)
+* [Cross-platform concepts](#cross-platform-concepts)
+  * [Forward search and inverse search](#forward-search-and-inverse-search)
+    * [Compiling with SyncTeX](#compiling-with-synctex)
+  * [Inter-process communication requires a server](#inter-process-communication-requires-a-server)
+  * [Getting a clientserver-enabled Vim](#getting-a-clientserver-enabled-vim)
+  * [Ensure Vim starts a server](#ensure-vim-starts-a-server)
+* [Using VimTeX](#using-vimtex)
+  * [Zathura (read this on Linux)](#zathura-read-this-on-linux)
+    * [Ensure your Zathura is SyncTeX-enabled](#ensure-your-zathura-is-synctex-enabled)
+    * [Optional tip: Return focus to Vim after forward search](#optional-tip-return-focus-to-vim-after-forward-search)
+  * [Skim (read this on macOS)](#skim-read-this-on-macos)
+  * [Further reading](#further-reading)
 * [OS-agnostic steps](#os-agnostic-steps)
   * [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication)
-  * [Asynchronous command execution](#asynchronous-command-execution)
-    * [Running shell scripts from Vim](#running-shell-scripts-from-vim)
-      * [Naive implementation](#naive-implementation)
-      * [Asynchronous commands with vim-dispatch](#asynchronous-commands-with-vim-dispatch)
 * [Setting up Skim (read this on macOS)](#setting-up-skim-read-this-on-macos)
   * [Forward search with Skim](#forward-search-with-skim)
     * [Implementing forward show](#implementing-forward-show)
@@ -41,114 +41,331 @@ The article also covers how to configure forward and backward search.
   * [Implementation](#implementation)
   * [Documentation](#documentation)
     * [Window manager control](#window-manager-control)
-    * [Forward search](#forward-search-1)
+    * [Forward search](#forward-search)
       * [`synctex view` documentation](#synctex-view-documentation)
       * [Zathura forward search documentation](#zathura-forward-search-documentation)
     * [Backward search](#backward-search-1)
       * [`synctex edit` documentation](#synctex-edit-documentation)
       * [Zathura's inverse search documentation](#zathuras-inverse-search-documentation)
+* [TODO](#todo)
+* [Summary](#summary)
 
 <!-- vim-markdown-toc -->
 
-## Functionality implemented in this article
-This article covers the following:
-
-1. My suggestion for a PDF reader (Skim on macOS and Zathura on Linux) and the reasons for these choices.
-
-1. Implementing forward search, i.e. jumping to the position in the PDF document corresponding the current cursor position in the `tex` document, triggered with a convenient keyboard shortcut from Vim.
-
-1. Implementing inverse search, i.e. switching focus from a line in the PDF document to the corresponding line in the `tex` source file, triggered by a simple click or keyboard shortcut in the PDF reader.
+## What to read in this article
+Everyone should read:
+- [Choosing a PDF Reader](#choosing-a-pdf-reader)
+- [Cross-platform concepts](#cross-platform-concepts)
 
 ## Choosing a PDF Reader
-The big picture here is to configure an external PDF reader to display the PDF file associated with the `tex` source file being edited in Vim.
-You want  PDF reader that:
+The general goal in this article is to configure a PDF reader for displaying the PDF file associated with the LaTeX source file edited in Vim.
+You want a PDF reader that:
 
 - in the background, constantly listens for changes to the PDF document and automatically updates its display when the document’s contents change after compilation.
   (The alternative: manually switch applications to the PDF reader, refresh the document, and switch back to Vim for *every single compilation*.
   You would tire of this pretty quickly.
   Or I guess you could hack together a shell script to do this for you, but why bother?)
   
-- Integrates with a program called SyncTeX, which makes both forward and inverse search possible.
+- Integrates with a program called SyncTeX, which makes it easy for Vim and the PDF reader to communicate with each other.
 
-For orientation, here's what forward and inverse search look like: **TODO** GIFs
+### A PDF reader on Linux
+I recommend and will cover [Zathura](https://pwmt.org/projects/zathura/), under the assumption that anyone reading a multi-article Vim series will appreciate Zathura's Vim-like key bindings and text-based configurability.
+VimTeX also makes configuration between Zathura and Vim very easy.
+Note, however, that many more Linux-compatible PDF reader exist---see the VimTeX plugin's documentation at `:help g:vimtex_view_method` if curious.
 
-### On macOS
-On macOS, to the best of my knowledge, you have basically one option meeting the above criteria: [Skim](https://skim-app.sourceforge.io/).
-You can download Skim from the [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
-The default macOS PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it support SyncTeX.
-<!-- (It is also possible to build Zathura on macOS!) -->
+### A PDF reader on macOS
+On macOS, to the best of my knowledge, you have basically one native option meeting the above criteria: [Skim](https://skim-app.sourceforge.io/).
+You can download Skim as a macOS `dmg` file from its [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
+The default macOS PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it integrate nicely with SyncTeX.
 
-### On Linux
-On Linux you have a variety of options.
-In this article I will cover Zathura, under the assumption that anyone reading a multi-article Vim series will also appreciate Zathura's Vim-like key bindings and text-based configurability.
-Many more possibilities are covered in the `vimtex` plugin's documentation at `help g:vimtex_view_method`.
+(It is also possible to build Zathura on macOS---see the [`homebrew-zathura` GitHub page if interested](https://github.com/zegervdv/homebrew-zathura). If you choose to use `homebrew-zathura` on macOS, you should be able to follow along with the Zathura instructions for Linux.)
 
-### On Windows
-I have not tested it myself and will not cover it in this article, but supposedly the SumatraPDF viewer supports both forward and backward search.
-This is covered, for example, in the `vimtex` plugin's documentation at `help vimtex_viewer_sumatrapdf`.
-See also `help g:vimtex_view_method` for other PDF reader possibilities on Windows.
+### A PDF reader on Windows
+I have not tested it myself and will not cover it in this article (reminder of the [series prerequisites for operating system]({% link tutorials/vim-latex/prerequisites.md %})), but the SumatraPDF viewer supposedly supports both forward and backward search.
+One can read more in the VimTeX plugin's documentation at `:help vimtex_viewer_sumatrapdf`.
+See also `:help g:vimtex_view_method` for other PDF reader possibilities on Windows.
 
 <!-- TODO: link to jdhao's inverse search. -->
 
-## The big picture
-Many of the same ideas and configuration steps apply on both macOS and Linux.
-To avoid repetition, I will list all steps applicable to both platforms here.
-OS-specific implementation specifics appear below.
+## Cross-platform concepts
+Many of the same ideas apply on both macOS and Linux.
+To avoid repetition I will list these here,
+and leave OS-specific implementation details for later in the article.
 
-### What is forward search?
-What is involved: a text editor used to edit a plain-text LaTeX file and a PDF reader displaying the PDF associated with the LaTeX file.
+### Forward search and inverse search
+You will hear two bits of jargon throughout this article:
+- *Forward search* is the process jumping from Vim to the position in the PDF document corresponding the current cursor position in the LaTeX source file in Vim.
+  In everyday language, forward search is a text editor telling a PDF reader: "hey, PDF reader, show the position in the PDF file corresponding to my current position in the LaTeX file".
+  <!-- TODO: GIF -->
 
-Forward search is triggered from the text editor.
-A command triggered in the text editor moves the PDF reader's focus to the line in the PDF file corresponding to the line in the LaTeX file at which forward search was triggered.
+- *Inverse search* (also called *backward search*) is the process of switching focus from a line in the PDF document to the corresponding line in the LaTeX source file. 
+  Informally, inverse search is like the user asking, "hey, PDF viewer, please take me to the position in the LaTeX source file corresponding to my current position in the PDF file".
 
-In everyday language: hey, PDF reader, show the position in the PDF file corresponding to my current position in the LaTeX file.
+Positions in the PDF file are linked to positions in the LaTeX source file using a utility called SyncTeX, which is implemented in a binary program called `synctex` that should ship by default with a standard TeX installation.
 
-### What is inverse search?
-Backward search is like asking, "hey, PDF viewer, please take me to the position in the `tex` source file corresponding to my current position in the PDF file".
-Backward search looks something like this: **TODO** GIF.
+<!-- **Note** Vim might not create a listen address at `/tmp/texsocket` if a file `/tmp/texsocket` already exists there from a different LaTeX document. -->
+<!-- In this case `v:servername` will default to something random and it will seem like backward search won't work. -->
+<!-- Deleting the existing `/tmp/texsocket` should solve the problem. -->
 
-Positions in the PDF file can be linked to positions in the `tex` source file using a utility called SyncTeX, which is implemented in a binary program called `synctex`; `synctex` should ship by default with a standard TeX installation.
+#### Compiling with SyncTeX
+For forward and backward search to work properly, your LaTeX documents must be compiled with `synctex` enabled.
+This is as simple as passing the `-synctex=1` option to the `pdflatex` or `latexmk` programs when compiling your LaTeX files; VimTeX's compiler backends do this by default, and doing so manually was covered in the [previous article in this series]({% link tutorials/vim-latex/compilation.md %}).
+If you are curious, you can find more `synctex` documentation at `man synctex` or by searching `man pdflatex` or `man latexmk` for `'synctex'`.
 
-**Note** Vim might not create a listen address at `/tmp/texsocket` if a file `/tmp/texsocket` already exists there from a different LaTeX document.
-In this case `v:servername` will default to something random and it will seem like backward search won't work.
-Deleting the existing `/tmp/texsocket` should solve the problem.
+### Inter-process communication requires a server
+Here is the big picture: inverse search requires one program---the PDF reader---to be able to access and open a second program---Vim---and ideally open Vim at a specific line.
+This type of inter-program communication is possible because of Vim's built-in [remote procedure call (RPC) protocol](https://en.wikipedia.org/wiki/Remote_procedure_call).
+The details of implementation vary between Vim and Neovim 
+(see `:help remote.txt` for Vim and `:help RPC` for Neovim)
+but in both cases Vim or Neovim must run a *server* that listens for and processes requests from other programs (such as a PDF reader).
+In this article and in the Vim and VimTeX documentation you will hear talk about a server---what we are referring to is the server Vim/Neovim must run to communicate with a PDF reader.
+Keep in mind throughout that an RPC protocol and client-server model are required under the hood for inverse search to work.
 
-#### Compiling with SyncTex
-Backwards search requires that your `tex` documents are compiled *with `synctex` enabled*.
-This is as simple as passing the `-synctex=1` option to the `pdflatex` or `latexmk` programs when compiling your `tex` files, which is covered in the previous article, [Compiling LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}).
-**TODO** link to section.
+### Getting a clientserver-enabled Vim
+Neovim, GVim, and MacVim come with client-server functionality by default; if you use any of these programs, lucky you.
+You can skip to the next section.
 
-For more `synctex` documentation, see `man synctex` or search `man pdflatex` or `man latexmk` for `'synctex'`.
+If you use terminal Vim, run `vim --version`.
+If the output includes `+clientserver`, your Vim version is compiled with client-server functionality enabled and can perform inverse search.
+Skip to the next section.
+If the output includes `-clientserver`, your Vim version does not have client-server functionality.
+You will need to install a new version of Vim to use inverse search.
+Getting a new version is easy:
+- **On Linux:** Use your package manager of choice to install `gvim`, which will include both the GUI program GVim *and* a regular command-line version of Vim compiled with client-server functionality---you will be able to keep using regular terminal `vim` as usual.
+  After installing `gvim`, check the output of `vim --version` again;
+  you should now see `+clientserver`.
 
-#### The big idea: using Vim with remote procedure calls
-Here is the big picture: we need one program---the PDF reader---to be able to access and open a second program---Vim---and ideally open Vim at a specific line.
-This type of inter-program interaction is possible because of Vim's built-in [remote procedure call protocol](https://en.wikipedia.org/wiki/Remote_procedure_call).
-The RPC implementation is different in Vim and Neovim---see `:help remote.txt` for Vim and `:help RPC` for Neovim.
+  Note that your package manager may notify you that `gvim` and `vim` are in conflict.
+  That's normal---in this case just follow the prompts to remove `vim` and install `gvim`, which will also include a version of regular terminal `vim`.
 
-In practice, setting up Vim or Neovim for backward search is fairly straightforward, once you know what to do.
-And although the hard work is taken care of for us in the Vim/Neovim source code, it is still instructive to keep in mind that an RPC protocol and client-server model are required under the hood for backward search to work.
+- **On macOS:** Install MacVim (e.g. `brew install macvim`), which, like `gvim` on Linux, will include both the GUI MacVim *and* a command-line version of Vim compiled with client-server functionality.
+  After installing MacVim, check the output of `vim --version` again;
+  you should now see `+clientserver`.
 
-Since the steps in Vim and Neovim are slightly different, I explain them in two different sections below.
+*The rest of this article assumes you have a version of Vim with `+clientserver`*.
 
-### Desired functionality
-#### Forward search
-Trigger forward search by pressing a key combination of your choice (e.g. `<leader>f`) while editing a LaTeX document in Vim.
+### Ensure Vim starts a server
+Neovim, GVim, and MacVim start a server on startup automatically; if you use any of these programs, lucky you---skip to the next section.
+If you use Vim, you need to ensure Vim starts a server for inverse search to work.
+To do so, place the following code snippet in your `vimrc` or `ftplugin/tex.vim`:
+```vim
+if empty(v:servername) && exists('*remote_startserver')
+  call remote_startserver('VIM')
+endif
+```
+This code checks the built-in `v:servername` variable to see if Vim has started a server, and if it hasn't, starts a server named `VIM` if Vim's `remote_startserver` function is available (which it should be on a reasonably up-to-date version of Vim).
+The above code snippet was taken from the VimTeX documentation at `:help vimtex-clientserver`, which will give you more background on starting a server for inverse search.
 
-- If PDF reader is not open
-  1. Launch a new PDF reader instance displaying the PDF file associated with the LaTeX document from which forward search was triggered.
-     
-  1. Move PDF reader display to line in the PDF corresponding to cursor position in Vim at which `<leader>f` was pressed.
-  1. Optionally highlight displayed line in PDF reader using a color of your choice.
-  1. If desired, immediately return focus to Vim if it was stolen by the PDF reader opening.
+After adding the above code snippet to your Vim config, restart Vim and check the output of `echo v:servername`---it should output `VIM`.
+Then open a LaTeX file and check the output of `:VimtexInfo`; the output should look something like this:
+```sh
+# If a server is successfully running:
+Has clientserver: true
+Servername: VIM
 
-- If PDF reader is already open and displaying the PDF file associated with the LaTeX file from which forward search was triggered, perform steps (ii-iv) above.
+# If a server is not running---inverse search won't work
+Has clientserver: true
+Servername: undefined (vim started without --servername)
+```
 
-#### Inverse search
-Trigger inverse search by performing a PDF-reader-specific mouse/key combination on a line in the PDF reader.
+## Using VimTeX
 
-- Remotely move the cursor in Vim to the position in the LaTeX source file corresponding to the line in the PDF where the inverse search clicked occured in the PDF reader.
+### Zathura (read this on Linux)
+Good news: VimTeX makes connecting Zathura and Vim/Neovim very easy.
+Here is what to do:
 
-- If desired, immediately move focus to Vim.
+- You will, obviously, need Zathura installed---do this with the package manager of your choice.
+  Then double check that your version of Zathura supports SyncTeX---this is explained in detail in the section [Ensure your Zathura is SyncTeX-enabled](#ensure-your-zathura-is-synctex-enabled) below.
+
+- You will need the VimTeX plugin installed. 
+  Check that the VimTeX PDF viewer interface is enabled by entering `:echo g:vimtex_view_enabled`, which will print `1` if VimTeX's PDF viewer interface is enabled and `0` if it is disabled.
+  (The interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and fix it before proceeding.)
+  
+- Install the [`xdotool`](https://github.com/jordansissel/xdotool) program using the Linux package manager of your choice.
+  (VimTeX uses `xdotool` to make forward search work properly; see `:help vimtex-view-zathura` for reference.)
+  
+- Place the following code in your `ftplugin/tex.vim` file:
+  ```vim
+  " Use Zathura as the VimTeX PDF viewer
+  let g:vimtex_view_method = 'zathura'
+  ```
+
+- Use the `:VimtexView` command in Vim/Neovim to trigger forward search.
+  You can either type this command manually, use the default VimTeX shortcut `<localleader>lv`, or define your own shortcut;
+  to define your own shortcut place the following code in your `ftplugin/tex.vim` file:
+  ```vim
+  " Define a custom shortcut to trigger VimtexView
+  nmap <localleader>v <plug>(vimtex-view)
+  ```
+  You could then use `<localleader>v` to trigger forward search---of course you could replace `<localleader>v` with whatever shortcut you prefer.
+
+- If you are using terminal Vim, ensure Vim has started a server as described above in the section [Ensure Vim starts a server](#ensure-vim-starts-a-server).
+  *Inverse search will not work if your Vim is not running a server*.
+  If you are using Neovim or GVim, lucky you---these programs start a server automatically and you have nothing to worry about.
+  If interested, you can check the name of the current Vim server with `echo v:servername` or by calling `:VimtexInfo` and scrolling to the `Servername:` line.
+
+- In Zathura, use `<CTRL>-<Left-Mouse-Click>` (i.e. a left mouse click while holding the control button) to trigger inverse search, which should open Vim and switch focus to the correct line in the LaTeX source file.
+  Inverse search should "just work"---this is because Zathura implements SyncTeX integration in a way (using Zathura's `--synctex-forward` and `--syntex-editor-command` options) that lets VimTeX launch Zathura with the relevant synchronization steps taken care of under the hood.
+  <!-- TODO: if curious, you can see how to manually set up forward and inverse search on Zathura by scrolling down to the section on REFERENCE -->
+
+#### Ensure your Zathura is SyncTeX-enabled
+Zathura must be compiled with `libsynctex` for forward and inverse search to work properly.
+(Most Linux platforms should ship a version with `libsynctex` support, but this isn't guaranteed---see the note towards the bottom of `:help vimtex-view-zathura` for more information.)
+You can check that your version of Zathura has SyncTeX support using the `ldd` program, which checks for shared dependencies: just issue the following command on command line:
+```sh
+ldd $(which zathura) | grep libsynctex
+```
+If the output returns something like `libsynctex.so.2 => /usr/lib/libsynctex.so.2 (0x00007fda66e50000)`, your Zathura has SyncTeX support.
+If the output is blank, your Zathura does not have SyncTeX support, and forward and inverse search will not work---you will need a new version of Zathura or a different PDF reader.
+
+Note that VimTeX performs this check automatically and will warn you if you are using a Zathura version without SyncTeX support;
+for the curious, this check is implemented in the VimTeX source code in the file `vimtex/autoload/vimtex/view/zathura.vim`, on [line 27](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/view/zathura.vim#L27) at the time of writing.
+See `:help g:vimtex_view_zathura_check_libsynctex` for reference.
+
+#### Optional tip: Return focus to Vim after forward search
+Depending on you window manager and/or desktop environment, window focus may switch from Vim to Zathura after performing inverse search (this happens for me on i3; YMMV).
+If you prefer, you can use `xdotool` to keep focus in Vim during forward search.
+Here's what to do:
+- Place the following line in your `ftplugin/tex.vim`:
+  ```vim
+  " Get Vim's window ID for switching focus from Zathura to Vim after forward search
+  let g:window_id = system("xdotool getactivewindow")
+  ```
+  This will, whenever you open a LaTeX file, use `xdotool` to query for an 8-digit window ID identifying the window running Vim (which is presumably the active window) and store this ID in the global Vim variable `g:window_id`.
+
+- Then define the following Vimscript function, also in `ftplugin/tex.vim`:
+  ```vim
+  function! s:TexForwardShowZathura() abort
+    VimtexView
+    sleep 100m  " give VimtexView 100 ms to complete; tweak value as needed
+    silent execute "!xdotool windowfocus " . expand(g:window_id)
+
+    " In case the windowfocus command failed; perhaps Vim's window ID changed
+    if v:shell_error
+      let g:window_id = system("xdotool getactivewindow")
+      silent execute "!xdotool windowfocus " . expand(g:window_id)
+    endif
+
+    redraw!
+  endfunction
+  ```
+  This function calls `VimtexView` to execute forward search, waits 100 ms for `VimtexView` to complete using the `sleep` command, then uses `xdotool`'s `windowfocus` command to immediately refocus the window holding Vim.
+  Using `silent execute` instead of just `execute` suppresses `Press ENTER or type command to continue` messages.
+  Although it is hacky, I have empirically found the 100 ms wait ensures the subsequent window focus executes properly.
+  A better solution might define some sort of callback that executes after `VimtexView` completes successfully---if you have a more elegant solution please let me know, and I will update my suggestion here.
+
+  I have found that Vim's window ID occasionally changes and causes the `windowfocus` command to fail;
+  although it feels like a hacky workaround, the `if v:shell_error` block uses Vim's built-in `v:shell_error` variable (see `:help v:shell_error`) to see if the previous `xdotool windowfocus` command failed, and if so gets the current window ID and retries the `windowfocus` command with the new ID.
+  In my experience, this solves the problem.
+  The `redraw!` command refreshes Vim's screen.
+  <!-- TODO: you can read more about Vimscript functions in the Vimscript article. -->
+
+- Finally, define a key mapping to call the `s:TexForwardShowZathura()` function by placing the following code in your `ftplugin/tex.vim`:
+  ```vim
+  nmap <localleader>v <Plug>TexForwardShow
+  noremap <script> <Plug>TexForwardShow <SID>TexForwardShow
+  noremap <SID>TexForwardShow :call <SID>TexForwardShowZathura()<CR>
+  ```
+  The updated `ftplugin/tex.vim` file would look something like this:
+  ```vim
+  " Get Vim's window ID for switching focus from Zathura to Vim after forward search
+  let g:window_id = system("xdotool getactivewindow")
+
+  function! s:TexForwardShowZathura() abort
+    VimtexView
+    sleep 100m  " give VimtexView 100 ms to complete; tweak value as needed
+    silent execute "!xdotool windowfocus " . expand(g:window_id)
+
+    " In case the windowfocus command failed; perhaps Vim's window ID changed
+    if v:shell_error
+      let g:window_id = system("xdotool getactivewindow")
+      silent execute "!xdotool windowfocus " . expand(g:window_id)
+    endif
+
+    redraw!
+  endfunction
+
+  nmap <localleader>v <Plug>TexForwardShow
+  noremap <script> <Plug>TexForwardShow <SID>TexForwardShow
+  noremap <SID>TexForwardShow :call <SID>TexForwardShowZathura()<CR>
+  ```
+  You could then use `<localleader>v` in Vim's normal mode to trigger forward show (you could of course change `<localleader>v` to whatever you prefer).
+  Since `s:TexForwardShowZathura()` is a script-local function, the above mapping needs to use Vim's `<SID>` mapping syntax, which might be unfamiliar;
+  this syntax is explained in this series' Vimscript article.
+  <!-- TODO: reference. -->
+
+### Skim (read this on macOS)
+Here is how to set up Skim to work with Vim/Neovim running VimTeX.
+Some of the steps are the same as for Zathura on Linux, so excuse the repetition:
+- You will, obviously, need Skim installed---you can download Skim as a macOS `dmg` file either from [the Skim homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
+  If you already have Skim installed, upgrade to the latest version to ensure forward search works properly.
+
+- In Skim, enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation): open Skim and navigate to `Preference` > `Sync` and select `Check for file changes` and `Reload automatically`.
+
+- You will need the VimTeX plugin installed. 
+  Check that the VimTeX PDF viewer interface is enabled by entering `:echo g:vimtex_view_enabled`, which will print `1` if VimTeX's PDF viewer interface is enabled and `0` if it is disabled.
+  (The interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and fix it before proceeding.)
+  
+- Place the following code in your `ftplugin/tex.vim` file:
+  ```vim
+  " Use Skim as the VimTeX PDF viewer
+  let g:vimtex_view_method = 'skim'
+  ```
+  If interested, see `:help vimtex-view-skim` for more information.
+
+- Use the `:VimtexView` command in Vim/Neovim to trigger forward search.
+  You can either type this command manually, use the default VimTeX shortcut `<localleader>lv`, or define your own shortcut;
+  to define your own shortcut place the following code in your `ftplugin/tex.vim` file:
+  ```vim
+  " Define a custom shortcut to trigger VimtexView
+  nmap <localleader>v <plug>(vimtex-view)
+  ```
+  You could then use `<localleader>v` to trigger forward search---of course you could replace `<localleader>v` with whatever shortcut you prefer.
+
+  *If forward search is not working, ensure Skim is fully up to date.*
+  VimTeX recently switched to a new forward search implementation (see [refactor skim viewer #2289](https://github.com/lervag/vimtex/pull/2289)) that requires an up-to-date Skim version to work properly.
+
+- If you are using terminal Vim, ensure Vim has started a server as described above in the section [Ensure Vim starts a server](#ensure-vim-starts-a-server).
+  If you are using Neovim or MacVim, lucky you---these programs start a server automatically and you have nothing to worry about.
+
+- Configure inverse search, which is done in Skim:
+  open Skim and navigate to `Preferences > Sync > PDF-TeX Sync Support`.
+  Depending on your editor, proceed as follows:
+  
+  - **MacVim:** select `MacVim` in the `Preset` field, which will automatically populate the `Command` and `Arguments` fields with correct values.
+
+  - **Neovim:** set the `Preset` field to `Custom`, set the `Command` field to `nvim`, and the `Arguments` field to
+    ```sh
+    --headless -c "VimtexInverseSearch %line '%file'"
+    ```
+
+  - **Vim:** set the `Preset` field to `Custom`, set the `Command` field to `vim`, and the `Arguments` field to
+    ```sh
+    -v --not-a-term -T dumb -c "VimtexInverseSearch %line '%file'"
+    ```
+
+  See `:help vimtex-synctex-inverse-search` to see where the above commands came from;
+  here is a short explanation:
+  - When you trigger inverse search, Skim will run the command in the `Command` field using the arguments in the `Arguments` field.
+  - `%file` and `%line` are macros provided by Skim that expand to the PDF file name and line number where inverse search was triggered, respectively,
+  - Both `Arguments` fields are just a sophisticated way to launch Neovim/Vim and call the `VimtexInverseSearch` function (provided by VimTeX) with the PDF line number and file name as parameters.
+    
+- In Skim, use `<Cmd>-<Shift>-<Left-Mouse-Click>` (i.e. a left mouse click while holding the command and shift buttons) in Skim to trigger inverse search.
+
+<!-- Issues -->
+<!-- - [Skim forward search not working on macOS 12.1 #2279](https://github.com/lervag/vimtex/issues/2279) -->
+<!-- - [#1438 Crash when calling displayline: Internal table overflow](https://sourceforge.net/p/skim-app/bugs/1438/) -->
+
+
+### Further reading
+Suggestion: read through the VimTeX documentation beginning at `:help g:vimtex_view_enabled` and ending at `:help g:vimtex_view_zathura_check_libsynctex`.
+Not all of the options will be relevant to your operating system or PDF reader, but there is plenty of interesting information and configuration options.
+Here is an example: VimTeX automatically opens your PDF reader when you first compile a document, even if you have not called `:VimtexView`.
+If you prefer to disable this behavior, place the following code in your `ftplugin/tex.vim`:
+```vim
+" Don't automatically open PDF viewer after first compilation
+let g:vimtex_view_automatic = 0
+```
 
 ## OS-agnostic steps
 ### Setting up Neovim for remote communication
@@ -194,45 +411,14 @@ Perform this on either macOS or Linux.
       ```
       You would then open `*.tex` files manually with `tvim myfile.tex` instead of `nvim myfile.tex`; of course change `tvim` to whatever you want.
 
-### Asynchronous command execution
-#### Running shell scripts from Vim
-The idea here, just like with compilation in the [previous article]({% link tutorials/vim-latex/compilation.md %}), is to call Skim's `displayline` script, a *shell script* normally called from the command line, *from within Vim*.
-Additionally, the `displayline` script should run asynchronously, to not freeze up Vim.
-
-##### Naive implementation
-The simplest way to execute shell commands from Vim is Vim's `:!{command}` functionality, which is documented at `:help :!cmd`.
-The process is straightforward: 
-
-1. in normal mode, enter `:` to enter Vim's command mode
-1. type `!`
-1. type a shell command and press Enter.
-
-For example, running `:!pdflatex myfile.tex` from Vim's command-line mode has the same effect as running `pdflatex myfile.tex` in a terminal emulator.
-
-##### Asynchronous commands with vim-dispatch
-- Problem: Vim's built-in `:!{command}` functionality runs synchronously---this means Vim freezes until the shell command finishes executing.
-For execution times over a few tens of milliseconds, this delay is unacceptable.
-Try running `:!pdflatex %` on a LaTeX file and see for yourself (`%` is a Vim macro for the current file).
-
-- Hacked solution: run the command in the background with `:!{command}&`.
-  This works only on Unix systems and won't show any output.
-
-- Actual solution: use an *asynchronous build plugin*.
-
-Asynchronous build plugins allow you to run shell commands asynchronously from within Vim without freezing up your editor.
-For this series I recommend Tim Pope's [`vim-dispatch`](https://github.com/tpope/vim-dispatch), but I have also used [skywind300](https://github.com/skywind3000)'s [asyncrun.vim](https://github.com/skywind3000/asyncrun.vim) with good results.
-You can install Dispatch or AsyncRun with the installation method of your choice, just like any other Vim plugin (see **TODO** prequisites).
-
-Both are straightforward to use---Dispatch provides a `:Start!` command while AsyncRun provides an `:AsyncRun` command; both are asynchronous equivalents of `:!`.
-For example:
-```vim
-:! pdflatex displayline 42 myfile.pdf myfile.tex  " show line 42 synchronously
-:Start! displayline 42 myfile.pdf myfile.tex      " show line 42 asynchronously
-:AsyncRun displayline 42 myfile.pdf myfile.tex    " show line 42 asynchronously
-```
 
 ## Setting up Skim (read this on macOS)
-First enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation): open Skim and navigate to `Preference` > `Sync` and select `Check for file changes` and `Reload automatically`.
+*Ensure you have an up-to-date version of Skim installed or forward search will not work.*
+Explanation: macOS 12+ Monterrey caused a previous version of Skim's forward search script to stop working; see [#1438 Crash when calling displayline: Internal table overflow](https://sourceforge.net/p/skim-app/bugs/1438/).
+The latest version of Skim fixes this issue.
+
+After making sure your Skim version is up to date, enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation) by opening Skim and navigating to `Preference` > `Sync`.
+Then select `Check for file changes` and `Reload automatically`.
 
 ### Forward search with Skim
 Skim ships with a shell script providing forward search---this script is called `displayline` and, for a default installation of Skim in macOS's `/Applications` folder, is found at `/Applications/Skim.app/Contents/SharedSupport/displayline`.
@@ -244,9 +430,9 @@ displayline [-r] [-b] [-g] LINE PDFFILE [TEXSOURCEFILE]
 You are basically telling Skim, "jump to the position in `PDFFILE` corresponding to the line number `LINE` in the LaTeX source file `TEXSOURCEFILE`".
 You can read more about `displayline` at [on SourceForge](https://sourceforge.net/p/skim-app/wiki/TeX_and_PDF_Synchronization/#setting-up-your-editor-for-forward-search).
 For our purposes:
-- `LINE` is the integer line number (starting at 1) in the `tex` source file from where the forward search is executed.
+- `LINE` is the integer line number (starting at 1) in the LaTeX source file from where the forward search is executed.
 - `PDFFILE` is the path to the to-be-displayed PDF file (and may be given relative to the directory from which `displayline` was called).
-- `TEXSOURCEFILE` is the path of the `tex` source file from which you make the `displayline` call.
+- `TEXSOURCEFILE` is the path of the LaTeX source file from which you make the `displayline` call.
 - the `-b` option highlights the jumped-to line in the PDF file in yellow.
   Use the `-b` option, if desired, to make it easier to see what line Skim moved to.
   (You can change the color in `Skim>Preferences>Display>Reading bar`).
@@ -262,7 +448,7 @@ For example, if run from a shell, a `displayline` call to show the PDF position 
 I use the full path to the displayline script, but I suppose if you add the script to your `PATH` environment variable you could use just `displayline`.
 
 #### Implementing forward show
-Suppose you wanted to use the key combination `<leader>f`, in normal mode, to trigger asynchronous forward search from the current `tex` file.
+Suppose you wanted to use the key combination `<leader>f`, in normal mode, to trigger asynchronous forward search from the current LaTeX file.
 Here's what you would do:
 
 - **TODO** If using Neovim's built-in jobs feature...
@@ -314,19 +500,19 @@ That's it! In either case, you should now be able to access forward show with `<
 You trigger backward search in Skim using `Command`+`Shift`+`Mouse-Click` on a line in the PDF file.
 For orientation, scroll up to the section [What is inverse search?](#what-is-inverse-search) for a big-picture idea of what inverse search actually is.
 
-First enable SyncTex integration in Skim by opening Skim and navigating to `Preferences > Sync > PDF-TeX Sync Support`.
+First enable SyncTeX integration in Skim by opening Skim and navigating to `Preferences > Sync > PDF-TeX Sync Support`.
 
 #### Backward search with MacVim and Skim
 In case you use the GUI editor MacVim, basically everything is done for you.
 Open Skim and navigate to `Preferences > Sync`.
-If you use any of the text editors listed in the `Preset` field, including MacVim, just select your editor and backward search should work out of the box, assuming you compile your LaTeX documents with SyncTex enabled.
+If you use any of the text editors listed in the `Preset` field, including MacVim, just select your editor and backward search should work out of the box, assuming you compile your LaTeX documents with SyncTeX enabled.
 
 #### Backward search with Neovim and Skim
 Things on Neovim are a bit more involved, but not too bad.
 First scroll back up and follow the steps for [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication).
 Then perform the following configuration in Skim:
 
-1. Open Skim and enable SyncTex in `Skim > Preferences > Sync > PDF-TeX Sync Support`.
+1. Open Skim and enable SyncTeX in `Skim > Preferences > Sync > PDF-TeX Sync Support`.
 
 1. Command line editors like Neovim and Vim require custom configuration of the `Command` and `Argument` fields.
    If you prefer the TLDR version, here are the values I use:
@@ -338,8 +524,8 @@ Then perform the following configuration in Skim:
    nvr --servername=/tmp/texsocket +%line "%file"
    ```
    About the macros: when properly configured with SyncTeX, Skim gives you the following information to work with:
-   - the full path of the `tex` source file to open in Neovim (stored in the `%file` macro), and
-   - the line number in the `tex` source file corresponding to the position you clicked in the PDF file (stored in the `%line` macro)
+   - the full path of the LaTeX source file to open in Neovim (stored in the `%file` macro), and
+   - the line number in the LaTeX source file corresponding to the position you clicked in the PDF file (stored in the `%line` macro)
 
    Your job is to use the `%line` and `%file` macros to construct a shell command that opens `%file` at line number `%line` in the editor of your preference.
    You need the `neovim-remote` script to open Neovim remotely; this is why the `Command` field reads `nvr` and not `nvim`; using `nvim` won't work because `nvim` cannot open files remotely.
@@ -526,7 +712,7 @@ Using `windowfocus` requires the ID number (e.g. in the format outputed by `xdot
 References: [online man page](https://man.archlinux.org/man/xdotool.1.en), [project webpage](https://www.semicomplete.com/projects/xdotool/), [GitHub page](https://github.com/jordansissel/xdotool)
 
 Workflow:
-- Use Vim's `system` function to query `xdotool getactivewindow` when switching to a buffer with the `tex` file type.
+- Use Vim's `system` function to query `xdotool getactivewindow` when switching to a buffer with the LaTeX file type.
   Store the window ID in an e.g. global Vim variable `g:window_id`.
   This will return the window ID of the window holding the Vim instance containing the LaTeX file.
   Example implementation: in `ftplugin/tex.vim` add
@@ -623,4 +809,34 @@ Note that `man zathura` does provide a forward search example, but I take a diff
   ```sh
   zathura -x "gvim --servername VIM --remote +%{line} %{input}" myfile.pdf
   ```
-  The `-x` option holds a standard remote process call to Vim and opens the file stored in Synctex's `%{input}` macro at the line number stored in `synctex`'s `%{line}` macro using `gvim` with the `--remote` option.
+  The `-x` option holds a standard remote process call to Vim and opens the file stored in SyncTeX's `%{input}` macro at the line number stored in `synctex`'s `%{line}` macro using `gvim` with the `--remote` option.
+
+## TODO
+- An alternate forward show implementation on macOS and Skim using displayline and using built-in jobs feature
+
+## Summary
+**Zathura on Linux** (using VimTeX)
+
+| Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
+| - | - | - | - | - |
+| NeoVim | ✅ | ✅ | ✅[^1] | ✅ |
+| Vim | ✅ | ✅ | ✅[^1] | ✅ |
+| gVim | ✅ | ✅ | ✅[^1] | ❌ |
+
+[^1]: If you use the `xdotool windowfocus` solution described in TODO, but not by default.
+
+**Zathura on macOS** (using VimTeX)
+
+| Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
+| - | - | - | - | - |
+| NeoVim | ✅ | ✅ | ✅ | ❌ |
+| Vim | ✅ | ❌ | ✅ | ❌ |
+| MacVim | ✅ | ✅ | ✅ | ❌ |
+
+**Skim on macOS** (using VimTeX)
+
+| Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
+| - | - | - | - | - |
+| NeoVim | ✅ | ✅ | ✅ | ❌ |
+| Vim | ✅ | ❌ | ✅ | ❌ |
+| MacVim | ✅ | ✅ | ✅ | ✅ |
