@@ -28,18 +28,6 @@ This article explains, for both macOS and Linux, how to set up an external PDF r
     * [Optional tip: Return focus to Vim after forward search](#optional-tip-return-focus-to-vim-after-forward-search)
   * [Skim (read this on macOS)](#skim-read-this-on-macos)
   * [Further reading](#further-reading)
-* [OS-agnostic steps](#os-agnostic-steps)
-  * [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication)
-* [Setting Up Zathura (read this on Linux)](#setting-up-zathura-read-this-on-linux)
-  * [Implementation](#implementation)
-  * [Documentation](#documentation)
-    * [Window manager control](#window-manager-control)
-    * [Forward search](#forward-search)
-      * [`synctex view` documentation](#synctex-view-documentation)
-      * [Zathura forward search documentation](#zathura-forward-search-documentation)
-    * [Backward search](#backward-search)
-      * [`synctex edit` documentation](#synctex-edit-documentation)
-      * [Zathura's inverse search documentation](#zathuras-inverse-search-documentation)
 * [TODO](#todo)
 * [Summary](#summary)
 
@@ -291,9 +279,10 @@ Here's what to do:
 Here is how to set up Skim to work with Vim/Neovim running VimTeX.
 Some of the steps are the same as for Zathura on Linux, so excuse the repetition:
 - You will, obviously, need Skim installed---you can download Skim as a macOS `dmg` file either from [the Skim homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
-  If you already have Skim installed, upgrade to the latest version to ensure forward search works properly.
+  *If you already have Skim installed, upgrade to the latest version,* which will ensure forward search works properly.
 
-- In Skim, enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation): open Skim and navigate to `Preference` > `Sync` and select `Check for file changes` and `Reload automatically`.
+- After making sure your Skim version is up to date, enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation) by opening Skim and navigating to `Preference` > `Sync`.
+  Then select `Check for file changes` and `Reload automatically`.
 
 - You will need the VimTeX plugin installed. 
   Check that the VimTeX PDF viewer interface is enabled by entering `:echo g:vimtex_view_enabled`, which will print `1` if VimTeX's PDF viewer interface is enabled and `0` if it is disabled.
@@ -360,293 +349,31 @@ If you prefer to disable this behavior, place the following code in your `ftplug
 let g:vimtex_view_automatic = 0
 ```
 
-## OS-agnostic steps
-### Setting up Neovim for remote communication
-Perform this on either macOS or Linux.
-
-1. Install the `neovim-remote` Python module, which is required for Neovim to work with RPC.
-   You can do this with `pip` just like any other Python package:
-   ```
-   pip install neovim-remote
-   ```
-   The `neovim-remote` executable is abbreviated to `nvr`, just like the `neovim` executable is abbreviated to `nvim`.
-
-1. To use `neovim-remote` (or any Python plugin) with Neovim, you need the `pynvim` module.
-   Install it with
-   ```
-   pip install pynvim
-   ```
-   
-1. When you open a `*.tex` file with Neovim, use the following command
-   ```
-   nvim --listen /tmp/texsocket myfile.tex
-   ```
-   Explanation: Neovim starts a server when launching, and this server allows external processes to communicate with Neovim using an RPC protocol.
-   By default, the server's listen address, (i.e. the location where programs that wish to communicate with Neovim should send commands) is randomly generated each time you open Neovim---you can view the current value with `:echo v:servername`.
-   Try `:echo v:servername` once after launching Neovim with the `--listen /tmp/texsocket` option and once without---you should see something wierd like `/var/folders/c2/lx18_n3d1vx2jklrvj06lmbh0000gn/T/nvimUTaK3R/0` in the former case and `/tmp/texsocket` in the latter. 
-   <!-- You can also check your `/tmp` directory to see if `/tmp/texsocket` was created. -->
-
-   To communicate remotely with Neovim, Skim must know Neovim's listen address, and all that the command `nvim --listen /tmp/texsocket myfile.tex` does is launch Neovim using the file `/tmp/texsocket` as a listen address (see `:help --listen`).
-   Using "socket" in the name is conventional because the file is a [*Unix domain socket*](https://en.wikipedia.org/wiki/Unix_domain_socket), but you could name the listen address whatever you want, as long as you can remember and reference the name later in Skim.
-
-   Of course, you don't want to go around typing `nvim --listen /tmp/texsocket` everytime you edit a LaTeX file.
-   I have two suggestions:
-   1. Configure your file manager (you have a highly-configurable command line file manager if you're using Neovim, right?) to open `*.tex` files using the command `nvim --listen /tmp/texsocket`. For example, I use the [`vifm` file manager](https://vifm.info/) and add the following to my `~/.config/vifm/vifmrc`:
-      ```vim
-      filetype {*.tex},<text/tex> nvim --listen /tmp/texsocket
-      ```
-      This opens all `*.tex` files with the command `nvim --listen /tmp/texsocket`; other command-line file browsers should have similar functionality.
-
-   1. Create a convenient shell alias, e.g. in your `~/.bashrc` if you use Bash, that you use for LaTeX files.
-      For example:
-      ```sh
-      alias tvim='nvim --listen /tmp/texsocket'
-      ```
-      You would then open `*.tex` files manually with `tvim myfile.tex` instead of `nvim myfile.tex`; of course change `tvim` to whatever you want.
-
-## Setting Up Zathura (read this on Linux)
-There are three main players you will see floating around in this section:
-1. Zathura's `--synctex-editor-command` option (abbreviated to `-x`), used to connect Zathura to a LaTeX source file for the purposes of inverse search.
-
-1. Zathura's `--synctex-forward` option, used for performing forward search when calling Zathura from Vim.
-
-1. The command-line tool [`xdotool`](https://github.com/jordansissel/xdotool), used to automatically switch focus from Zathura to Vim (so that, say, you don't have to manually switch back from Zathura to Vim to restart editing after every inverse search.)
-
-### Implementation
-First follow the steps in [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication).
-
-Then create `ftplugin/tex.vim` if you don't already have it, and inside add the following variables:
-```vim
-" Boolean-like variable to track if a Zathura instance is currently open
-" and displaying the PDF file associated with the current LaTeX buffer.
-" 1 means Zathura is open
-" 0 means Zathura is closed
-let b:zathura_open = 0   " initialize to Zathura closed
-
-" ID of the window holding Vim as understood by xdotool.
-" Used to switch focus from Zathura to Vim using xdotool.
-let g:window_id = system("xdotool getactivewindow")
-```
-Then create script-local Vimscript function called, for example, `s:TexForwardShowZathura`, which we will use to implement forward search.
-There is a lot of complicated-looking code, but the logic is simple: we are just setting correct values for Zathura's `--synctex-editor-command` and `synctex-forward` options with a bit of Vimscript string concatenation thrown in.
-```vim
-" The inverse search command that Zathura runs in response to Ctrl-Click,
-" which just runs the local shell script `latex-linux.sh` with a few parameters.
-" Note that the entire command is intentionally enclosed in double quotes.
-" A human-readable version of s:inverse_command is:
-" "latex-linux.sh %{input} %{line} <Vim-window-id>"
-let s:inverse_command = 
-      \'"${HOME}/.config/nvim/personal/inverse-search/latex-linux.sh ' .
-      \ ' %{input} %{line} ' .
-      \ expand(g:window_id) . '"'
-
-function! s:TexForwardShowZathura() abort
-    " A human-readable version of forward_command is:
-    " --synctex-forward line:col:myfile.tex myfile.pdf
-    " Get line and column numbers in LaTeX file when forward search is triggered
-    let forward_command = " --synctex-forward " .
-      \ line('.') . ":" .
-      \ col('.') . ":" .
-      \ expand('%:p') . " " .
-      \ expand('%:p:r') . ".pdf"
-
-    " If Zathura is already open.
-    " Note that setting `b:zathura_open = 0` is taken care of
-    " in the below jobstart call's `on_exit` handler.
-    if b:zathura_open
-        " Using the *synchronous* `execute` command ensures Zathura displays the
-        " correct PDF line and steals focus before we call `xdotool` a few lines
-        " below to switch focus back from Zathura to Vim.
-        " Zathura switching its displayed line takes a couple hundred ms max, 
-        # so synchronous execution is acceptable here.
-        execute "!zathura " . expand(forward_command)
-
-    " If Zathura is not yet open, set the -x (inverse search) option.
-    " Since the Zathura instance must remain open indefinitely, i.e. as long
-    " as we wish to have the PDF file open, asynchronous execution is essential.
-    " The `on_exit` handler will allow Vim to detect when Zathura closes.
-    else
-      jobstart("zathura -x " . 
-            \ s:inverse_command . " " .
-            \ forward_command,
-            \ {'on_exit': 'ZathuraExit'})
-
-      let b:zathura_open = 1
-      " Give Zathura time to open and steal focus from Vim before calling
-      " `xdotool` to switch focus back from Zathura to Vim.
-      sleep 250m  
-    endif
-
-    " The xdotool call finishes quickly enough to run synchronously, i.e. with `execute !`
-    execute "!xdotool windowfocus " . expand(g:window_id)
-    redraw!  " update Vim screen
-endfunction
-```
-Then add the following `ZathuraExit` function, which is used as the `on_exit` callback handler associated with the `jobstart` call used to launch Zathura in the code block above.
-Loosely, the `on_exit` event notifies Vim when Zathura closes, even if Zathura is not closed from Vim.
-We then update the Vim variable `b:zathura_open` to reflect the terminated connection between Vim and Zathura.
-See Neovim's `:help on_exit` for documentation; the Vim equivalent is `:help close_cb`.
-```vim
-" Callback function for use with job_start after Zathura closes.
-" Simply turns off the b:zathura_open variable.
-function! ZathuraExit(job_id, data, event)
-  let b:zathura_open = 0
-endfunction
-```
-As a last step in `ftplugin/tex.vim`, map the key combination `<leader>f` (or whatever else you like) to trigger forward show.
-```vim
-nmap <leader>f <Plug>TexForwardShow
-noremap <script> <Plug>TexForwardShow <SID>TexForwardShow
-noremap <SID>TexForwardShow :call <SID>TexForwardShowZathura()<CR>
-```
-See **TODO** reference for the theory of creating key mappings to call script-local functions.
-
-Finally, create a shell script (this example uses `${HOME}/.config/nvim/personal/inverse-search/latex-linux.sh`, but put it wherever you want as long as you update the `s:inverse_command` accordingly) with the following content:
-```sh
-#!/bin/sh
-# Used for inverse search from a PDF in Zathura 
-# to the corresponding *.tex in Neovim on Linux.
-# xdotool is used to return focus to the Vim window.
-#
-# SYNOPSIS
-#   inverse <tex_file> <line_num> <window_id>
-# ARGUMENT
-#    <tex_file>
-#     Path to the LaTeX file to open in Neovim
-#    
-#    <line_num>
-#     Line number to move the cursor to in the opened LaTeX file
-#    
-#    <window_id>
-#     Numerical ID of the window in which Vim is running
-#     as returned by `xdotool getactivewindow`.
-#     E.g. 10485762
-nvr --remote-silent --servername=/tmp/texsocket +"${2}" "${1}"
-xdotool windowfocus ${3}
-```
-
-### Documentation
-
-#### Window manager control
-Desired behavior:
-- After triggering forward show in Vim, return focus from Zathura back to the terminal (in my case Alacritty) running Vim.
-
-- After triggering inverse show in Zathura, switch focus from Zathura to the terminal running Vim
-
-We implement this behavior with `xdotool`'s `windowfocus` command.
-Using `windowfocus` requires the ID number (e.g. in the format outputed by `xdotool getactivewindow`) of the window to focus.
-
-References: [online man page](https://man.archlinux.org/man/xdotool.1.en), [project webpage](https://www.semicomplete.com/projects/xdotool/), [GitHub page](https://github.com/jordansissel/xdotool)
-
-Workflow:
-- Use Vim's `system` function to query `xdotool getactivewindow` when switching to a buffer with the LaTeX file type.
-  Store the window ID in an e.g. global Vim variable `g:window_id`.
-  This will return the window ID of the window holding the Vim instance containing the LaTeX file.
-  Example implementation: in `ftplugin/tex.vim` add
-  ```vim
-  let g:window_id = system("xdotool getactivewindow")
-  ```
-
-- Use `xdotool windowfocus <window>` to focus the window holding Vim.
-
-  Note also the possibility of switching focus back to a terminal (e.g. for the Alacritty terminal) with
-  ```sh
-  xdotool search --class "Alacritty" windowfocus
-  ```
-  But this is unreliable if you have multiple instances of the same terminal open.
-
-#### Forward search
-##### `synctex view` documentation
-- Reference: `synctex help view`
-- `synctex view` is a command used to implement forward search and is meant to be called by a text editor.
-
-- Full usage is (from `synctex view help`)
-  ```sh
-  synctex view -i line:column:[page_hint:]input -o output [-d directory] [-x viewer-command] [-h before/offset:middle/after]
-  ```
-  For practical purposes, the following seems to be enough:
-  ```sh
-  synctex view -i line:column:input -o output [-d directory]
-  ```
-  where
-  - `line` and `column` are 1-based integers representing the target line and column in text file
-    `input` is the path to the LaTeX source file (it should match the source file's name as it appears in a compilation `*.log` file.)
-
-  - `output` is the full path to the PDF file to be displayed 
-  (called output because it is the result of compiling the source file)
-
-  - `directory` is the directory containing the `*.synctex` file associated with LaTeX source file.
-    You can omit the `-d directory` option if the `*.pdf` and `*.synctex` files have the same parent directory
-
-  - Normally `synctex` outputs its result to `stdout`.
-    The `-x viewer-command` option is used launch a PDF reader with `synctex`'s output
-
-##### Zathura forward search documentation
-```sh
-zathura --synctex-forward <input> myfile.pdf
-```
-where `<input>` uses the same format as `synctex`'s `view -i`, which is documented in `synctex help view`
-
-From the `SYNCTEX SUPPORT` section of `man zathura`,
-
-> Zathura knows how to parse the output of the `synctex view` command.
-
-> It is enough to pass the arguments to `synctex view`'s `-i` option (i.e. `line:column:[page_hint:]tex_file`) to Zathura via Zathura's `--synctex-forward` option [and Zathura will take care of the rest].
-
-Lesson: call Zathura from Vim with
-```sh
-zathura --synctex-forward line:column:input.tex output.pdf
-```
-Note that `man zathura` does provide a forward search example, but I take a different route in this text.
-
-#### Backward search
-##### `synctex edit` documentation
-
-- Reference: `synctex help edit`
-
-- `synctex edit` is a command used to implement inverse search and is meant to be called by a PDF reader.
-
-- Full usage is (from `synctex edit help`)
-  ```sh
-  synctex edit -o page:x:y:file [-d directory] [-x editor-command] [-h offset:context]
-  ```
-  What's relevant on the user's end is the `-x editor-comand` option.
-
-  The `editor-command` should be a `printf`-like string, but that sounds scary if you don't know how `printf` works.
-  Basically `synctex` gives you the following macros to work with:
-  - `%{output}` is the full path to the output (PDF) document, with no extension.
-  - `%{input}` is the full path to the input (LaTeX) document.
-  - `%{line}` is the 0-based line number specifier; use `%{line+1}` for 1-based lines
-  `%{column}` is the 0-based column number specifier; `%{column+1}` for 1-based columns.
-  - `%{offset}` is the 0 based offset specifier and 
-  - `%{context}` "is the context specifier of the hint". What is that?
-
-  You can then use the macros to construct a command that opens the text editor of your choice at the desired `{line}` and `{column}`
-
-- Note that if the `-x` option is not provided to `synctex edit`, the content of the `SYNCTEX_EDITOR` environment variable is used instead.
-
-##### Zathura's inverse search documentation
-- In Zathura inverse search is triggered with `<Ctrl><Left mouse click>`
-
-- Open a Zathura instance with the `-x` option, which should contain, in quotes, the command the opened Zathura instance should run in response to `<Ctrl><Left mouse click>`
-
-  The `-x` command seems to be the analog of the `-x` option in the `synctex view` command and can use the same syntax and macros.
-
-- Here is an example from `man zathura` to give you an idea of how you could use the `-x` option:
-  ```sh
-  zathura -x "gvim --servername VIM --remote +%{line} %{input}" myfile.pdf
-  ```
-  The `-x` option holds a standard remote process call to Vim and opens the file stored in SyncTeX's `%{input}` macro at the line number stored in `synctex`'s `%{line}` macro using `gvim` with the `--remote` option.
-
 ## TODO
-- An alternate forward show implementation on macOS and Skim using displayline and using built-in jobs feature
+- Note that Vim inverse search on macOS does not work in my testing.
+  If you want inverse search on macOS use Neovim or MacVim.
+
+  Try `vim --serverlist` and notice that it is empty, even if `vim --version` lists `+clientserver` and `echo v:servername` is not empty.
+
+  See `:help macvim-clientserver` (only available if you use MacVim's version of `vim`) and note the line
+  > Server listings are made possible by the frontend (MacVim) keeping a list of all currently running servers. Thus servers are not aware of each other directly; only MacVim know which servers are running.
+  
+  See also [Client Server mode does not work in non-GUI macvim #657](https://github.com/macvim-dev/macvim/issues/657)
+
+  Note that Homebrew used to offer `brew install vim --with-client-server`, but this option is no longer available.
+  It may well be possible to compile a version of non-MacVim, terminal Vim from source that includes `+clientserver`, but that is beyond the scope of this tutorial, and would probably be more work than just switching to Neovim.
+
+- Neovim and Skim inverse search using `nvr` instead of `VimtexInverseSearch`
+- Neovim and Zathura inverse search using `nvr` instead of `VimtexInverseSearch`
+- Forward show implementation on macOS and Skim using displayline and using built-in jobs feature. 
+  Because I can.
 
 ## Summary
 **Zathura on Linux** (using VimTeX)
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
 | - | - | - | - | - |
-| NeoVim | ✅ | ✅ | ✅[^1] | ✅ |
+| Neovim | ✅ | ✅ | ✅[^1] | ✅ |
 | Vim | ✅ | ✅ | ✅[^1] | ✅ |
 | gVim | ✅ | ✅ | ✅[^1] | ❌ |
 
@@ -656,7 +383,7 @@ Note that `man zathura` does provide a forward search example, but I take a diff
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
 | - | - | - | - | - |
-| NeoVim | ✅ | ✅ | ✅ | ❌ |
+| Neovim | ✅ | ✅ | ✅ | ❌ |
 | Vim | ✅ | ❌ | ✅ | ❌ |
 | MacVim | ✅ | ✅ | ✅ | ❌ |
 
@@ -664,6 +391,6 @@ Note that `man zathura` does provide a forward search example, but I take a diff
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Editor gets focus after inverse search |
 | - | - | - | - | - |
-| NeoVim | ✅ | ✅ | ✅ | ❌ |
+| Neovim | ✅ | ✅ | ✅ | ❌ |
 | Vim | ✅ | ❌ | ✅ | ❌ |
 | MacVim | ✅ | ✅ | ✅ | ✅ |
