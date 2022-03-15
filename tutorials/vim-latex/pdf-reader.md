@@ -30,13 +30,6 @@ This article explains, for both macOS and Linux, how to set up an external PDF r
   * [Further reading](#further-reading)
 * [OS-agnostic steps](#os-agnostic-steps)
   * [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication)
-* [Setting up Skim (read this on macOS)](#setting-up-skim-read-this-on-macos)
-  * [Forward search with Skim](#forward-search-with-skim)
-    * [Implementing forward show](#implementing-forward-show)
-  * [Backward search](#backward-search)
-    * [Backward search with MacVim and Skim](#backward-search-with-macvim-and-skim)
-    * [Backward search with Neovim and Skim](#backward-search-with-neovim-and-skim)
-    * [Backward search with Vim and Skim](#backward-search-with-vim-and-skim)
 * [Setting Up Zathura (read this on Linux)](#setting-up-zathura-read-this-on-linux)
   * [Implementation](#implementation)
   * [Documentation](#documentation)
@@ -44,7 +37,7 @@ This article explains, for both macOS and Linux, how to set up an external PDF r
     * [Forward search](#forward-search)
       * [`synctex view` documentation](#synctex-view-documentation)
       * [Zathura forward search documentation](#zathura-forward-search-documentation)
-    * [Backward search](#backward-search-1)
+    * [Backward search](#backward-search)
       * [`synctex edit` documentation](#synctex-edit-documentation)
       * [Zathura's inverse search documentation](#zathuras-inverse-search-documentation)
 * [TODO](#todo)
@@ -410,172 +403,6 @@ Perform this on either macOS or Linux.
       alias tvim='nvim --listen /tmp/texsocket'
       ```
       You would then open `*.tex` files manually with `tvim myfile.tex` instead of `nvim myfile.tex`; of course change `tvim` to whatever you want.
-
-
-## Setting up Skim (read this on macOS)
-*Ensure you have an up-to-date version of Skim installed or forward search will not work.*
-Explanation: macOS 12+ Monterrey caused a previous version of Skim's forward search script to stop working; see [#1438 Crash when calling displayline: Internal table overflow](https://sourceforge.net/p/skim-app/bugs/1438/).
-The latest version of Skim fixes this issue.
-
-After making sure your Skim version is up to date, enable automatic document refreshing (so Skim will automatically update the displayed PDF after each compilation) by opening Skim and navigating to `Preference` > `Sync`.
-Then select `Check for file changes` and `Reload automatically`.
-
-### Forward search with Skim
-Skim ships with a shell script providing forward search---this script is called `displayline` and, for a default installation of Skim in macOS's `/Applications` folder, is found at `/Applications/Skim.app/Contents/SharedSupport/displayline`.
-
-The `displayline` call signature is
-```
-displayline [-r] [-b] [-g] LINE PDFFILE [TEXSOURCEFILE]
-```
-You are basically telling Skim, "jump to the position in `PDFFILE` corresponding to the line number `LINE` in the LaTeX source file `TEXSOURCEFILE`".
-You can read more about `displayline` at [on SourceForge](https://sourceforge.net/p/skim-app/wiki/TeX_and_PDF_Synchronization/#setting-up-your-editor-for-forward-search).
-For our purposes:
-- `LINE` is the integer line number (starting at 1) in the LaTeX source file from where the forward search is executed.
-- `PDFFILE` is the path to the to-be-displayed PDF file (and may be given relative to the directory from which `displayline` was called).
-- `TEXSOURCEFILE` is the path of the LaTeX source file from which you make the `displayline` call.
-- the `-b` option highlights the jumped-to line in the PDF file in yellow.
-  Use the `-b` option, if desired, to make it easier to see what line Skim moved to.
-  (You can change the color in `Skim>Preferences>Display>Reading bar`).
-- the `-g` option disables switching window focus to Skim after `displayline` is called; use `-g` to keep focus in your text editor.
-- I don't know what the `-r` option does.
-  The `displayline` documentation has the following to say: `-r, -revert Revert the file from disk if it was open`.
-  Please let me know if you know know more!
-
-For example, if run from a shell, a `displayline` call to show the PDF position associated with line 42 of the LaTeX file `myfile.tex`, using the `b` and `g` options, would read
-```sh
-/Applications/Skim.app/Contents/SharedSupport/displayline -bg 42 myfile.pdf myfile.tex
-```
-I use the full path to the displayline script, but I suppose if you add the script to your `PATH` environment variable you could use just `displayline`.
-
-#### Implementing forward show
-Suppose you wanted to use the key combination `<leader>f`, in normal mode, to trigger asynchronous forward search from the current LaTeX file.
-Here's what you would do:
-
-- **TODO** If using Neovim's built-in jobs feature...
-
-- If using Vim 8+'s built-in jobs feature...
-
-- If using `vim-dispatch`, place the following in `ftplugin/tex.vim`:
-  ```vim
-  nnoremap <leader>f :execute "Start! " .
-        \ "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g " .
-        \ line('.') . " " .
-        \ expand('%:r') . ".pdf " .
-        \ expand('%')<CR>
-  ```
-  The macro `%` gives the current file name relative to Vim's CWD, and the modified version `%:r` gives the file name without extension.
-  See `:help cmdline-special` and `:help filename-modifiers`.
-  **TODO** also link to compilation or maybe just cover Vim's `filename-modifiers` in the Vimscript theory article.
-
-  There is one potential issue: by default `vim-dispatch` tries to open a new window to show the `Start!` command's output.
-  This is great when viewing compilation logs, but I find it disorienting for forward search, where I just want to jump to the PDF reader with minimal distractions.
-  You can force the `Start!` command into `headless` mode, which won't open a new window, with the following configuration:
-  ```vim
-  let g:dispatch_no_tmux_start = 1
-  let g:dispatch_no_screen_start = 1
-  let g:dispatch_no_terminal_start = 1
-  let g:dispatch_no_windows_start = 1
-  let g:dispatch_no_iterm_start = 1
-  let g:dispatch_no_x11_start = 1
-  ```
-  You could add this code, for example, just below the forward search key mapping to `<leader>f`.
-  I recommend reading `:help dispatch-strategies` to see `vim-dispatch`'s runtime handlers, their order of preference, and how to disable them as shown above.
-  You can view the handlers with `echo g:dispatch_handlers` or, if you're interested, check the `vim-dispatch` source code in `vim-dispatch/plugin/dispatch.vim` (line 88 at the time of writing).
-
-- If using `asyncrun.vim`, place the following in `ftplugin/tex.vim`:
-  ```vim
-  nnoremap <leader>f :execute "AsyncRun -silent -strip " .
-        \ "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g " .
-        \ line('.') .
-        \ " $(VIM_RELDIR)/$(VIM_FILENOEXT).pdf" .
-        \ " $(VIM_RELNAME)"<CR>
-  ```
-  Because I prefer to silence output from forward search commands, I included the `AsyncRun` options `-silent` and `-strip` to stop the QuickFix menu from opening and to suppress AsyncRun's status messages.
-  These are documented in `:help asyncrun-run-shell-command`, but you have to scroll down a bit.
-
-That's it! In either case, you should now be able to access forward show with `<leader>f` in normal mode.
-
-
-### Backward search
-You trigger backward search in Skim using `Command`+`Shift`+`Mouse-Click` on a line in the PDF file.
-For orientation, scroll up to the section [What is inverse search?](#what-is-inverse-search) for a big-picture idea of what inverse search actually is.
-
-First enable SyncTeX integration in Skim by opening Skim and navigating to `Preferences > Sync > PDF-TeX Sync Support`.
-
-#### Backward search with MacVim and Skim
-In case you use the GUI editor MacVim, basically everything is done for you.
-Open Skim and navigate to `Preferences > Sync`.
-If you use any of the text editors listed in the `Preset` field, including MacVim, just select your editor and backward search should work out of the box, assuming you compile your LaTeX documents with SyncTeX enabled.
-
-#### Backward search with Neovim and Skim
-Things on Neovim are a bit more involved, but not too bad.
-First scroll back up and follow the steps for [Setting up Neovim for remote communication](#setting-up-neovim-for-remote-communication).
-Then perform the following configuration in Skim:
-
-1. Open Skim and enable SyncTeX in `Skim > Preferences > Sync > PDF-TeX Sync Support`.
-
-1. Command line editors like Neovim and Vim require custom configuration of the `Command` and `Argument` fields.
-   If you prefer the TLDR version, here are the values I use:
-   - `Command`: `nvr`
-   - `Argument`: `--servername=/tmp/texsocket +%line "%file"`
-
-   And here's an explanation: When you trigger backward search in Skim, Skim runs the shell command in the `Command` field using the arguments in the `Arguments` field; in my case, if you ignore the Skim-specific `%line` and `%file` macros for a moment, this is the equivalent of opening a terminal and typing
-   ```
-   nvr --servername=/tmp/texsocket +%line "%file"
-   ```
-   About the macros: when properly configured with SyncTeX, Skim gives you the following information to work with:
-   - the full path of the LaTeX source file to open in Neovim (stored in the `%file` macro), and
-   - the line number in the LaTeX source file corresponding to the position you clicked in the PDF file (stored in the `%line` macro)
-
-   Your job is to use the `%line` and `%file` macros to construct a shell command that opens `%file` at line number `%line` in the editor of your preference.
-   You need the `neovim-remote` script to open Neovim remotely; this is why the `Command` field reads `nvr` and not `nvim`; using `nvim` won't work because `nvim` cannot open files remotely.
-   Note that the `%file` macro is quoted to escape potential white spaces in file names.
-
-   Finally, the `+%line` thing (which might evaluate in practice to, say, `+42` or `+100`) just opens Neovim at the line contained in Skim's `%line` macro.
-   In general, `nvim +[linenum]` or `nvr +[linenum]` opens Neovim with the cursor positioned at line `linenum`---this is documented in the `OPTIONS` section of `man nvim`, but you have to scroll down a bit.
-   For more information about `neovim-remote`, enter `nvr --help` on a command line.
-
-**Tip: Return focus to Neovim** 
-
-By default, in my experience, Skim does not switch focus back to terminal editors (it does for MacVim, though).
-To get around this, you can append `&& open -a iTerm` (if you use `iTerm` as your terminal, for example) to switch focus back to `iTerm` once the `nvr` command executes successfully.
-The full Skim backward search fields would then read
-
-- `Command`: `nvr`
-- `Argument`: `--servername=/tmp/texsocket +%line "%file" && open -a iTerm`
-
-Of course replace `iTerm` with the terminal application of your choice, e.g. `open -a Alacritty` or `open -a Terminal`.
-(The `open -a` command is a macOS command that opens a given application.)
-
-**Another approach:** For another take on the same problem, check out [jdhao's nice guide on setting up backward search in Neovim](https://jdhao.github.io/2021/02/20/inverse_search_setup_neovim_vimtex/) on both macOS and Windows.
-This guide stores Neovim's server address differently than I described above: instead of launching Neovim with the `--listen /tmp/texsocket` option, it uses Neovim's default, randomly-generated server address and writes `v:servername` to a text file at `/tmp/vimtexserver.txt`, which it then reads from Skim using the `cat /tmp/vimtexserver.txt`.
-
-#### Backward search with Vim and Skim
-**TLDR**: If you want inverse search on macOS use Neovim or MacVim.
-
-*I have not yet figured out how to set up inverse search with terminal Vim.*
-But I thought I might provide a few pointers if you want to play around with this yourself.
-
-- *Important*: Vim must be compiled with the `clientserver` option for backward search to work.
-  On a command line enter `vim --version` and ensure the output includes `+clientserver` (as opposed to `-clientserver`).
-  If your Vim does not have `clientserver`, a solution is to uninstall your current Vim, install MacVim (e.g. `brew install macvim`), and then use `vim` as usually.
-  Even if you don't use the GUI, installing MacVim should also ship a version of Vim with `clientserver` enabled.
-
-- From the documentation in `:help clientserver` you *should* be able to
-  1. Open Vim with `vim --servername VIM myfile.tex`, or use `:call remote_startserver("VIM")` after launching Vim.
-     Use `:echo v:servername` to ensure Vim's server name was set to `VIM`.
-
-  2. In your PDF reader, use an inverse search command like
-     ```sh
-     vim --servername VIM --remote +{linenumber} {file}
-     ```
-     Translated to Skim's syntax, this would be
-     ```sh
-     vim --servername VIM --remote +%line "%file"
-     ```
-  3. Compile LaTeX documents with `synctex` enabled and trigger inverse search in Skim, as usual, with `<Cmd>+<Shift>+<Mouse-Click>`.
-
-  But I did not get this to work when writing this series, and I would appreciate any solutions.
 
 ## Setting Up Zathura (read this on Linux)
 There are three main players you will see floating around in this section:
