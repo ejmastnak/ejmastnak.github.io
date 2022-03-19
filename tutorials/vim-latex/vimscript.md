@@ -28,7 +28,6 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Scope of script-local functions](#scope-of-script-local-functions)
     * [Why use script-local functions?](#why-use-script-local-functions)
     * [Calling script-local functions using SID key mappings](#calling-script-local-functions-using-sid-key-mappings)
-  * [Mappings: Safety mechanisms](#mappings-safety-mechanisms)
   * [Notes: mapping](#notes-mapping)
   * [Map arguments](#map-arguments)
   * [Script-local mappings](#script-local-mappings)
@@ -376,44 +375,6 @@ nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 ```
 But it is conventional to use similar names for the `<Plug>` mapping, `<SID` mapping, and function definition.
 
-### Mappings: Safety mechanisms
-- Use the two-step `<Plug>{DescriptiveName}` method for defining mappings in plugins that others might use.
-  The choice of `<Plug>{DescriptiveName}` should be something that would be unique (within reasonable expectations).
-
-- Then for a useful mapping use 
-  ```
-  if !hasmapto("<Plug>{PlugName}", "{mapmode}") && "" == mapcheck("{mapping}","{mapmode}")
-    {mode}map {mapping} <Plug>{PlugName}
-  endif
-
-  " example with <Plug>TexCompile mapped to <leader>c in normal mode
-  if !hasmapto("<Plug>TexCompile", "n") && "" == mapcheck("<leader>c","n")
-    nmap <leader>c <Plug>TexCompile
-  endif
-  ```
-  Alternatively, or as an additional safety mechanism, define a variable (e.g.) `g:my_plugin_no_mappings` and to something like
-  ```
-  if !exists("g:my_plugin_no_mappings") || ! g:my_plugin_no_mappings
-    nmap <leader>c <Plug>TexCompile
-  endif
-  ```
-  I recommend learning from the experts: check for example the very bottom to Tim Pope's `surround.vim` or `commentary.vim`.
-
-- Note that these are hardcore safety mechanisms and are needed only if the plugin will be distributed to other people, to avoid overwriting their existing mappings and whatnot.
-  You can be sloppier (or I guess less cautious) if you are writting only for yourself.
-
-- Another take: If you want to be REALLY conservative, the Vim docs (see `:help write-filetype-plugin`) recommend the following:
-  ```
-  if !exists("g:no_plugin_maps") && !exists("g:no_tex_plugin_maps")
-    if !hasmapto('<Plug>TexCompile')
-      nmap <buffer> <LocalLeader>c <Plug>TexCompile
-    endif
-    nnoremap <buffer> <script> <Plug>TexCompile <SID>TexCompile
-    nnoremap <SID>Compile  :call <SID>TexCompile()<CR>
-  endif
-  ```
-  The variable `g:no_plugin_maps` disables mappings for all filetype plugins while `g:no_tex_plugin_maps` disables mappings specific to the `tex` filetype plugin.
-  
 ### Notes: mapping
 - `:help mapmodes` for documentation of map modes; in practice: the meaning of `nmap`, `imap`, `map`, and so on.
 
