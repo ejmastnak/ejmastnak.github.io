@@ -21,6 +21,7 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [How Vim loads filetype plugins](#how-vim-loads-filetype-plugins)
 * [Key mappings](#key-mappings)
   * [Writing key mappings](#writing-key-mappings)
+    * [Remapping: `map` and `noremap`](#remapping-map-and-noremap)
     * [Map modes](#map-modes)
     * [The leader key](#the-leader-key)
     * [The local leader key](#the-local-leader-key)
@@ -204,6 +205,21 @@ Here is what's involved in the mapping definition:
 The command `:map {lhs} {rhs}` then maps the key sequence `{lhs}` to the key sequence `{rhs}` in the Vim mode in which the mapping applies.
 
 You probably already have some key mappings in your `vimrc` or `init.vim`.
+
+#### Remapping: `map` and `noremap`
+I will cover this topic only briefly (its really not too complicated), and refer you to Steve Losh's nice description of the same content in [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough treatment.
+
+Here is the TLDR version:
+- Vim offers two types of mapping commands
+  1. The *recursive* commands `map`, `nmap`, `imap`, and their other `*map` relatives
+  2. The *non-recursive* commands `noremap`, `nnoremap`, `inoremap`, and their other `*noremap` relatives
+- Both `:map {lhs} {rhs}` and `:noremap {lhs} {rhs}` will map `{lhs}` to `{rhs}`, but if any keys in the `{rhs}` of a `:map` mapping have been used the `{lhs}` of a second mapping (e.g. somewhere else in your Vim config or in third-party plugin), then the second mapping will be triggered as a result of the first (often with unexpected results!).
+
+  Using `:noremap {lhs} {rhs}` is safer---it ensures that even if `{rhs}` contains the `{lhs}` of a second mapping, the second mapping won't interfere with the first.
+  *In practice, you should always use* `noremap` *or its* `*noremap` *relatives unless you have a very good reason not to* (e.g. when working with `<Plug>` or `<SID>` mappings, which are meant to be remapped, and which I cover later in this article).
+  <!-- **TODO** reference -->
+
+Again, if desired, check out [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough discussion of `map` and `noremap`.
 
 #### Map modes
 The documentation at `:help map-modes` gives an overview of the various map commands (`nmap`, `imap`, `map`, etc...) and the Vim modes in which they apply.
