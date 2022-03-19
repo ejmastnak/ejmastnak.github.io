@@ -28,7 +28,6 @@ This article provides a theoretical background for use of Vimscript in filetype-
   * [Script-local mappings](#script-local-mappings)
     * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
     * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
-* [Plugin best practices](#plugin-best-practices)
 * [Writing Vimscript functions](#writing-vimscript-functions)
   * [About this section](#about-this-section)
   * [Function definition syntax](#function-definition-syntax)
@@ -369,38 +368,7 @@ Often, regular users writing plugins for themselves won't find compelling reason
 
   `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
 
-
 - `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
-
-
-## Plugin best practices
-This section lists some of the best practices suggested in `:help write-plugin` and `:help write-filetype-plugin`.
-
-- Use a unique global variable, conventionally something like `g:loaded_myplugin`, as a safety mechanism to prevent loading a user-defined plugin twice.
-  Then include the following Vimscript at the *very start* of your plugin (before implementing any functionality):
-  ```vim
-  if exists("g:loaded_myplugin")  " if `g:loaded_myplugin` exists, the plugin was already loaded
-    finish  " exit immediately
-  endif
-  let g:loaded_myplugin = 1       " record that plugin has been loaded
-  ```
-  This technique, besides avoiding problems with twice-defined autocommands and functions, allows users to disable loading the plugin, if desired---a user who wouldn't want to use the plugin would set `g:loaded_myplugin = 1` (or any other value, as long as they create the variable) somewhere in their `vimrc`.
-  The safety mechanism above would immediately `finish` and exit the plugin upon finding that `g:loaded_myplugin` was already defined.
-  Reference: the `NOT LOADING` section of `:help write-plugin`.
-
-- Use `:setlocal` instead of `:set` for options in filetype-specific plugins.
-  Using `:setlocal` keeps modifications local to the current buffer, and it makes sense to keep filetype-specific modifications local to the buffer with the target filetype.
-  See `:help :setlocal` and the `OPTIONS` section of `:help ftplugin` for reference.
-
-- Use the `<buffer>` keyword with any key mappings (discussed in detail in **TODO** reference) used in filetype specific plugins---this keeps the mappings local to the buffer with the target file type.
-  Analogously, consider using `<LocalLeader>` instead of `<Leader>` for leader key mappings in filetype-specific plugins---`<LocalLeader>` gives users the option to use filetype-specific leader keys.
-
-  In fact, you can go down a whole rabbit hole of filetype-specific keymap safety mechanisms that I haven't listed here---see the `MAPPINGS` section of `:help ftplugin` if feeling inspired.
-
-- Vim actually comes with built-in filetype plugins for common file types---you can view them at `$VIMRUNTIME/ftplugin`.
-  To use most of a built-in filetype plugin and only overwrite a few settings, put your modifications in `nvim/after/ftplugin/filetype.vim`.
-  Vim's built-in filetype plugin will be loaded, and then whatever you have in `after/` will overwrite any settings you changed.
-  Reference: the `DISABLING` section of `:help ftplugin`.
 
 
 ## Writing Vimscript functions
@@ -601,23 +569,32 @@ nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 But it is conventional to use similar names for the `<Plug>` mapping, `<SID` mapping, and function definition.
 
 ### Autoload functions
-See `:help autoload-functions`.
-Basically...
-- In an `autoload/` directory somewhere in your Vim `runtimepath`, create a Vimscript file `my_functions.vim`.
-  Inside `autoload/my_functions.vim`, define a function with the syntax
+I briefly cover autoload functions here only for the sake of completeness.
+You probably won't use them for your own purposes, but the VimTeX plugin makes heavy use of autoload functions, so you might run into them when browsing the VimTeX source code.
+
+Summarizing somewhat, autoload functions are essentially an optimization to slightly lower Vim's start-up time---instead of Vim reading and loading them into memory during initial start-up, like regular functions, Vim will load autoload functions only when they are first called.
+On modern hardware, the resulting decrease in start-up time will be noticeable only for a large plugin with hundreds of functions, like VimTeX.
+
+Here is the basic workflow for using autoload functions:
+
+- In an `autoload/` directory somewhere in your Vim `runtimepath`, create a Vimscript file, for example `my_function_script.vim`.
+
+- Inside `autoload/my_function_script.vim`, define a function with the syntax
   ```
-  function my_functions#function_name()
+  function my_function_script#function_name()
     " function body
   endfunction
   ```
-  The general syntax is `{filename}#{function-name}`.
-  The `filename` must exactly match the name of the Vimscript file within which the function is defined.
+  The general naming syntax is `{filename}#{function-name}`, where
+  `{filename}` must exactly match the name of the Vimscript file within which the function is defined.
   When autoloading functions, it is conventional that `function-name` starts with lowercase characters.
 
-  Call the function as `call my_functions#function_name()`.
-  What happens: Vim recognizes the `{filename}#{function-name}` syntax, realizes the function is an autoload function, and searches all `autoload` directories in your Vim `runtimepath` for files name `filename`, then within these files searchs for functions named `function_name`.
-  If a match is found, a function is loaded into memory and should be visible with `:function`.
+- When needed, call the function using `call my_function_script#function_name()`.
+  
+  Here is what happens: Vim recognizes the `{filename}#{function-name}` syntax, realizes the function is an autoload function, and searches all `autoload` directories in your Vim `runtimepath` for files name `filename`, then within these files searchs for functions named `function_name`.
+  If a match is found, a function is loaded into memory, can be called by the user, and should be visible with `:function`.
 
+You can find official documentation of autoload functions at `:help autoload-functions`, and 
 
 <!-- **Variables** -->
 <!-- - For declaring internal variables, see `:help internal-variables` -->
