@@ -19,6 +19,16 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Automatic filetype detection](#automatic-filetype-detection)
     * [Manual filetype detection](#manual-filetype-detection)
     * [How Vim loads filetype plugins](#how-vim-loads-filetype-plugins)
+* [Key mappings](#key-mappings)
+  * [Writing key mappings](#writing-key-mappings)
+    * [Map modes](#map-modes)
+    * [Map arguments](#map-arguments)
+    * [Leader key](#leader-key)
+  * [Listing mappings and getting information](#listing-mappings-and-getting-information)
+  * [Script-local mappings](#script-local-mappings)
+    * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
+    * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
+* [Plugin best practices](#plugin-best-practices)
 * [Writing Vimscript functions](#writing-vimscript-functions)
   * [About this section](#about-this-section)
   * [Function definition syntax](#function-definition-syntax)
@@ -28,12 +38,6 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Scope of script-local functions](#scope-of-script-local-functions)
     * [Why use script-local functions?](#why-use-script-local-functions)
     * [Calling script-local functions using SID key mappings](#calling-script-local-functions-using-sid-key-mappings)
-  * [Notes: mapping](#notes-mapping)
-  * [Map arguments](#map-arguments)
-  * [Script-local mappings](#script-local-mappings)
-  * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
-  * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
-* [Plugin best practices](#plugin-best-practices)
   * [Autoload functions](#autoload-functions)
 
 <!-- vim-markdown-toc -->
@@ -176,6 +180,227 @@ For our purposes:
 As a best practice, keep filetype-specific settings in dedicated `{filetype}.vim` files inside `ftplugin/`.
 Think of `ftplugin/{filetype.vim}` as a `vimrc` for that file type only.
 Keep your `init.vim` for global settings you want to apply to all files.
+
+
+
+## Key mappings
+Vim key mappings allow you to customize the meaning of typed keys,
+and I would count them among the fundamental Vim configuration tools.
+In the context of this series, key mappings are mostly used to define shortcuts for calling commands and functions that would be tedious to type out in full (similar to aliases in, say, the Bash shell).
+
+### Writing key mappings
+The `Key mapping` chapter in the documentation file `map.txt`, which you can access with `:help key-mapping`, contains the official documentation of key mappings.
+I will summarize here what I deem necessary for understanding the key mappings used in this series. 
+
+The most general syntax for defining a key mapping is
+```vim
+:map {lhs} {rhs}
+```
+Here is what's involved in the mapping definition:
+- `{lhs}`: A (generally short and memorable) key combination you wish to map
+- `{rhs}`: A (generally longer, tedious-to-manually-type) key combination you want the short, memorable `{lhs}` to trigger.
+- The Vim mode you want the mapping to apply in, which you can control by replacing `:map` with `:nmap` (normal mode), `:vmap` (visual mode), `:imap` (insert mode), or a host of other related commands, listed in `:help :map-commands`.
+
+The command `:map {lhs} {rhs}` then maps the key sequence `{lhs}` to the key sequence `{rhs}` in the Vim mode in which the mapping applies.
+
+You probably already have some key mappings in your `vimrc` or `init.vim`.
+
+#### Map modes
+The documentation at `:help map-modes` gives an overview of the various map commands (`nmap`, `imap`, `map`, etc...) and the Vim modes in which they apply.
+For your convenience, here is table summarizing Vim's command and map modes, taken from `:help map-table`:
+
+  |       | normal | insert | command | visual | select | operator-pending | terminal | lang-arg |
+  | -----------  |------|-----|-----|-----|-----|-----|------|------| 
+  | `[nore]map`  | yes  |  -  |  -  | yes | yes | yes |  -   |  -   |
+  | `n[nore]map` | yes  |  -  |  -  |  -  |  -  |  -  |  -   |  -   |
+  | `[nore]map!` |  -   | yes | yes |  -  |  -  |  -  |  -   |  -   |
+  | `i[nore]map` |  -   | yes |  -  |  -  |  -  |  -  |  -   |  -   |
+  | `c[nore]map` |  -   |  -  | yes |  -  |  -  |  -  |  -   |  -   |
+  | `v[nore]map` |  -   |  -  |  -  | yes | yes |  -  |  -   |  -   |
+  | `x[nore]map` |  -   |  -  |  -  | yes |  -  |  -  |  -   |  -   |
+  | `s[nore]map` |  -   |  -  |  -  |  -  | yes |  -  |  -   |  -   |
+  | `o[nore]map` |  -   |  -  |  -  |  -  |  -  | yes |  -   |  -   |
+  | `t[nore]map` |  -   |  -  |  -  |  -  |  -  |  -  | yes  |  -   |
+  | `l[nore]map` |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
+
+This series uses mostly `map`, `nmap`, `omap`, `xmap`, `vmap`, and their `noremap` equivalents.
+
+#### Map arguments
+What Vim calls map arguments are special keywords that allow you to customize a key mapping's functionality;
+the official documentation may be found at `:help map-arguments`.
+Vim defines for 6 map arguments,
+`<buffer>`, `<nowait>`, `<silent>`, `<script>`, `<expr>` and `<unique>`, which may be used in any order.
+They must appear right after the `:map` command, the mappings `{lhs}`.
+Here is a short summary, which you can reference later, as needed:
+
+- `<silent>` stops a mapping from producing output on Vim's command line.
+  It is often used in practice to avoid annoying `"Press ENTER or type command to continue"` prompts.
+
+
+- If the `<buffer>` keyword is included in a key mapping, the mapping will apply only to the Vim buffer for which the mapping was loaded or defined.
+  Example use case: filetype plugins implementing filetype-specific functionality, in which you want a mapping to apply only to the buffer holding the target filetype. 
+
+- A mapping using `<unique>` will fail if a mapping with the same `{lhs}` already exists.
+  Use `<unique>` when you want to be extra careful that a mapping won't overwrite an existing mapping with the same `{lhs}`.
+
+- `<script>` is used to define a new mapping that only remaps characters in the `{rhs}` using mappings that were defined local to a script, starting with `<SID>`.
+  This keyword is used in practice when defining mappings that call script-local functions, and is not something you would have to worry about outside of that context.
+  <!-- **TODO** ref section with script-local mappings. -->
+
+- The `<nowait>` and `<expr>` keywords are not needed for this series; see `:help map-nowait` and `:help map-expression` if interested.
+
+
+**Useful: the `<Cmd>` keyword**
+
+Vim defines one more keyword: `<Cmd>`.
+You can use `<Cmd>` mappings to execute Vim commands directly in the current mode (without using `:` to enter Vim's command mode).
+Using `<Cmd>` avoids unnecessary mode changes and associated autommand events, improves performance, and is generally the best way to run Vim commands.
+The official documentation lives at `:help map-<cmd>`; here are some examples for reference
+```
+noremap e <Cmd>echo "Hello world!"<CR>
+```
+**TODO** do the compilation and update thing.
+
+#### Leader key
+- See `:help mapleader` leader key.
+  Basically, `<Leader>` is an alias for the content of the `mapleader` variable.
+  (See the contents of `mapleader` with `:echo mapleader`).
+  Improtant (see `:help mapleader`): the value of `mapleader` is used at the time the mapping was defined.
+  Changing `mapleader` after defining a mapping won't change the mapping.
+
+  Local equivalent is `maplocalleader` and `<localleader>`
+
+- Suggestion: `,` and `<Space>` are good prefixes for normal mode mappings
+
+### Listing mappings and getting information
+- `:help map-listing` for an explanation of the syntax used when listing mappings with e.g. `:map`, `imap`, etc...
+
+- Super useful (tucked away at the bottom of `:help map-which-keys`): use the command `:help {key}<C-D>` to see which commands/mappings start with `{key}` (where `<C-D>` is `CTRL-D`).
+  For example `:help s<C-D>` shows all commands starting with `s`.
+  Type a command you wish to get help on and press enter to go to the corresponding help page.
+
+- See `:help <>` for explanation of `<>` notation for special keys, e.g. `<Esc>` for the escape key or `<CR>` for the Return key.
+
+  See also `:help keycodes` for a list of all special key codes that can be used with the `:map command`.
+
+### Script-local mappings 
+Keep the big picture in mind: (from `:help script-local`)
+
+> When using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
+> To avoid this, they can be made local to the script.
+
+- The point of `<SID>` is to give each function a unique "script ID" so that it won't conflict with functions with the same name in other scripts; `<SID>` is just the identification number of the script in which a script-local function is define.
+  It allows Vim to find a script-local function, without the possibility that functions with the same name in other scripts would conflict with each other.
+
+  Again: `<SID>` is the unique identifier of a script in which a function was defined.
+
+**TODO**: clean up language
+- `<Plug>` doesn't have special meaning beyond the letters themselves.
+  It just understood to mean... hmmm IDK.
+  You use it "for mappings the user might want to map a key sequence to".
+  It's an in-between step.
+  Kind of API-like.
+  The plugin author maps some complicated expression for function call to `<Plug>XYZ`, and then the user, to access the complicated stuff, has to map (using `map` and not `noremap!`) a familiar sequence to `<Plug>XYZ`.
+
+  `<Plug>` is a buffer.
+  The hold point is that a user would never *accidentally* type `<Plug>`.
+  It avoids the scenario in which a plugin author maps idk `gg` or something to a function call and the user wouldn't expect it, and trigger the mapping by accident in everyday use.
+  So the plugin author maps function call to a `<Plug>` mapping and indicates this in the plugin documentation.
+  Then the user has a very low risk of triggering the mapping in unwanted scenarios, since who would every type `<Plug>` in everyday usage?
+
+- From `:help using-<Plug>`, the suggested naming convention to make it VERY unlikely that mappings from different scripts interfere with each other is
+  
+  > `<Plug>{Script-abbreviation}{Map-description};`
+
+  Only the first letter of the script name and the first letter of the map description should be uppercase, to clearly distinguish the two.
+  A semicolon is added to the end intentionally.
+  The semicolon is excessive for me.
+
+- `scriptnames` show the names of all sourced scripts in order of increasing `<SNR>` number
+
+#### Recipe: mapping to script-local functions
+- Make functions script-local `function s:{function-name}()`
+
+- Then:
+  ```vim
+  function! s:TexCompile()
+    " function body would go here
+  endfunction
+
+  " define key map here
+  nmap <leader>c <Plug>TexCompile
+  nnoremap <script> <Plug>TexCompile <SID>TexCompile
+  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
+  ```
+  (To fully understand what is happens, you should understand the general difference between `map` and `noremap`.)
+
+  Note the use of:
+  - `nmap` in `nmap <leader>c <Plug>TexCompile`, since we want to remap `<leader>c` to `<Plug>TexCompile` (we want `<leader>c` to trigger the same thing that `<Plug>TexCompile` is mapped to one line below.)
+
+
+  - `nnoremap <script>` in `<nnoremap> <script> <Plug>TexCompile <SID>TexCompile`.
+
+    First what this does: `noremap <script> {lhs} <SID>{rhs}` will only remap `<SID>{rhs}` to mappings defined in the script with script ID `<SID>`.
+
+    Using `noremap <script>` really means "use `remap` if the mapping's RHS occurs in the script with script ID `<SID>`, and use `noremap` otherwise".
+
+    This is a peculiarity of the `<script>` keyword and is described in `:map-script`, if not in perfectly clear language.
+
+  - `nnoremap` in `nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>`.
+    This ensures the mapping's RHS, i.e. `:call <SID>TexCompile()<CR>`, is executed verbatim.
+
+#### Understanding what could go wrong if you don't follow best practices
+It helps to understand the consequences (which often aren't terribly severe), so you can make an informed decision for yourself.
+Often, regular users writing plugins for themselves won't find compelling reasons to take all of the safety measures listed above, because the extra bother outweights the potential benefits.
+
+- If you don't use `<unique>` with mappings, any existing mapping with the same `{lhs}` will be overwritten.
+  If you do use `<unique>`, the new mapping will fail with an error message, so that you can debug the problem.
+
+  If writing mappings for your own use that you know you want to be the way they are, there is no compelling reason to use use `<unique>`.
+  You would use `<unique>` as a plugin author to prevent the possibility that users of your plugin, who won't be looking at its source code, won't have their mappings overwritten.
+
+  I rarely see `<unique>` out in the wild, although you can find it in Tim Pope's `vim-fugitive` in `autoload/fugitive.vim`
+
+- If you don't use `<SID>`, there is a possibility that functions with the same name, but defined in different scripts, will conflict.
+  One will end up overwriting the other and you will get confusing results.
+
+  Again, this is relevant more for plugin authors than for users.
+  If you're sure a function name doesn't occur anywhere else in your Vim directory (which is reasonable if you prefix your function name with a short abbreviation of your script and have your external plugins under control), you'll be fine not using `<SID>`
+
+  `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
+
+
+- `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
+
+
+## Plugin best practices
+This section lists some of the best practices suggested in `:help write-plugin` and `:help write-filetype-plugin`.
+
+- Use a unique global variable, conventionally something like `g:loaded_myplugin`, as a safety mechanism to prevent loading a user-defined plugin twice.
+  Then include the following Vimscript at the *very start* of your plugin (before implementing any functionality):
+  ```vim
+  if exists("g:loaded_myplugin")  " if `g:loaded_myplugin` exists, the plugin was already loaded
+    finish  " exit immediately
+  endif
+  let g:loaded_myplugin = 1       " record that plugin has been loaded
+  ```
+  This technique, besides avoiding problems with twice-defined autocommands and functions, allows users to disable loading the plugin, if desired---a user who wouldn't want to use the plugin would set `g:loaded_myplugin = 1` (or any other value, as long as they create the variable) somewhere in their `vimrc`.
+  The safety mechanism above would immediately `finish` and exit the plugin upon finding that `g:loaded_myplugin` was already defined.
+  Reference: the `NOT LOADING` section of `:help write-plugin`.
+
+- Use `:setlocal` instead of `:set` for options in filetype-specific plugins.
+  Using `:setlocal` keeps modifications local to the current buffer, and it makes sense to keep filetype-specific modifications local to the buffer with the target filetype.
+  See `:help :setlocal` and the `OPTIONS` section of `:help ftplugin` for reference.
+
+- Use the `<buffer>` keyword with any key mappings (discussed in detail in **TODO** reference) used in filetype specific plugins---this keeps the mappings local to the buffer with the target file type.
+  Analogously, consider using `<LocalLeader>` instead of `<Leader>` for leader key mappings in filetype-specific plugins---`<LocalLeader>` gives users the option to use filetype-specific leader keys.
+
+  In fact, you can go down a whole rabbit hole of filetype-specific keymap safety mechanisms that I haven't listed here---see the `MAPPINGS` section of `:help ftplugin` if feeling inspired.
+
+- Vim actually comes with built-in filetype plugins for common file types---you can view them at `$VIMRUNTIME/ftplugin`.
+  To use most of a built-in filetype plugin and only overwrite a few settings, put your modifications in `nvim/after/ftplugin/filetype.vim`.
+  Vim's built-in filetype plugin will be loaded, and then whatever you have in `after/` will overwrite any settings you changed.
+  Reference: the `DISABLING` section of `:help ftplugin`.
 
 
 ## Writing Vimscript functions
@@ -374,213 +599,6 @@ nnoremap <script> <Plug>ABC <SID>XYZ
 nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 ```
 But it is conventional to use similar names for the `<Plug>` mapping, `<SID` mapping, and function definition.
-
-### Notes: mapping
-- `:help mapmodes` for documentation of map modes; in practice: the meaning of `nmap`, `imap`, `map`, and so on.
-
-- `:help script-local` for script-local mappings and functions
-
-
-  The big picture: 
-
-  > when using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
-  > To avoid this, they can be made local to the script.
-
-- `:help map-listing` for an explanation of the syntax used when listing mappings with e.g. `:map`, `imap`, etc...
-
-  From `:help map-table`:
-
-  |       | normal | insert | command | visual | select | operator-pending | terminal | lang-arg |
-  | -----------  |------|-----|-----|-----|-----|-----|------|------| 
-  | `[nore]map`  | yes  |  -  |  -  | yes | yes | yes |  -   |  -   |
-  | `n[nore]map` | yes  |  -  |  -  |  -  |  -  |  -  |  -   |  -   |
-  | `[nore]map!` |  -   | yes | yes |  -  |  -  |  -  |  -   |  -   |
-  | `i[nore]map` |  -   | yes |  -  |  -  |  -  |  -  |  -   |  -   |
-  | `c[nore]map` |  -   |  -  | yes |  -  |  -  |  -  |  -   |  -   |
-  | `v[nore]map` |  -   |  -  |  -  | yes | yes |  -  |  -   |  -   |
-  | `x[nore]map` |  -   |  -  |  -  | yes |  -  |  -  |  -   |  -   |
-  | `s[nore]map` |  -   |  -  |  -  |  -  | yes |  -  |  -   |  -   |
-  | `o[nore]map` |  -   |  -  |  -  |  -  |  -  | yes |  -   |  -   |
-  | `t[nore]map` |  -   |  -  |  -  |  -  |  -  |  -  | yes  |  -   |
-  | `l[nore]map` |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
-
-
-- See `:help mapleader` leader key.
-  Basically, `<Leader>` is an alias for the content of the `mapleader` variable.
-  (See the contents of `mapleader` with `:echo mapleader`).
-  Improtant (see `:help mapleader`): the value of `mapleader` is used at the time the mapping was defined.
-  Changing `mapleader` after defining a mapping won't change the mapping.
-
-  Local equivalent is `maplocalleader` and `<LocalLeader>`
-
-- See `:help <>` for explanation of `<>` notation
-
-- If you need multiple map commands on a single line, separate them with `|` (but don't put multiple map commands on a single line!) (see `:help map-comments` and `:help map-bar` just below).
-
-**Suggestions**
-- `,` and `<Space>` are good prefixes for normal mode mappings
-- Super useful (tucked away at the bottom of `:help map-which-keys`): use the command `:help {key}<C-D>` to see which commands/mappings start with `{key}` (where `<C-D>` is `CTRL-D`).
-  For example `:help s<C-D>` shows all commands starting with `s`.
-  Type a command you wish to get help on and press enter to go to the corresponding help page.
-
-### Map arguments
-Reference: `:help map-arguments`
-
-`<buffer>`, `<nowait>`, `<silent>`, `<script>`, `<expr>` and `<unique>` can be used in any order.
-They must appear right after the map command, before any other arguments.
-
-- `<silent>` stops a mapping from producing output on Vim's command line.
-  It is often used to avoid `"Press enter to continue"` dialogs.
-
-- `<script>` is used to define a new mapping that only remaps characters in the `{rhs}` using mappings that were defined local to a script, starting with `<SID>`.
-  
-  Use: "avoid that mappings from outside a script interfere", but do use other mappings defined in the script. 
-
-  Note: `:map <script>` and `:noremap <script>` both act as `:noremap <script>`;  the `<script>` argument overrules the `:map` command to act as `noremap`.
-  Best practice: use `:noremap <script>`, because it's clearer that remapping is (mostly) disabled.
-
-- `<unique>`: mapping will fail if a mapping with the same `{lhs}` already exists.
-
-- `<expr>`: in this case the mapping's `{rhs}` is interpretted as a Vimscript expression, and the result of the expression is inserted.
-  With `<expr>` the mapping's `{lhs}` calls the Vimscript expression in the mapping's `{rhs}`.
-  Mappins with `<expr>` are often used in insert mode to insert the output of Vimscript functions.
-
-  Return an empty string `''` to not insert anything.
-
-  Note: you don't use `:call` to call functions with `<expr>`, just e.g.
-  ```
-	:inoremap <expr> ff <SID>InsertFraction()
-  ```
-  Plenty more you can do with `<expr>` than is needed here---see `:help map-<expr>`.
-
-- Use `<Cmd>` mappings to execute Vim commands directly in the current mode.
-  Reference: `:help map-<cmd>`
-
-  Using `<Cmd>` avoids mode changes and is the cleanest solution to running commands, instead of `<C-O>:{cmd}`.
-  Particularly useful in insert mode to avoid `<C-O>` hacks.
-  You do need a terminating `<CR>` though.
-  ```
-  noremap e <Cmd>echo "Hello world!"<CR>
-  ```
-
-### Script-local mappings 
-Keep the big picture in mind: (from `:help script-local`)
-
-> When using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
-> To avoid this, they can be made local to the script.
-
-- The point of `<SID>` is to give each function a unique "script ID" so that it won't conflict with functions with the same name in other scripts; `<SID>` is just the identification number of the script in which a script-local function is define.
-  It allows Vim to find a script-local function, without the possibility that functions with the same name in other scripts would conflict with each other.
-
-  Again: `<SID>` is the unique identifier of a script in which a function was defined.
-
-**TODO**: clean up language
-- `<Plug>` doesn't have special meaning beyond the letters themselves.
-  It just understood to mean... hmmm IDK.
-  You use it "for mappings the user might want to map a key sequence to".
-  It's an in-between step.
-  Kind of API-like.
-  The plugin author maps some complicated expression for function call to `<Plug>XYZ`, and then the user, to access the complicated stuff, has to map (using `map` and not `noremap!`) a familiar sequence to `<Plug>XYZ`.
-
-  `<Plug>` is a buffer.
-  The hold point is that a user would never *accidentally* type `<Plug>`.
-  It avoids the scenario in which a plugin author maps idk `gg` or something to a function call and the user wouldn't expect it, and trigger the mapping by accident in everyday use.
-  So the plugin author maps function call to a `<Plug>` mapping and indicates this in the plugin documentation.
-  Then the user has a very low risk of triggering the mapping in unwanted scenarios, since who would every type `<Plug>` in everyday usage?
-
-- From `:help using-<Plug>`, the suggested naming convention to make it VERY unlikely that mappings from different scripts interfere with each other is
-  
-  > `<Plug>{Script-abbreviation}{Map-description};`
-
-  Only the first letter of the script name and the first letter of the map description should be uppercase, to clearly distinguish the two.
-  A semicolon is added to the end intentionally.
-  The semicolon is excessive for me.
-
-- `scriptnames` show the names of all sourced scripts in order of increasing `<SNR>` number
-
-### Recipe: mapping to script-local functions
-- Make functions script-local `function s:{function-name}()`
-
-- Then:
-  ```vim
-  function! s:TexCompile()
-    " function body would go here
-  endfunction
-
-  " define key map here
-  nmap <leader>c <Plug>TexCompile
-  nnoremap <script> <Plug>TexCompile <SID>TexCompile
-  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
-  ```
-  (To fully understand what is happens, you should understand the general difference between `map` and `noremap`.)
-
-  Note the use of:
-  - `nmap` in `nmap <leader>c <Plug>TexCompile`, since we want to remap `<leader>c` to `<Plug>TexCompile` (we want `<leader>c` to trigger the same thing that `<Plug>TexCompile` is mapped to one line below.)
-
-
-  - `nnoremap <script>` in `<nnoremap> <script> <Plug>TexCompile <SID>TexCompile`.
-
-    First what this does: `noremap <script> {lhs} <SID>{rhs}` will only remap `<SID>{rhs}` to mappings defined in the script with script ID `<SID>`.
-
-    Using `noremap <script>` really means "use `remap` if the mapping's RHS occurs in the script with script ID `<SID>`, and use `noremap` otherwise".
-
-    This is a peculiarity of the `<script>` keyword and is described in `:map-script`, if not in perfectly clear language.
-
-  - `nnoremap` in `nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>`.
-    This ensures the mapping's RHS, i.e. `:call <SID>TexCompile()<CR>`, is executed verbatim.
-
-### Understanding what could go wrong if you don't follow best practices
-It helps to understand the consequences (which often aren't terribly severe), so you can make an informed decision for yourself.
-Often, regular users writing plugins for themselves won't find compelling reasons to take all of the safety measures listed above, because the extra bother outweights the potential benefits.
-
-- If you don't use `<unique>` with mappings, any existing mapping with the same `{lhs}` will be overwritten.
-  If you do use `<unique>`, the new mapping will fail with an error message, so that you can debug the problem.
-
-  If writing mappings for your own use that you know you want to be the way they are, there is no compelling reason to use use `<unique>`.
-  You would use `<unique>` as a plugin author to prevent the possibility that users of your plugin, who won't be looking at its source code, won't have their mappings overwritten.
-
-  I rarely see `<unique>` out in the wild, although you can find it in Tim Pope's `vim-fugitive` in `autoload/fugitive.vim`
-
-- If you don't use `<SID>`, there is a possibility that functions with the same name, but defined in different scripts, will conflict.
-  One will end up overwriting the other and you will get confusing results.
-
-  Again, this is relevant more for plugin authors than for users.
-  If you're sure a function name doesn't occur anywhere else in your Vim directory (which is reasonable if you prefix your function name with a short abbreviation of your script and have your external plugins under control), you'll be fine not using `<SID>`
-
-  `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
-
-
-- `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
-
-
-## Plugin best practices
-This section lists some of the best practices suggested in `:help write-plugin` and `:help write-filetype-plugin`.
-
-- Use a unique global variable, conventionally something like `g:loaded_myplugin`, as a safety mechanism to prevent loading a user-defined plugin twice.
-  Then include the following Vimscript at the *very start* of your plugin (before implementing any functionality):
-  ```vim
-  if exists("g:loaded_myplugin")  " if `g:loaded_myplugin` exists, the plugin was already loaded
-    finish  " exit immediately
-  endif
-  let g:loaded_myplugin = 1       " record that plugin has been loaded
-  ```
-  This technique, besides avoiding problems with twice-defined autocommands and functions, allows users to disable loading the plugin, if desired---a user who wouldn't want to use the plugin would set `g:loaded_myplugin = 1` (or any other value, as long as they create the variable) somewhere in their `vimrc`.
-  The safety mechanism above would immediately `finish` and exit the plugin upon finding that `g:loaded_myplugin` was already defined.
-  Reference: the `NOT LOADING` section of `:help write-plugin`.
-
-- Use `:setlocal` instead of `:set` for options in filetype-specific plugins.
-  Using `:setlocal` keeps modifications local to the current buffer, and it makes sense to keep filetype-specific modifications local to the buffer with the target filetype.
-  See `:help :setlocal` and the `OPTIONS` section of `:help ftplugin` for reference.
-
-- Use the `<buffer>` keyword with any key mappings (discussed in detail in **TODO** reference) used in filetype specific plugins---this keeps the mappings local to the buffer with the target file type.
-  Analogously, consider using `<LocalLeader>` instead of `<Leader>` for leader key mappings in filetype-specific plugins---`<LocalLeader>` gives users the option to use filetype-specific leader keys.
-
-  In fact, you can go down a whole rabbit hole of filetype-specific keymap safety mechanisms that I haven't listed here---see the `MAPPINGS` section of `:help ftplugin` if feeling inspired.
-
-- Vim actually comes with built-in filetype plugins for common file types---you can view them at `$VIMRUNTIME/ftplugin`.
-  To use most of a built-in filetype plugin and only overwrite a few settings, put your modifications in `nvim/after/ftplugin/filetype.vim`.
-  Vim's built-in filetype plugin will be loaded, and then whatever you have in `after/` will overwrite any settings you changed.
-  Reference: the `DISABLING` section of `:help ftplugin`.
 
 ### Autoload functions
 See `:help autoload-functions`.
