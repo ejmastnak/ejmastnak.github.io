@@ -22,8 +22,9 @@ This article provides a theoretical background for use of Vimscript in filetype-
 * [Key mappings](#key-mappings)
   * [Writing key mappings](#writing-key-mappings)
     * [Map modes](#map-modes)
+    * [The leader key](#the-leader-key)
+    * [The local leader key](#the-local-leader-key)
     * [Map arguments](#map-arguments)
-    * [Leader key](#leader-key)
   * [Listing mappings and getting information](#listing-mappings-and-getting-information)
   * [Script-local mappings](#script-local-mappings)
     * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
@@ -191,13 +192,13 @@ In the context of this series, key mappings are mostly used to define shortcuts 
 The `Key mapping` chapter in the documentation file `map.txt`, which you can access with `:help key-mapping`, contains the official documentation of key mappings.
 I will summarize here what I deem necessary for understanding the key mappings used in this series. 
 
-The most general syntax for defining a key mapping is
+The general syntax for defining a key mapping is
 ```vim
 :map {lhs} {rhs}
 ```
 Here is what's involved in the mapping definition:
-- `{lhs}`: A (generally short and memorable) key combination you wish to map
-- `{rhs}`: A (generally longer, tedious-to-manually-type) key combination you want the short, memorable `{lhs}` to trigger.
+- `{lhs}` (left hand side): A (generally short and memorable) key combination you wish to map
+- `{rhs}` (right hand side): A (generally longer, tedious-to-manually-type) key combination you want the short, memorable `{lhs}` to trigger.
 - The Vim mode you want the mapping to apply in, which you can control by replacing `:map` with `:nmap` (normal mode), `:vmap` (visual mode), `:imap` (insert mode), or a host of other related commands, listed in `:help :map-commands`.
 
 The command `:map {lhs} {rhs}` then maps the key sequence `{lhs}` to the key sequence `{rhs}` in the Vim mode in which the mapping applies.
@@ -206,7 +207,8 @@ You probably already have some key mappings in your `vimrc` or `init.vim`.
 
 #### Map modes
 The documentation at `:help map-modes` gives an overview of the various map commands (`nmap`, `imap`, `map`, etc...) and the Vim modes in which they apply.
-For your convenience, here is table summarizing Vim's command and map modes, taken from `:help map-table`:
+For your convenience, here is table summarizing Vim's command and map modes, taken from `:help map-table`.
+You don't need to memorize it, of course---just remember it exists either on this website or at `:help map-table`, and come back for refresher as needed.
 
   |       | normal | insert | command | visual | select | operator-pending | terminal | lang-arg |
   | -----------  |------|-----|-----|-----|-----|-----|------|------| 
@@ -223,6 +225,74 @@ For your convenience, here is table summarizing Vim's command and map modes, tak
   | `l[nore]map` |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
 
 This series uses mostly `map`, `nmap`, `omap`, `xmap`, `vmap`, and their `noremap` equivalents.
+
+#### The leader key
+Vim offers something called a *leader key*, which works as a prefix you can use to begin the `{lhs}` of key mappings.
+The leader key works as a sort of unique identifier that helps prevent your own key mapping shortcuts from clashing with Vim's default key bindings, and it is common practice to begin the `{lhs}` of your custom key mappings with a leader key.
+For official documentation, see `:help mapleader`.
+
+Here's how the leader key business works in practice:
+1. Decide on a key to use as your leader key.
+   You will have to make a compromise: the key should be convenient and easily typed, but it shouldn't clash with keys used for built-in Vim actions.
+   Common values are the space bar (`<Space>`), the comma (`,`) and the backslash (`\`), which aren't used in default Vim commands.
+   A key like `j`, `f`, or `d` wouldn't work well, since these keys are already used by Vim for motion and deletion.
+ 
+1. In your `vimrc` or `init.vim`, store your chosen leader key in Vim's built-in `mapleader` variable.
+   Here are some examples:
+   ```vim
+   " Use space as the leader key
+   let mapleader = " "
+ 
+   " Use the comma as the leader key
+   let mapleader = ","
+ 
+   " Use the backslash as the leader key
+   let mapleader = "\"
+   ```
+   The default leader key is the backslash, but many users prefer to use either the space bar or comma, since the backslash is a bit out of the way.
+   You can view the current value of the leader key with `:echo mapleader`.
+   (Caution: if you use space as your leader key, the output of `:echo mapleader` will look blank, but has really printed a space character).
+1. Use the leader key in key mappings with the special `<leader>` keyword in the mapping's `{lhs}`.
+   You can think of `<leader>` as a sort of alias for the content of the `mapleader` variable.
+   For illustrative purposes, here are some concrete examples:
+   ```vim
+   " Use <leader>s to toggle Vim's spell-checking on and off;
+   " <CR> (carriage return) is just the mapping keycode for the Enter key.
+   noremap <leader>s :set spell!<CR>
+ 
+   " Use <leader>b to move to the next Vim buffer
+   noremap <leader>b :bnext<CR>
+ 
+   " Use <leader>U to refresh UltiSnips after changing snippet files
+   noremap <leader>U :call UltiSnips#RefreshSnippets()<CR>
+ 
+   " Use <leader>c to save and comile the current document
+   noremap <leader>c :write<CR>VimtexCompileS<CR>
+   ```
+1. Enjoy!
+   For example, you could then type `<leader>s` in normal mode, of course replacing `<leader>` with the value of your leader key, to call `:set spell!<CR>` and toggle Vim's spell-checking on and off.
+
+Disclaimer: A few of the above example mappings are actually poor Vimscript---Vim offer a better way to call commands from key mappings using a special `<Cmd>` keyword.
+But because I haven't introduced it yet, the above mappings use `:` to enter Command mode.
+We'll fix this later in 
+**TODO** reference.
+
+#### The local leader key
+Vim is flexible, and allows you (if you wanted) to define a different leader key for each Vim buffer.
+You would do this with the built-in variable `maplocalleader` and the corresponding keyword `<localleader>`, which are the buffer-local equivalents of `mapleader` and `<localleader>`, and you can use them in the exactly same way.
+
+The local leader key gives you the possibility of a different leader key for each filetype (for example `<Space>` as a local leader in LaTeX files, `,` in Python files, and optionally a different key, say `\`, as a global leader key).
+
+The VimTeX plugin uses `<localleader>` in its default mappings (as a precaution to avoid override your own `<leader>` mappings), so it is important to set a local leader key for LaTeX files.
+To do this, add the following code to your `ftplugin/tex.vim` file:
+```vim
+" This code would go in ftplugin/tex.vim, and sets
+" space as the leader leader key for `tex` filetype.
+let maplocalleader = " "
+```
+In practice, most users will want to set `maplocalleader` to the same value as their global leader (to avoid the confusion of different global and local leader keys), but you could of course use any key you want.
+
+See `:help maplocalleader` for official documentation of the local leader key.
 
 #### Map arguments
 What Vim calls map arguments are special keywords that allow you to customize a key mapping's functionality;
@@ -259,17 +329,6 @@ The official documentation lives at `:help map-<cmd>`; here are some examples fo
 noremap e <Cmd>echo "Hello world!"<CR>
 ```
 **TODO** do the compilation and update thing.
-
-#### Leader key
-- See `:help mapleader` leader key.
-  Basically, `<Leader>` is an alias for the content of the `mapleader` variable.
-  (See the contents of `mapleader` with `:echo mapleader`).
-  Improtant (see `:help mapleader`): the value of `mapleader` is used at the time the mapping was defined.
-  Changing `mapleader` after defining a mapping won't change the mapping.
-
-  Local equivalent is `maplocalleader` and `<localleader>`
-
-- Suggestion: `,` and `<Space>` are good prefixes for normal mode mappings
 
 ### Listing mappings and getting information
 - `:help map-listing` for an explanation of the syntax used when listing mappings with e.g. `:map`, `imap`, etc...
@@ -600,5 +659,3 @@ You can find official documentation of autoload functions at `:help autoload-fun
 <!-- - For declaring internal variables, see `:help internal-variables` -->
 <!-- - `:help variable-scope` -->
 <!-- The period is the Vimscript string concatenation operator; see `:help expr5` for the official documentation. -->
-
-
