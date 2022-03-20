@@ -270,20 +270,20 @@ An example output of `:map <leader>` (which would show all mappings in normal, v
   <Space>b   * <Cmd>bnext<CR>
 n <Space>i   * <Cmd>VimtexInfo<CR>
 ```
-This output has four columns:
+This output has four columns, summarized in the following table:
 
 | **Mode** | **LHS** | **Remap status** | **RHS** |
 | - | - | - | - |
 | A single character indicating the mode in which the mapping applies | The mapping's full `{lhs}` | A single character indicating if the mapping can be remapped or not | The mapping's full `{rhs}` |
 
-The values of the mode column are mostly self-explanatory---`n` means normal mode (the result of `nmap`), ` ` (space) means `nvo` mode (the result of `map`), `i` means insert mode (the result of `imap`), etc.
+The characters in the mode column are mostly self-explanatory---`n` means normal mode (the result of `nmap`), ` ` (space) means `nvo` mode (the result of `map`), `i` means insert mode (the result of `imap`), etc.
 See `:help map-listing` for a list of all codes.
 The remap status column will usually only show `*` (meaning a mapping is not remappable; the result of `noremap`) and ` ` (meaning a mapping is remappable; the result of `map`), but other values are possible---again, see `:help map-listing` for a list of all codes.
 
 ### Plug mappings
 Sooner or later, especially if you use third-party plugins, you will run into mappings including the strange-looking `<Plug>` keyword.
 Don't be scared!
-The `<Plug>` keyword is just a way for plugin authors to give plugin users more flexibility in defining custom shortcuts to trigger functionality provided by the plugin.
+The `<Plug>` keyword is just a way for plugin authors to give plugin users more flexibility in defining custom shortcuts for using functionality provided by the plugin.
 <!-- Well-written plugins will often use `<Plug>` mappings. -->
 
 Here's how the whole `<Plug>` business works:
@@ -555,7 +555,7 @@ Here is the basic workflow for using autoload functions:
   Here is what happens: Vim recognizes the `{filename}#{function-name}` syntax, realizes the function is an autoload function, and searches all `autoload` directories in your Vim `runtimepath` for files name `filename`, then within these files searchs for functions named `function_name`.
   If a match is found, a function is loaded into memory, can be called by the user, and should be visible with `:function`.
 
-You can find official documentation of autoload functions at `:help autoload-functions`, and 
+You can find official documentation of autoload functions at `:help autoload-functions`.
 
 <!-- **Variables** -->
 <!-- - For declaring internal variables, see `:help internal-variables` -->
