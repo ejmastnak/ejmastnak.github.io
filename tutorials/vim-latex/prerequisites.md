@@ -21,6 +21,7 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
 * [Command line usage](#command-line-usage)
 * [Installing system packages](#installing-system-packages)
 * [Shell scripting abbreviations](#shell-scripting-abbreviations)
+* [The abbreviations e.g. and i.e.](#the-abbreviations-eg-and-ie)
 
 <!-- vim-markdown-toc -->
 
@@ -162,3 +163,29 @@ The abbreviations you should know for this series are:
 - `.` is shorthand for the current working directory
 - `..` is shorthand for one directory above the current working directory
 - `*` is the match-all wildcard character used in [glob patterns](https://en.wikipedia.org/wiki/Glob_(programming)).
+
+## The abbreviations e.g. and i.e.
+**Prerequisite:** You know what "e.g." and "i.e." mean---I will use both throughout this series.
+(While these abbreviations might be obvious to some people, they could well be nontrivial to others, for example non-native English speakers or anyone previously unfamiliar with technical or academic writing.)
+
+**Quick crash course:**
+- "e.g." means "for example"; it is an abbreviation of the Latin phrase *exemplī grātiā*, which means "for the sake of an example".
+  For more information consult [Wiktionary](https://en.wiktionary.org/wiki/e.g.) or the Internet.
+
+  Example:
+  > The VimTeX function `vimtex#syntax#in_mathzone()` returns `1` if the cursor is inside a LaTeX math zone (**e.g.** inside an `equation` environment or between inline math `$ $` symbols) and `0` otherwise.
+
+  Equivalent meaning, using "for example":
+  > The VimTeX function `vimtex#syntax#in_mathzone()` returns `1` if the cursor is inside a LaTeX math zone (**for example** inside an `equation` environment or between inline math `$ $` symbols) and `0` otherwise.
+
+- "i.e." means "that is" and is usually used as a clarification of a previous statement; it is an abbreviation of the Latin phrase *id est*, which, surprise surprise, means "that is".
+  For more information consult [Wiktionary](https://en.wiktionary.org/wiki/i.e.) or search the Internet.
+
+  Example:
+  > The VimTeX shortcuts `[*` and `]*` let you move between the boundaries of LaTeX comments (**i.e.** any text beginning with `%`)
+
+  Equivalent meaning, using "that is":
+  > The VimTeX shortcuts `[*` and `]*` let you move between the boundaries of LaTeX comments (**that is** any text beginning with `%`)
+  
+Probably thanks to their conciseness, "e.g." and "i.e." commonly appear in technical and academic writing;
+they look weird the first time you see them, but you quickly get used to and come to appreciate them.
