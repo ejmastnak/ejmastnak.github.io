@@ -28,8 +28,8 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
 - Prerequisite: you are working on macOS, Linux, or some other Unix variant.
 
 - Suggestion: If you use Windows, I suggest you follow along with the series as is;
-  most techniques and ideas should work fine, and if XYZ doesn't work as expected, search the Internet for "how to use XYZ Vim/LaTeX/shell feature on Windows".
-  I have no meaningful experience with Windows and cannot offer advice at the level of detail required for this series, but there should be plenty of Windows users on the Internet more knowledgeable than I am who have figured out a solution or workaround.
+  you will still find plenty of helpful techniques and ideas, and if XYZ doesn't work as expected, search the Internet for "how to use XYZ Vim/LaTeX/shell feature on Windows".
+  I do not have formal experience with Windows and cannot offer advice at the level of detail required for this series, but there should be plenty of Windows users on the Internet more knowledgeable than I am who have figured out a solution or workaround.
 
 ### LaTeX knowledge
 - Prerequisite: you know what LaTeX is, have a working LaTeX distribution installed locally on your computer, and know how to use it, at least for creating basic documents.
@@ -51,7 +51,8 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
   
 - Suggestions:
   - Installation: Vim should come installed on most of the Unix-based systems this series is written for.
-    Unfortunately the [official instructions for installing Vim](https://github.com/vim/vim#installation) aren't particularly good; I suggest [using Homebrew](https://formulae.brew.sh/formula/vim) on macOS or consulting your distribution's package manager on Linux.
+    Unfortunately the [official instructions for installing Vim](https://github.com/vim/vim#installation) aren't particularly good;
+    for installation I suggest [using Homebrew](https://formulae.brew.sh/formula/vim) on macOS or consulting your distribution's package manager on Linux.
   - And here are the [official instructions for installing Neovim](https://github.com/neovim/neovim/wiki/Installing-Neovim) (which are much friendlier to beginners than Vim's instructions).
     *If you are choosing between Vim and Neovim specifically for the purpose of this series, I encourage you to choose Neovim---*skipping ahead somewhat, connecting Neovim to your PDF reader will be easier because of Neovim's implementation of the remote procedure call protocol.
 
@@ -65,7 +66,7 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
 
 ### Literacy in basic Vim/Neovim differences
 - Prerequisite: if you use Neovim, you should know how to navigate the small differences between Neovim and Vim, for example Neovim's `init.vim` file replacing Vim's `vimrc` or the user's Neovim configuration files living at `~/.config/nvim` as opposed Vim's `~/.vim`.
-  (Nontrivial differences, such as setting up a PDF reader, are explained separately for both editors.)
+  (Nontrivial differences, such as the server configuration required to set up a PDF reader, are explained separately for both editors.)
 
 - Suggestion: read through Neovim's `:help vim-differences`.
 
@@ -78,7 +79,7 @@ These prerequisites are listed below; each includes a suggestion or mini-tutoria
   - For most users, I suggest the well-regarded [Vim-Plug plugin](https://github.com/junegunn/vim-plug).
   The [Vim-Plug GitHub page](https://github.com/junegunn/vim-plug) contains everything you need to get started.
 
-  - If you *really* want to manage your plugins manually, use Vim/Neovim's built-in plugin management system.
+  - If you prefer to manage your plugins manually, without third-party tools, use Vim/Neovim's built-in plugin management system.
   The relevant documentation lives at `:help packages` but is unnecessarily complicated for a beginner's purposes.
   When getting started with the built-in plugin system, it is enough to perform the following:
   1. Create the folder `pack` inside your root Vim configuration folder (i.e. create `~/.vim/pack/` if using Vim and `~/.config/nvim/pack/` if using Neovim)

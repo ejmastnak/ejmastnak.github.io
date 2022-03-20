@@ -5,7 +5,7 @@ title: Snippets \| Setting up Vim for LaTeX Part 1
 
 ## About the series
 This is part two in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
-This article covers snippets, which are templates of commonly reused code that can dramatically speed up your LaTeX writing.
+This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
@@ -18,7 +18,7 @@ This article covers snippets, which are templates of commonly reused code that c
     * [Snippet folders](#snippet-folders)
 * [Watch the screencasts!](#watch-the-screencasts)
 * [Writing Snippets](#writing-snippets)
-  * [Anatomy of an UltiSnippets snippet](#anatomy-of-an-ultisnippets-snippet)
+  * [Anatomy of an UltiSnips snippet](#anatomy-of-an-ultisnips-snippet)
   * [Options](#options)
   * [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)
   * [Tabstops](#tabstops)
@@ -36,15 +36,15 @@ This article covers snippets, which are templates of commonly reused code that c
 <!-- vim-markdown-toc -->
 
 ## What snippets do
-Snippets are templates of commonly used code patterns (think LaTeX environments and commands) that, when inserted into text dynamically using short (e.g. two- or three-character) triggers, will dramatically speed up the writing of LaTeX code.
-Without wishing to overstate the case, snippets are the single most important tool in the process of writing LaTeX efficiently and painlessly.
+Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character) triggers.
+Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly.
 
 **TODO** Gifs of e.g. `itemize` environment followed by items, `figure` environment with tabstops, Greek letters
 
-Snippets in the specific context of efficient, Vim-written LaTeX were probably first introduced to the Internet by Gilles Castel, and I encourage you to [read his snippet article](https://castel.dev/post/lecture-notes-1/#snippets) as well as this one.
+Snippets in the specific context of efficient, Vim-written LaTeX were probably first introduced to the Internet by Gilles Castel, and I encourage you to [read his original snippet article](https://castel.dev/post/lecture-notes-1/#snippets) in addition to this one.
 
 ## Getting started with UltiSnips
-This tutorial will use the most mature of the many Vim snippet plugins: [the UltiSnips plugin](https://github.com/SirVer/ultisnips).
+This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
 If you use Neovim, note that UltiSnips' support of Neovim is "best-effort only".
 Don't let this discourage you---I and many other Neovim users daily drive Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
 If you use regular Vim, you should be fine in any case.
@@ -74,15 +74,14 @@ After installing UltiSnips you should configure...
 1. the key you use to move forward through a snippet's tabstops, which is set using `g:UltiSnipsJumpForwardTrigger`, and
 1. the key you use to move backward through a snippet's tabstops, which is set with `g:UltiSnipsJumpBackwardTrigger`.
 
-For orientation, here is an example configuration:
+For orientation, here is an example configuration, which you would place the code in your `vimrc` or `init.vim`:
 ```vim
 " This code should go in your vimrc or init.vim
 let g:UltiSnipsExpandTrigger = '<Tab>'          " use Tab to expand snippets
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'     " use Tab to move forward through tabstops
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'  " use Shift-Tab to move backward through tabstops
 ```
-This code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops, and make the combination `<Shift>`+`<Tab>` navigate backward through tabstops.
-Yes, UltiSnips lets you use the same key for both expansion and tabstop navigation! (Although using the `<Tab>` key for both expansion and tabstop navigation might conflict with default mappings from certain autocomplete plugins---your mileage may vary.)
+Explanation: this code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops (yes, UltiSnips lets you use the same key for both expansion and tabstop navigation), and make the key combination `<Shift>`+`<Tab>` navigate backward through tabstops.
 
 See `:help UltiSnips-trigger-key-mappings` for relevant documentation.
 For fine-grained control one can also work directly with functions controlling expand and jump behavior; for more information on this see `:help UltiSnips-trigger-functions`.
@@ -98,29 +97,33 @@ By default, UltiSnips expects your `.snippet` files to live in directories calle
 You can use folder names other than the default `UltiSnips`, too---the snippet directory name is controlled with the global variable `g:UltiSnipsSnippetDirectories`.
 From `:help UltiSnips-how-snippets-are-loaded`,
 
-> UltiSnips will search each 'runtimepath' directory for the subdirectory names
+> UltiSnips will search each `runtimepath` directory for the subdirectory names
 defined in `g:UltiSnipsSnippetDirectories` in the order they are defined.
 
-For example, to use `MySnippets` as a snippet directory, you would place the following Vimscript in your `vimrc`:
+For example, to use `MySnippets` as a snippet directory, you would place the following Vimscript in your `vimrc` or `init.vim`:
 ```vim
+" Use both `UltiSnips` and `MySnippets` as snippet directories
  let g:UltiSnipsSnippetDirectories=["UltiSnips", "MySnippets"]
 ```
-UltiSnips would then load `*.snippet` files located in both `UltiSnips` and `MySnippets` directories.
+UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets` directories in your Vim `runtimepath`.
 
-Suggested optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
+Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
 ```
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " on Vim
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']   " on Neovim
 ```
-(The `.` after `$HOME` is the Vimscript string concatenation operator.)
+This behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
+(The `.` joining `$HOME` and `'/.vim/UltiSnips'` is the Vimscript string concatenation operator.)
 
 #### Snippet folders
 You might prefer to further organize `filetype`-specific snippets into multiple files of their own.
 To do so, make a folder named with the target `filetype` inside your snippets directory.
 UltiSnips will then load *all* `.snippet` files inside this folder, regardless of their basename.
+Again, this behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
 As a concrete example, a selection of my UltiSnips directory looks like this:
-```
-${HOME}/.config/nvim/UltiSnips/
+```sh
+${HOME}/.vim/UltiSnips/           # Vim
+${HOME}/.config/nvim/UltiSnips/    # Neovim
 ├── all.snippets
 ├── markdown.snippets
 ├── python.snippets
@@ -133,17 +136,20 @@ ${HOME}/.config/nvim/UltiSnips/
 Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated directory, while a single file suffices for `all`, `markdown`, and `python`.
 
 ## Watch the screencasts!
-They're old but gold, and pack a surprisingly thorough demonstration of UltiSnips' capabilities into about 20 minutes of video.
-Many of the features described below also appear in the screencasts.
+Quite a few years ago now, Holger Rapp, the author of UltiSnips, created four screencasts demonstrating the plugin's features:
 - [Episode 1: What are snippets and do I need them?](http://www.sirver.net/blog/2011/12/30/first-episode-of-ultisnips-screencast/)
 - [Episode 2: Creating Basic Snippets](http://www.sirver.net/blog/2012/01/08/second-episode-of-ultisnips-screencast/)
 - [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/)
 - [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/)
 
+They're old but gold, and pack an impressively thorough demonstration of UltiSnips' capabilities into about 20 minutes of video.
+I strongly suggest your watch them---you will find many of the features described in this article covered from a different perspective in the screencasts.
+
+
 ## Writing Snippets
 **TLDR:** create a `{filetype}.snippets` file in your `UltiSnips` directory (e.g. `tex.snippets`) and write your snippets inside this file using the syntax described in `:help UltiSnips-basic-syntax`.
 
-### Anatomy of an UltiSnippets snippet
+### Anatomy of an UltiSnips snippet
 The general form of an UltiSnips snippet is:
 ```
 snippet {trigger} ["description" [options]]
@@ -157,21 +163,21 @@ See `:help UltiSnips-authoring-snippets` for the relevant documentation.
 ### Options
 You'll need to use a few options to get the full UltiSnips experience.
 All options are clearly documented at `:help UltiSnips-snippet-options`, and I'll summarize here only what is necessary for understanding the snippets that appear later in this document.
-Based on my (subjective) experience, mostly with LaTeX files, here are some good options to know:
+Based on my (subjective) experience, with a focus on LaTeX files, here are some good options to know:
 - `A` enables automatic expansion, i.e. a snippet with the `A` option will expand immediately after `trigger` is typed, without you having to press the`g:UltiSnipsExpandTrigger` key.
   If you're aiming for real-time LaTeX, using well thought-out automatic snippet expansion will dramatically increase your efficiency---more on this in [(subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing).
 
 - `r` allows the use of regular expansions in the snippet's trigger.
   More on this in the section on [regex snippet triggers](#regex-snippet-triggers).
 
-- `b` expands snippets only if `trigger` is typed at the beginning of a line---this option was used above in the [snippet for writing snippets](#tip-a-snippet-for-writing-snippets).
+- `b` expands snippets only if `trigger` is typed at the beginning of a line---this is a useful option when writing snippets for LaTeX environments, which are usually defined at the beginning of a new line.
 
 - `i` (for "in-word" expansion) expands snippets regardless of where `trigger` is typed.
   (By default snippets expand only if `trigger` begins a new line or is preceded by whitespace.)
 
 
 ### Assorted snippet syntax rules
-- Comments start with `#` and can be used to document snippets (see `:help UltiSnips-basic-syntax`)
+- UltiSnips supports comments, which start with `#` and can be used to document snippets (see `:help UltiSnips-basic-syntax` for reference).
 
 - According to `:help UltiSnips-character-escaping`, the characters `'`, `{`, `$`, and `\` need to be escaped by prepending a backslash `\`.
   That said, I'm generally able to use `'`, `{`, and `\` in snippet bodies without escaping them---your mileage may vary.
@@ -180,7 +186,7 @@ Based on my (subjective) experience, mostly with LaTeX files, here are some good
   ```
   extends filetype
   ```
-  anywhere in a `*.snippets` file will load all snippets from `filetype.snippets` into the current snippets file.
+  anywhere in a `*.snippets` file will load all snippets from `filetype.snippets` into the snippets file containing `extends filetype`.
   As an example use case from `:help UltiSnips-basic-syntax`, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
 
 - The line `priority {N}`, where `N` is an integer number (e.g. `priority 5`), placed *anywhere* in `.snippets` file on its own line will set the priority of all snippets below that line to `N`.

@@ -10,7 +10,6 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
 
-* [What to read in this article](#what-to-read-in-this-article)
 * [Choosing a PDF Reader](#choosing-a-pdf-reader)
   * [A PDF reader on Linux](#a-pdf-reader-on-linux)
   * [A PDF reader on macOS](#a-pdf-reader-on-macos)
@@ -42,12 +41,6 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
 
 <!-- vim-markdown-toc -->
 
-## What to read in this article
-Everyone should read:
-- [Choosing a PDF Reader](#choosing-a-pdf-reader)
-- [Cross-platform concepts](#cross-platform-concepts)
-
-<!-- The general goal in this article is to configure a PDF reader for displaying the PDF file associated with the LaTeX source file edited in Vim. -->
 ## Choosing a PDF Reader
 You want a PDF reader that:
 
@@ -61,7 +54,7 @@ You want a PDF reader that:
 ### A PDF reader on Linux
 I recommend and will cover [Zathura](https://pwmt.org/projects/zathura/), under the assumption that anyone reading a multi-article Vim series will appreciate Zathura's Vim-like key bindings and text-based configurability.
 The VimTeX plugin also makes configuration between Zathura and Vim very easy.
-Note, however, that many more Linux-compatible PDF reader exist---see the VimTeX plugin's documentation at `:help g:vimtex_view_method` if curious.
+Note, however, that many more Linux-compatible PDF readers exist---see the VimTeX plugin's documentation at `:help g:vimtex_view_method` if curious.
 
 ### A PDF reader on macOS
 The canonical option on macOS is [Skim](https://skim-app.sourceforge.io/), which you can download as a macOS `dmg` file from its [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
@@ -76,7 +69,6 @@ See also `:help g:vimtex_view_method` for other PDF reader possibilities on Wind
 
 ## Summary: What works on what platform
 I tested 9 combinations of editor, OS, and PDF reader when preparing this article, and the results are summarized in the table below---the more green check marks the better.
-Based on what I found (YMMV), not everything works perfectly with every editor on every OS.
 
 **Recommendations based on my testing:**
 - If you have a choice of editor, use Neovim---everything works on every OS, potentially with a few small work-arounds.
