@@ -14,7 +14,7 @@ This article provides a theoretical background for use of Vimscript in filetype-
 * [Key mappings](#key-mappings)
   * [Writing key mappings](#writing-key-mappings)
     * [Remapping: `map` and `noremap`](#remapping-map-and-noremap)
-    * [Choosing LHS keys](#choosing-lhs-keys)
+    * [Two tips for choosing LHS keys](#two-tips-for-choosing-lhs-keys)
     * [Map modes](#map-modes)
     * [The leader key](#the-leader-key)
     * [The local leader key](#the-local-leader-key)
@@ -98,14 +98,29 @@ Here is the TLDR version:
 
 Again, if desired, consult [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough discussion of `map` and `noremap`.
 
-#### Choosing LHS keys
-- Super useful (tucked away at the bottom of `:help map-which-keys`): use the command `:help {key}<C-D>` to see which commands/mappings start with `{key}` (where `<C-D>` is `CTRL-D`).
-  For example `:help s<C-D>` shows all commands starting with `s`.
-  Type a command you wish to get help on and press enter to go to the corresponding help page.
+#### Two tips for choosing LHS keys
+- **Notation for special keys:** Certain keys can be used in key mappings only if you refer to them with a special notation.
+  Some examples follow below:
+  
+  | Key | Vim mapping notation |
+  | - | - |
+  | Space | `<Space>` |
+  | Enter | `<CR>` |
+  | Escape | `<Esc>` |
+  | Tab | `<Tab>` |
+  | Backspace | `<BS>` |
 
-- See `:help <>` for explanation of `<>` notation for special keys, e.g. `<Esc>` for the escape key or `<CR>` for the Return key.
+  See `:help keycodes` for a full list of special keys and their Vim notation, and `:help <>` for the rules behind Vim's `<>` notation for special keys.
+  Note that the Vim names are case-insensitive---`<cr>` is the same as `<CR>`, for example.
+  
+- **Seeing what keys are already used by Vim:** Vim defines a great deal of keyboard shortcuts, which can cause problems when defining your own mappings---you don't want the mapping's `{lhs}` to override a built-in Vim command.
+  
+  You can use the Vim command `:help {key}<C-D>` (where `<C-D>` is Vim notation for `<Ctrl>d`) to see if `{key}` is used for some built-in or plugin-defined Vim command.
+  For example `:help s<C-D>` shows a multi-column list of all commands beginning with `s` (there are a lot!).
+  You can then type out the full version of any command you see in this list and press enter to go its help page. 
+  This useful tip is tucked away at the bottom of `:help map-which-keys`.
 
-  See also `:help keycodes` for a list of all special key codes that can be used with the `:map command`.
+  It also helps to use Vim's leader key functionality to avoid conflicts with built-in Vim commands---the leader key is described a few paragraphs below in the section [The leader key](#the-leader-key).
 
 #### Map modes
 Not every mapping will expand in every Vim mode;
