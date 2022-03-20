@@ -11,14 +11,6 @@ This article provides a theoretical background for use of Vimscript in filetype-
 <!-- vim-markdown-toc GFM -->
 
 * [How to read this article](#how-to-read-this-article)
-* [The basics of file-specific Vim plugins](#the-basics-of-file-specific-vim-plugins)
-  * [What is a plugin?](#what-is-a-plugin)
-  * [Runtimepath: where Vim looks for files to load](#runtimepath-where-vim-looks-for-files-to-load)
-  * [Vim's filetype plugin system](#vims-filetype-plugin-system)
-    * [Filetype plugin basic recipe](#filetype-plugin-basic-recipe)
-    * [Automatic filetype detection](#automatic-filetype-detection)
-    * [Manual filetype detection](#manual-filetype-detection)
-    * [How Vim loads filetype plugins](#how-vim-loads-filetype-plugins)
 * [Key mappings](#key-mappings)
   * [Writing key mappings](#writing-key-mappings)
     * [Remapping: `map` and `noremap`](#remapping-map-and-noremap)
@@ -33,6 +25,8 @@ This article provides a theoretical background for use of Vimscript in filetype-
 * [Writing Vimscript functions](#writing-vimscript-functions)
   * [About this section](#about-this-section)
   * [Function definition syntax](#function-definition-syntax)
+    * [Naming functions](#naming-functions)
+    * [Function definition syntax](#function-definition-syntax-1)
     * [Tip: Best practice for naming functions](#tip-best-practice-for-naming-functions)
     * [Note: Another way of defining functions](#note-another-way-of-defining-functions)
   * [Script-local functions](#script-local-functions)
@@ -53,139 +47,6 @@ I suggest skimming through on a first reading, remembering this article exists, 
 Note that this article is not a comprehensive Vimscript tutorial, just a (hopefully) coherent explanation---aimed at beginners---of the few Vimscript concepts used in this series.
 
 By the way, nothing in this article is LaTeX-specific and would generalize perfectly to Vim workflows with other file types.
-
-## The basics of file-specific Vim plugins
-
-### What is a plugin?
-Officially, as defined in `:help plugin`, a *plugin* is the name for a Vimscript file that is loaded when you start Vim.
-If you have every created a `vimrc` or `init.vim` file, which are just simple Vimscript files, you have technically written a Vim plugin.
-Just like your `vimrc`, a plugin's purpose is to extend Vim's default functionality to meet your personal needs.
-
-A *package*, as defined in `:help packages`, is a set of Vimscript files.
-To be pedantic, what most people (myself included) refer to in everyday usage as a Vim plugin is technically a package.
-That's irrelevant; the point is that plugins and packages are just Vimscript files used to extend Vim's default functionality, and, if you have ever written a `vimrc` or `init.vim`, it is within your means to write more advanced plugins, too.
-
-### Runtimepath: where Vim looks for files to load
-Your Vim *`runtimepath`* is a list of directories, both in your home directory and system-wide, that Vim searches for files to load at runtime, i.e. when opening Vim.
-Below is a list of some directories on Vim's default `runtimepath`, taken from `:help runtimepath`---you will probably recognize some of them from your own Vim setup.
-
-| Directory or File | Description |
-| ----------------- | ----------- |
-| `filetype.vim` |	Used to set a file's Vim filetype |
-| `autoload` |	Scripts loaded dynamicly using Vim's `autoload` feature |
-| `colors/` | Vim colorscheme files conventionally go here | 
-| `compiler/` | Contains files related to compilation and `make` functionality | 
-| `doc/` | Contains documentation and help files | 
-| `ftplugin/` | Filetype-specific configurations go here | 
-| `indent/` | Contains scripts related to indentation | 
-| `pack/` | Vim's default location for third-party plugins | 
-| `spell/` | Files related to spell-checking | 
-| `syntax/` | Contains scripts related to syntax highlighting | 
-
-You can view your current `runtimepath` with `:echo &runtimepath`.
-If you want a plugin to load automatically when you open Vim, you must place the plugin in an appropriate location in your `runtimepath`.
-
-For the purposes of this series, the most important directory in your `runtimepath` is the `ftplugin/` directory in your Vim config folder, i.e. the directory `~/.vim/ftplugin/` on Vim and `~/.config/nvim/ftplugin/` on Neovim.
-Here's why it is so important: `ftplugin/` is the correct directory to place LaTeX-specific configuration (or in general any configuration that you wish to apply only to a single file type), and this entire series is all about LaTeX-specific configuration.
-
-### Vim's filetype plugin system
-Say you've written some customizations that you want to apply only to LaTeX files, and not to any other file types.
-To keep your LaTeX customizations specific to only LaTeX files, you should use Vim's *filetype plugin system*.
-
-#### Filetype plugin basic recipe
-Say you want to write a plugin that applies only to LaTeX files.
-Here's what to do:
-1. Add the following lines to your `vimrc`
-   (these settings are enabled by default on Neovim---see `:help nvim-defaults`---but it can't hurt to place them in your `init.vim`, too):
-   ```vim
-   filetype on             " enable filetype detection
-   filetype plugin on      " load file-specific plugins
-   filetype indent on      " load file-specific indentation
-   ```
-   These lines enable filetype detection and filetype-specific plugins and indentation.
-   To get an overview of your current filetype status, use the `:filetype` command; you want an output that reads:
-   ```vim
-   " With Vim's filetype-specific functionality enabled, the output looks like this
-   filetype detection:ON  plugin:ON  indent:ON
-   ```
-  See `:help filetype` for more information on filetype plugins.
-
-1. Create the file structure `~/.vim/ftplugin/tex.vim`.
-   Your LaTeX-specific mappings and functions will go in `~/.vim/ftplugin/tex.vim`.
-   That's it! Assuming you followed step 1, anything in `tex.vim` will be loaded only when editing files with the `tex` filetype (i.e. LaTeX and related files), and will not interfere with your other filetype plugins.
-
-   Optional tip: You can also split up your `tex` customizations among multiple files (instead of having a single, cluttered `tex.vim` file).
-   To do this, create the file structure `~/.vim/ftplugin/tex/*.vim`.
-   Any Vimscript files inside `~/.vim/ftplugin/tex/` will then load automatically when editing files with the `tex` filetype.
-   As a concrete example, you might design your `ftplugin` directory like this:
-   ```sh
-   # Two ways to have LaTeX-specific configuration; note the dedicated `tex` folder in the second example
-   ftplugin/                  ftplugin/
-   ├── tex.vim                ├── markdown.vim
-   ├── markdown.vim           ├── python.vim
-   └── python.vim             └── tex
-                                  ├── vimtex.vim
-                                  └── main.vim
-   ```
-   The first example uses a single `tex.vim` file inside `ftplugin`.
-   In the second example, the `tex`-specific configuration is divided into two files---`vimtex.vim` might store configuration related to the VimTeX plugin and `main.tex` would store general settings for the `tex` filetype.
-
-   
-The following sections explain how loading filetype plugins works under the hood.
-<!-- See `h: add-filetype-plugin` and `h: write-filetype-plugin` for further information. -->
-
-#### Automatic filetype detection
-- Vim keeps track of a file's type using the `filetype` option.
-  You can view Vim's opinion of a file's `filetype` using the commands `:set filetype?` or `:echo &filetype`.
-
-- Once you set `:filetype on` in your `vimrc` (enabled by default on Neovim), Vim automatically detects common filetypes (LaTeX included) based on the file's extension using a Vimscript file called `filetype.vim` that ships with Vim.
-  You can view `filetype.vim`'s source code at the path `$VIMRUNTIME/filetype.vim` (first use `:echo $VIMRUNTIME` in Vim to determine `$VIMRUNTIME`).
-
-#### Manual filetype detection
-If Vim's default filetype detection using `filetype.vim` fails (this only happens for exotic filetypes), you can also manually configure Vim to detect the target filetype.
-Note that manual detection of exotic filetypes is not needed for this tutorial (Vim detects LaTeX files without any configuration on your part), so feel free to skip ahead.
-But if you're curious, here's an example using LilyPond files, which by convention have the extension `.ly`.
-([LilyPond](https://lilypond.org/) is a free and open-source text-based system for elegantly typesetting musical notation; as an analogy, LilyPond is for music what LaTeX is for math.)
-
-Here's what to do for manual filetype detection:
-1. Identify the extension(s) you expect for the target filetype, e.g. `.ly` for LilyPond.
-
-1. Make up some reasonable value that Vim's `filetype` variable should take for the target filetype.
-   This can match the extension, but doesn't have to.
-   For LilyPond files I use `filetype=lilypond`.
-
-1. Create the file `~/.vim/ftdetect/lilypond.vim` (the file name, in this case `lilypond.vim`, can technically be anything ending in `.vim`, but by convention should match the value of `filetype`).
-   Inside the file add the single line
-   ```
-   autocommand BufNewFile,BufRead *.ly set filetype=lilypond
-   ```
-   Of course replace `.ly` with your target extension and `lilypond` with the value of `filetype` you chose in step 2.
-   
-#### How Vim loads filetype plugins
-The relevant documentation lives at `:help filetype` and `:help ftplugin`, but is rather long.
-For our purposes:
-
-- When you open a file with Vim, assuming you have set `:filetype on`, Vim tries to determine the file's type by cross-checking the file's extension against a set of extensions found in `$VIMRUNTIME/filetype.vim`.
-  Generally this method works out of the box (`filetype.vim` is over 2300 lines and covers the majority of common files).
-  If the file's type is not detected from extension, Vim attempts to guess the file type based on file contents using `$VIMRUNTIME/scripts.vim` (reference: `:help filetype`).
-  If both `$VIMRUNTIME/filetype.vim` and `$VIMRUNTIME/scripts.vim` fail, Vim checks the contents of `ftdetect` directories in your `runtimepath`, as described in the section [Manual filetype detection](#manual-filetype-detection) a few paragraphs above.
-
-- If Vim successfully detects a file's type, it sets the value of the `filetype` option to indicate the file type.
-  Often, but not always, the value of `filetype` matches the file's conventional extension; for LaTeX this value is `filetype=tex`.
-  You can check the current value of `filetype` with `echo &filetype` or `:set filetype?`.
-
-- After the `filetype` option is set, Vim checks the contents of your `~/.vim/ftplugin` directory, if you have one.
-  If Vim finds either...
-
-  - a file `ftplugin/{filetype}.vim` (e.g. `filetype/tex.vim` for `filetype=tex`), then Vim loads the contents of `{filetype}.vim`, or
-
-  - a directory `ftplugin/{filetype}` (e.g. `ftplugin/tex` for the `filetype=tex`), then Vim loads all `.vim` files inside the `{filetype}` directory.
-
-As a best practice, keep filetype-specific settings in dedicated `{filetype}.vim` files inside `ftplugin/`.
-Think of `ftplugin/{filetype.vim}` as a `vimrc` for that file type only.
-Keep your `init.vim` for global settings you want to apply to all files.
-
-
 
 ## Key mappings
 Vim key mappings allow you to customize the meaning of typed keys,
@@ -447,21 +308,27 @@ In my experience the coverage of functions in `eval.txt` is more comprehensive b
 
 ### Function definition syntax
 A quick Vim vocabulary lesson:
-- *Vim functions* (a better name would be *built-in functions*) are functions built-in to Vim, like `expand()` and `append()`; built-in function start with lowercase letters.
+- *Vim functions* (a better name might be *built-in functions*) are functions built-in to Vim, like `expand()` and `append()`; built-in function start with lowercase letters.
   You can find a full list at `:help vim-function`, which is 7500+ lines long.
 
 - *User functions* are custom Vimscript functions written by a user in their personal plugins or Vim config; their usage is documented at `:help user-function`.
 
 In this series we'll be interested in user functions.
-From `:help E124`, the name of a user-defined function...
+
+
+#### Naming functions
+User-defined Vimscript should start with a capital letter.
+To quote the official documentation aj `:help E124`, the name of a user-defined function...
 
   > ... must be made of alphanumeric characters and `_`, and must start with either a capital letter or `s:` [...] to avoid confusion with built-in functions.
 
-The Vim documentation makes the capital letter requirement for user-defined functions sound more severe than it is---starting functions with capital letters, to the best of my knowledge, is just a sensible best practice to avoid conflicts with built-in Vim functions, which are always lowercase.
+Starting functions with capital letters, to the best of my knowledge, is just a sensible best practice to avoid conflicts or confusion with built-in Vim functions, which are always lowercase, 
+and the Vim documentation makes the capital letter requirement for user-defined functions sound more severe than it is.
 Your user functions will work fine if they start with a lower-case letter, as long as they don't conflict with existing Vim functions.
 (For example, Tim Pope's excellent [`vim-commentary`](https://github.com/tpope/vim-commentary) and [`vim-surround`](https://github.com/tpope/vim-surround) plugins include some lowercase function names.) But by using uppercase function names, you *ensure* your functions won't conflict with built-in Vim functions.
 (Note that a special class of functions called *autoload functions* often intentionally start with lowercase letters, but autoload functions use a special syntax to avoid conflict with built-in Vim functions.)
 
+#### Function definition syntax
 The general syntax for defining Vimscript functions, defined at `:help E124`, is
 ```vim
 function[!] {name}([arguments]) [range] [abort] [dict] [closure]
@@ -469,7 +336,7 @@ function[!] {name}([arguments]) [range] [abort] [dict] [closure]
 endfunction
 ```
 Anything in square brackets is optional.
-Most Vimscript functions used in this series follow the following syntax:
+Most Vimscript functions used in this series use the following syntax:
 ```vim
 function! {name}([arguments]) abort
   " function body
@@ -505,7 +372,7 @@ You can use the `:function` command to list all loaded user functions (expect a 
 
 #### Tip: Best practice for naming functions
 As suggested in the `PACKAGING` section of `:help 41.10`, prepend a unique, memorable string before all related functions in a Vimscript file, for example an abbreviation of the script name.
-In this series, for LaTeX-related functions, we use a `Tex` prefix, as in
+For example, a LaTeX-related script might use a `Tex` prefix, as in
 ```vim
 function TexCompile
   " function body
@@ -517,8 +384,7 @@ endfunction
 
 " and so on...
 ```
-Prepending a short, memorable string to related functions keeps your Vimscript more organized and also makes it less likely that function names in different scripts will conflict.
-If you had `Compile` functions for multiple file types, using a short prefix, such as `TexCompile` and `JavaCompile`, avoids the problem of conflicting `Compile` functions in two separate scripts.
+Prepending a short, memorable string to related functions keeps your Vimscript more organized and also makes it less likely that function names in different scripts will conflict---if you had `Compile` functions for multiple file types, for example, using a short prefix, such as `TexCompile` and `JavaCompile`, avoids the problem of conflicting `Compile` functions in two separate scripts.
 
 #### Note: Another way of defining functions
 When defining Vimscript functions you can use either of the following:
@@ -528,7 +394,7 @@ function! MyFunction()
   " function body
 endfunction
 
-" Loads `MyFunction` only if there are no existing instance currently in memory
+" Loads `MyFunction` only if there are no existing instances currently in memory
 if !exists("MyFunction")
   function MyFunction()
     " function body
@@ -536,7 +402,7 @@ if !exists("MyFunction")
 endif
 
 ```
-A filetype plugin is sourced every time a file of the target file type is opened.
+Explanation: a filetype plugin is sourced every time a file of the target file type is opened.
 The above techniques are two ways to make sure functions in filetype plugins are not loaded twice; the second preserves the existing definition and the first overwrites it.
 The first option is more concise and readable, while the second is probably slightly more efficient, since evaluating an `if` statement is faster that overwriting and reloading a function from scratch.
 But on modern hardware it is unlikely you would notice any difference in speed between the two.
