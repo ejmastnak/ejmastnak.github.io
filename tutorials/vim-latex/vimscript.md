@@ -94,7 +94,6 @@ Here is the TLDR version:
     In everyday terms, `noremap` and its relatives ensure mappings do what you meant them to do.
   
 - *Best practice: always use* `noremap` *or its* `*noremap` *relatives unless you have a very good reason not to* (e.g. when working with `<Plug>` or `<SID>` mappings, which are meant to be remapped, and which I cover later in this article).
-  <!-- **TODO** reference -->
 
 Again, if desired, consult [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough discussion of `map` and `noremap`.
 
@@ -131,17 +130,17 @@ You don't need to memorize it, of course---just remember it exists either on thi
 
   |       | normal | insert | command | visual | select | operator-pending | terminal | lang-arg |
   | -----------  |------|-----|-----|-----|-----|-----|------|------| 
-  | `[nore]map`  | yes  |  -  |  -  | yes | yes | yes |  -   |  -   |
-  | `n[nore]map` | yes  |  -  |  -  |  -  |  -  |  -  |  -   |  -   |
-  | `[nore]map!` |  -   | yes | yes |  -  |  -  |  -  |  -   |  -   |
-  | `i[nore]map` |  -   | yes |  -  |  -  |  -  |  -  |  -   |  -   |
-  | `c[nore]map` |  -   |  -  | yes |  -  |  -  |  -  |  -   |  -   |
-  | `v[nore]map` |  -   |  -  |  -  | yes | yes |  -  |  -   |  -   |
-  | `x[nore]map` |  -   |  -  |  -  | yes |  -  |  -  |  -   |  -   |
-  | `s[nore]map` |  -   |  -  |  -  |  -  | yes |  -  |  -   |  -   |
-  | `o[nore]map` |  -   |  -  |  -  |  -  |  -  | yes |  -   |  -   |
-  | `t[nore]map` |  -   |  -  |  -  |  -  |  -  |  -  | yes  |  -   |
-  | `l[nore]map` |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
+  | `[nore]map`  | ✅ |  -  |  -  | ✅ | ✅ | ✅ |  -   |  -   |
+  | `n[nore]map` | ✅  |  -  |  -  |  -  |  -  |  -  |  -   |  -   |
+  | `[nore]map!` |  -   | ✅ | ✅ |  -  |  -  |  -  |  -   |  -   |
+  | `i[nore]map` |  -   | ✅ |  -  |  -  |  -  |  -  |  -   |  -   |
+  | `c[nore]map` |  -   |  -  | ✅ |  -  |  -  |  -  |  -   |  -   |
+  | `v[nore]map` |  -   |  -  |  -  | ✅ | ✅ |  -  |  -   |  -   |
+  | `x[nore]map` |  -   |  -  |  -  | ✅ |  -  |  -  |  -   |  -   |
+  | `s[nore]map` |  -   |  -  |  -  |  -  | ✅ |  -  |  -   |  -   |
+  | `o[nore]map` |  -   |  -  |  -  |  -  |  -  | ✅ |  -   |  -   |
+  | `t[nore]map` |  -   |  -  |  -  |  -  |  -  |  -  | ✅  |  -   |
+  | `l[nore]map` |  -   | ✅ | ✅ |  -  |  -  |  -  |  -   | ✅  |
 
 This series will use mostly `noremap` and `nnoremap`,  and occasionally `omap`, `xmap`, `vmap`, and their `noremap` equivalents.
 
@@ -193,7 +192,7 @@ Here's how the leader key business works in practice:
 
 Disclaimer: A few of the above example mappings are actually poor Vimscript---Vim offer a better way to call commands from key mappings using a special `<Cmd>` keyword.
 But because I haven't introduced it yet, the above mappings use `:` to enter Command mode.
-We'll fix this later in this article the section [The useful `<Cmd>` keyword](#the-useful-cmd-keyword).
+We'll fix this later in this article in the section [The useful `<Cmd>` keyword](#the-useful-cmd-keyword).
 
 #### The local leader key
 Vim is flexible, and allows you (if you wanted) to define a different leader key for each Vim buffer.
@@ -230,7 +229,7 @@ Here is a short summary, which you can reference later, as needed:
 
 - `<script>` is used to define a new mapping that only remaps characters in the `{rhs}` using mappings that were defined local to a script, starting with `<SID>`.
   This keyword is used in practice when defining mappings that call script-local functions, and is not something you would have to worry about outside of that context.
-  <!-- **TODO** ref section with script-local mappings. -->
+  For a description of script-local mappings, you can scroll down to the section [Calling script-local functions using SID key mappings](#calling-script-local-functions-using-sid-key-mappings).
 
 - The `<nowait>` and `<expr>` keywords are not needed for this series; see `:help map-nowait` and `:help map-expression` if interested.
 
@@ -281,29 +280,42 @@ See `:help map-listing` for a list of all codes.
 The remap status column will usually only show `*` (meaning a mapping is not remappable; the result of `noremap`) and ` ` (meaning a mapping is remappable; the result of `map`), but other values are possible---again, see `:help map-listing` for a list of all codes.
 
 ### Plug mappings
-- Nothing scary, but something you will inevitably see in the wild and should know about.
+Sooner or later, especially if you use third-party plugins, you will run into mappings including the strange-looking `<Plug>` keyword.
+Don't be scared!
+The `<Plug>` keyword is just a way for plugin authors to give plugin users more flexibility in defining custom shortcuts to trigger functionality provided by the plugin.
+<!-- Well-written plugins will often use `<Plug>` mappings. -->
 
-A plugin author maps some (potentially complicated) plugin functionality to a `<Plug>` mapping, and leaves it up to the user to define a convenient `{lhs}` mapping to call the `<Plug>` mapping, which in turn triggers the plugin functionality.
+Here's how the whole `<Plug>` business works:
+1. A plugin author maps some (potentially complicated) plugin functionality to a `<Plug>` mapping, and notes this in the plugin documentation.
+   
+1. A plugin user reads the plugin documentation, sees the `<Plug>` mapping, and defines a convenient `{lhs}` mapping of their own that calls the plugin's `<Plug>` mapping (which in turn remaps to the plugin functionality that `<Plug>` was originally mapped to).
+ 
+1. The user then uses their own `{lhs}` to trigger the plugin functionality associated with the original `<Plug>` mapping.
 
-Basically an API for calling plugin functionality.
+It might help to think of `<Plug>` mappings as a sort of API for calling plugin's functionality---users interface with the plugin's internal workings via `<Plug>` mappings provided by the plugin author.
 
-- a keyword no one would reasonably use in a `{lhs}`, 
-- intentionally weird so their is no risk anyone would use it
-- intended for plugin authors (hence `<Plug>`) to give users flexibility
+Here's why `<Plug>` mappings are useful:
+- They give plugin users flexibility in choosing the `{lhs}` shortcut they personally want to use to trigger plugin functions (each user is different and has their own preferences), instead of the plugin author forcing one shortcut on all users.
 
-According to the Vim docs at `:help using-<Plug>`, Vim seems to interpret `<Plug>` as a special code that a physical keyboard key can never produce.
+- Since `<Plug>` is special Vim keyword that cannot be produced by physical keyboard keys (see `:help using-<Plug>`), there is no risk of the plugin's `<Plug>` mapping overriding any of the plugin users' existing mappings.
 
-Examples from the VimTeX plugin:
-```vim
-nmap <leader>i <plug>(vimtex-info)
-nmap <leader>v <plug>(vimtex-view)
+And here is a real-life example of the exact three-step `<Plug>` process described above, taken from the VimTeX plugin.
 
-omap am <plug>(vimtex-a$)
-xmap am <plug>(vimtex-a$)
-omap im <plug>(vimtex-i$)
-xmap im <plug>(vimtex-i$)
-```
-Recall [the VimTeX article]({% link tutorials/vim-latex/vimtex.md %}).
+1. The VimTeX documentation at `:help vimtex-default-mappings` and `:help VimtexCompile` explains that VimTeX maps the `:VimtexCompile` command (which triggers the compilation functionality provided by the VimTeX plugin) to the `<Plug>` mapping `<Plug>(vimtex-compile)`.
+   (Note that the `<Plug>` keyword is case-insensitive, so e.g. `<Plug>` and `<plug>` mean the same thing.)
+
+1. A user reads the VimTeX docs, sees that the `:VimtexCompile` command is mapped to `<Plug>(vimtex-compile)`, and decides they want to use the shortcut `<leader>c` to call `:VimtexCompile`.
+   They then define (for example in `ftplugin/vimtex.vim`) the mapping
+   ```vim
+   " Using `<leader>c` to call `:VimtexCompile` via VimTeX's plug mapping
+   nmap <leader>c <Plug>(vimtex-compile)
+   ```
+   (It is important to use `nmap` instead of `noremap`, since it is *intended* for the mapping's `rhs`, i.e. `<Plug>(vimtex-compile)`, to remap to its original meaning of `:VimtexCompile` as defined in the VimTeX plugin.)
+
+1. The user can then use `<leader>c` in normal mode to call `:VimtexCompile` and thus compile their LaTeX documents.
+
+Note that, in addition to its `<Plug>` mappings, VimTeX also defines default shortcuts for most of its commands (for example `<localleader>ll` to call `:VimtexCompile`), but any `<Plug>` remappings done by the user, such as `nmap <leader>c <Plug>(vimtex-compile)` above, will override VimTeX's default mappings and respect the user's.
+This behavior was mentioned earlier in this series in the [VimTeX article]({% link tutorials/vim-latex/vimtex.md %}), and is described in the VimTeX documentation at `:help vimtex-default-mappings`.
 
 ## Writing Vimscript functions
 ### About this section
