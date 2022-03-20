@@ -38,12 +38,13 @@ This article provides a theoretical background for use of Vimscript in filetype-
 <!-- vim-markdown-toc -->
 
 ## How to read this article
-This article is long.
+This article is long. 
+And parts of it are inevitably dense given the material covered.
 You don't have to read everything---in fact, if you are already familiar with Vimscript or if you find theory boring, feel free to skip the article entirely.
+The article is a selection of the Vimscript needed to understand the content of this series, presented in a way that should hopefully be easier for a new user to understand than tackling the Vim documentation directly, together with references of exactly where in the Vim docs to find more information.
 I suggest skimming through on a first reading, remembering this article exists, and then referring back to it, if desired, when you wish to better understand the Vimscript functions and key mappings used in the series.
-Note that this article is not a comprehensive Vimscript tutorial, just a (hopefully) coherent explanation---aimed at beginners---of the few Vimscript concepts used in this series.
 
-By the way, nothing in this article is LaTeX-specific and would generalize perfectly to Vim workflows with other file types.
+By the way, nothing in this article is particularly LaTeX-specific and would generalize well to Vim workflows with other file types.
 
 ## Key mappings
 Vim key mappings allow you to customize the meaning of typed keys,
@@ -51,11 +52,11 @@ and I would count them among the fundamental Vim configuration tools.
 In the context of this series, key mappings are mostly used to define shortcuts for calling commands and functions that would be tedious to type out in full (similar to aliases in, say, the Bash shell).
 This section is a whirlwind tour through Vimscript key mappings, from the basic definition syntax to practical mappings actually used in this tutorial.
 
-### Writing key mappings
 The official documentation of key mappings lives in the `Key mapping` chapter of the Vim documentation file `map.txt`, and you can access it with `:help key-mapping`.
 I will summarize here what I deem necessary for understanding the key mappings used in this series. 
 
-The basic syntax for defining a key mapping is
+### Writing key mappings
+The basic syntax for defining a key mapping, which you can find at `:help map-commands`, is
 ```vim
 :map {lhs} {rhs}
 ```
@@ -321,10 +322,6 @@ This behavior was mentioned earlier in this series in the [VimTeX article]({% li
 ### About this section
 Nothing in this section is original---everything comes from the Vim documentation section `eval.txt`, which covers everything a typical user would need to know about Vimscript expressions.
 But `eval.txt` is over 12000 lines and not terribly inviting to beginners, so I am listing here the information I have subjectively found most relevant for a typical user getting started with writing Vimscript functions.
-
-Please keep in mind: this article is *not* an attempt to replace the Vim documentation, nor is it a comprehensive Vimscript tutorial.
-Rather, it is a selection of the Vimscript needed to understand the content of this series, presented in a way that should hopefully be easier for a new user to understand than tackling `:help eval.txt` directly, together with references of exactly where in the Vim docs to find more information.
-My goal is to make it easier for you to get started and avoid some common pitfalls; you can then return to `eval.txt` once you find your footing.
 
 Note on documentation: `:help usr_41.txt` provides a summary of Vimscript.
 There is some overlap between `usr_41.txt` and `eval.txt`.
