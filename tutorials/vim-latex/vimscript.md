@@ -33,9 +33,6 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Scope of script-local functions](#scope-of-script-local-functions)
     * [Why use script-local functions?](#why-use-script-local-functions)
     * [Calling script-local functions using SID key mappings](#calling-script-local-functions-using-sid-key-mappings)
-  * [Script-local mappings](#script-local-mappings)
-    * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
-    * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
   * [Autoload functions](#autoload-functions)
 
 <!-- vim-markdown-toc -->
@@ -432,28 +429,26 @@ Here is what the documentation at `:help local-function` has to say:
 One would overwrite the other, leading to confusion.
 Meanwhile, if the scripts both used `function s:SomeFunctionName`, no problems would occur because the functions are script-local.
 
-Lesson: using script-local functions avoids name conflict with functions in other scripts.
-Although the risk of name overlap is often small, I will focus on script-local functions in this article.
+**Lesson:** using script-local functions prevents name conflicts with functions in other scripts.
 
-Note that using script-local functions is not a hard and fast rule.
-If you don't want to go through the bother of script-local functions and are certain your function names won't conflict with other scripts or plugins---especially if you don't intend to distribute your plugin to others---you don't need to make every function script-local.
+**But keep in mind:** If you are not a plugin author who will distribute your Vimscript to other users, the risk of name overlap is often small, and you may decide that using script local functions is more bother than it is worth.
+If you are certain your function names won't conflict with other scripts or plugins---especially if you don't intend to distribute your plugin to others---you don't need to make every function script-local.
 Even well-known filetype plugins from reputable authors can include global functions, such as `MarkdownFold` and `MarkdownFoldText` in Tim Pope's [`vim-markdown`](https://github.com/tpope/vim-markdown), and everything works just fine.
 
+In any case, if you do follow best practices and use script-local functions, here is how to call the functions with key mappings outside of the script in which the functions were defined.
+
 #### Calling script-local functions using SID key mappings
-In Vimscript, defining key mappings that call script-local functions is a three-step process:
-1. Map the key combination you will actually use to call the function to a `<Plug>` mapping.
+In Vimscript, defining key mappings that call script-local functions is a multi-step process:
+1. Pick a short, convenient key combination you will actually use to call the function.
+1. Map the shortcut key combination to a `<Plug>` mapping.
 1. Map the `<Plug>` mapping to a `<SID>` (script ID) mapping.
 1. Use the `<SID>` mapping to call the function.
 
-The goal here is to make script-local functions usable outside of the script in which they were written, but in a way that prevents conflict with mappings and functions in other plugins.
-Vim makes this possible with the `<SID>` keyword, which stands for script ID and uniquely identifies the script in which a script-local function was originally defined.
-
-Following is a concrete example of this three-step process, adapted from the official documentation;
-you can see the original source in the `PIECES` section of `:help write-plugin`.
-Suppose you wanted to use the key sequence `,c` in normal mode to call a script-local function called `TexCompile` defined in, say, `ftplugin/tex.vim`.
+<!-- adapted from the official documentation; you can see the original source in the `PIECES` section of `:help write-plugin`. -->
+Following is a concrete example of this multi-step process: we will define a script-local plugin called `s:TexCompile()` in the file `ftplugin/tex.vim`, and use the short key sequence `,c` in normal mode to call this function in all Vim buffers with the `tex` filetype.
 Here is the code that would achieve this:
   ```vim
-  " In the file ftplugin/tex.vim (for example), define...
+  " In the file ftplugin/tex.vim (for instance)...
 
   function! s:TexCompile()
     " implement compilation functionality here
@@ -465,21 +460,21 @@ Here is the code that would achieve this:
   nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
   ```
   You could then use `,c` in normal mode to call the `s:TexCompile` function from *any* file with the `tex` filetype.
+  (You could off course replace `,c` with whatever shortcut you wanted.)
 
 Here's an explanation of what the above Vimscript does:
-- `nmap ,c <Plug>TexCompile` maps the key combination `,c` to the literal string `<Plug>TexCompile` (in normal mode because of `nmap`).
-  Appending `<Plug>` is conventional in this context, but note that `<Plug>` is simply a string of characters just like `TexCompile`.
+- `nmap ,c <Plug>TexCompile` maps the shortcut `,c` to the string `<Plug>TexCompile` (in normal mode because of `nmap`) using a `<Plug>` mapping, which was described earlier in this article in the section [Plug mappings](#plug-mappings).
 
 - `nnoremap <script> <Plug>TexCompile <SID>TexCompile` maps the string `<Plug>TexCompile` to `<SID>Compile`.
 
-- The final line maps `<SID>Compile` to the command `:call <SID>TexCompile()<CR>`, which calls the `TexCompile()` function (`<CR>` represents the enter key).
+- The final line maps `<SID>Compile` to the command `:call <SID>TexCompile()<CR>`, which calls the `s:TexCompile()` function (`<CR>` represents the enter key).
   Using `<SID>` before the function name, as in `<SID>TexCompile()`, allows Vim to identify the script ID of the script the function was originally defined in, which makes it possible for Vim to find and execute the function even when the mapping the calls it is used outside the original script.
   You can read more about this admittedly convoluted process at `:help <SID>`.
 
-  It's important that `nmap ,c <Plug>TexCompile` uses `nmap` and not `nnoremap`, since it is *intended* that `<Plug>TexCompile` maps to `<SID>Compile`.
-  Using `noremap ,c <Plug>TexCompile` (instead of `nmap`) would make `,c` the equivalent of literally typing the key sequence `<Plug>TexCompile`.
+  It's important that `nmap ,c <Plug>TexCompile` uses `nmap` and not `nnoremap`, since it is *intended* that `<Plug>TexCompile` remaps to `<SID>Compile`.
+  Using `noremap ,c <Plug>TexCompile` (instead of `nmap`) would make `,c` the equivalent of literally typing the key sequence `<Plug>TexCompile` in normal mode.
 
-In summary, `,c` maps to `<Plug>TexCompile`, which maps to `<SID>TexCompile`, which calls the `TexCompile` function.
+In summary, `,c` maps to `<Plug>TexCompile`, which maps to `<SID>TexCompile`, which calls the `s:TexCompile()` function.
 Kind of a bother, right? Oh well, consider it a peculiarity of Vim.
 And, if followed, this technique ensure functions from different scripts won't conflict, which is important for maintaining a healthy plugin ecosystem.
 
@@ -495,97 +490,23 @@ nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 ```
 But it is conventional to use similar names for the `<Plug>` mapping, `<SID` mapping, and function definition.
 
-### Script-local mappings 
-Keep the big picture in mind: (from `:help script-local`)
+**Review of the big picture**
 
-> When using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
-> To avoid this, they can be made local to the script.
+- Using script-local functions is a Vimscript best practice that prevents naming conflicts between functions with the same name in different scripts.
 
-- The point of `<SID>` is to give each function a unique "script ID" so that it won't conflict with functions with the same name in other scripts; `<SID>` is just the identification number of the script in which a script-local function is define.
-  It allows Vim to find a script-local function, without the possibility that functions with the same name in other scripts would conflict with each other.
+- Making functions script-local comes with a compromise---calling script-local functions with key mappings that work outside of the parent script requires the multi-step process using the `<SID>` keyword described above.
 
-  Again: `<SID>` is the unique identifier of a script in which a function was defined.
+- The `<SID>` keyword gives each function a unique "script ID", so that it won't conflict with functions with the same name in other scripts;
+  Vim expands `<SID>` to a unique script identification number when it loads script-local functions into memory.
+  This script ID allows Vim to find and call the function even outside the function's parent script.
 
-**TODO**: clean up language
-- `<Plug>` doesn't have special meaning beyond the letters themselves.
-  It just understood to mean... hmmm IDK.
-  You use it "for mappings the user might want to map a key sequence to".
-  It's an in-between step.
-  Kind of API-like.
-  The plugin author maps some complicated expression for function call to `<Plug>XYZ`, and then the user, to access the complicated stuff, has to map (using `map` and not `noremap!`) a familiar sequence to `<Plug>XYZ`.
+**The result:** The above mapping process makes script-local functions usable outside of the script in which they were written, but in a way that prevents conflict with mappings and functions in other plugins.
 
-  `<Plug>` is a buffer.
-  The hold point is that a user would never *accidentally* type `<Plug>`.
-  It avoids the scenario in which a plugin author maps idk `gg` or something to a function call and the user wouldn't expect it, and trigger the mapping by accident in everyday use.
-  So the plugin author maps function call to a `<Plug>` mapping and indicates this in the plugin documentation.
-  Then the user has a very low risk of triggering the mapping in unwanted scenarios, since who would every type `<Plug>` in everyday usage?
-
-- From `:help using-<Plug>`, the suggested naming convention to make it VERY unlikely that mappings from different scripts interfere with each other is
-  
-  > `<Plug>{Script-abbreviation}{Map-description};`
-
-  Only the first letter of the script name and the first letter of the map description should be uppercase, to clearly distinguish the two.
-  A semicolon is added to the end intentionally.
-  The semicolon is excessive for me.
-
-- `scriptnames` show the names of all sourced scripts in order of increasing `<SNR>` number
-
-#### Recipe: mapping to script-local functions
-- Make functions script-local `function s:{function-name}()`
-
-- Then:
-  ```vim
-  function! s:TexCompile()
-    " function body would go here
-  endfunction
-
-  " define key map here
-  nmap <leader>c <Plug>TexCompile
-  nnoremap <script> <Plug>TexCompile <SID>TexCompile
-  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
-  ```
-  (To fully understand what is happens, you should understand the general difference between `map` and `noremap`.)
-
-  Note the use of:
-  - `nmap` in `nmap <leader>c <Plug>TexCompile`, since we want to remap `<leader>c` to `<Plug>TexCompile` (we want `<leader>c` to trigger the same thing that `<Plug>TexCompile` is mapped to one line below.)
-
-
-  - `nnoremap <script>` in `<nnoremap> <script> <Plug>TexCompile <SID>TexCompile`.
-
-    First what this does: `noremap <script> {lhs} <SID>{rhs}` will only remap `<SID>{rhs}` to mappings defined in the script with script ID `<SID>`.
-
-    Using `noremap <script>` really means "use `remap` if the mapping's RHS occurs in the script with script ID `<SID>`, and use `noremap` otherwise".
-
-    This is a peculiarity of the `<script>` keyword and is described in `:map-script`, if not in perfectly clear language.
-
-  - `nnoremap` in `nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>`.
-    This ensures the mapping's RHS, i.e. `:call <SID>TexCompile()<CR>`, is executed verbatim.
-
-#### Understanding what could go wrong if you don't follow best practices
-It helps to understand the consequences (which often aren't terribly severe), so you can make an informed decision for yourself.
-Often, regular users writing plugins for themselves won't find compelling reasons to take all of the safety measures listed above, because the extra bother outweights the potential benefits.
-
-- If you don't use `<unique>` with mappings, any existing mapping with the same `{lhs}` will be overwritten.
-  If you do use `<unique>`, the new mapping will fail with an error message, so that you can debug the problem.
-
-  If writing mappings for your own use that you know you want to be the way they are, there is no compelling reason to use use `<unique>`.
-  You would use `<unique>` as a plugin author to prevent the possibility that users of your plugin, who won't be looking at its source code, won't have their mappings overwritten.
-
-  I rarely see `<unique>` out in the wild, although you can find it in Tim Pope's `vim-fugitive` in `autoload/fugitive.vim`
-
-- If you don't use `<SID>`, there is a possibility that functions with the same name, but defined in different scripts, will conflict.
-  One will end up overwriting the other and you will get confusing results.
-
-  Again, this is relevant more for plugin authors than for users.
-  If you're sure a function name doesn't occur anywhere else in your Vim directory (which is reasonable if you prefix your function name with a short abbreviation of your script and have your external plugins under control), you'll be fine not using `<SID>`
-
-  `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
-
-- `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
-
+This is most relevant for plugin authors, who must ensure *their* plugin functions don't unexpectedly overwrite the personal functions of the users who installed their plugins.
+If you're not a plugin author and feel sure that a function name doesn't occur anywhere else in your Vim `runtimepath` (which is reasonable if you prefix your function name with a short abbreviation of your script and have a good picture of your third-party plugins), you'll can probably get away with not using a script-local function.
 
 ### Autoload functions
-I briefly cover autoload functions here only for the sake of completeness.
+I will briefly cover autoload functions here only for the sake of completeness.
 You probably won't use them for your own purposes, but the VimTeX plugin makes heavy use of autoload functions, so you might run into them when browsing the VimTeX source code.
 
 Summarizing somewhat, autoload functions are essentially an optimization to slightly lower Vim's start-up time---instead of Vim reading and loading them into memory during initial start-up, like regular functions, Vim will load autoload functions only when they are first called.
