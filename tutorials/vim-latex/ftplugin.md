@@ -1,3 +1,21 @@
+## About the series
+This is part three in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This article covers explains Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
+Understanding this article will give you a clearer mental model of how the VimTeX plugin works.
+
+## Contents of this article
+<!-- vim-markdown-toc GFM -->
+
+* [The basics of file-specific Vim plugins](#the-basics-of-file-specific-vim-plugins)
+  * [What is a plugin?](#what-is-a-plugin)
+  * [Runtimepath: where Vim looks for files to load](#runtimepath-where-vim-looks-for-files-to-load)
+  * [Vim's filetype plugin system](#vims-filetype-plugin-system)
+    * [Filetype plugin basic recipe](#filetype-plugin-basic-recipe)
+    * [Automatic filetype detection](#automatic-filetype-detection)
+    * [Manual filetype detection](#manual-filetype-detection)
+    * [How Vim loads filetype plugins](#how-vim-loads-filetype-plugins)
+
+<!-- vim-markdown-toc -->
 
 ## The basics of file-specific Vim plugins
 

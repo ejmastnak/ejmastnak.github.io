@@ -19,6 +19,8 @@ As proof that the concepts in this tutorial work, here are [1500+ pages of types
 
 1. [**Snippets**, the key to real-time LaTeX]({% link tutorials/vim-latex/ultisnips.md %}): how to use the [UltiSnips](https://github.com/SirVer/ultisnips) plugin for writing snippets; suggestions for efficient snippet triggers; example snippets.
 
+1. Vim's [**filetype plugin system**]({% link tutorials/vim-latex/ftplugin.md %}): understanding how Vim lets you create customizations that apply only to the LaTeX filetype, which will help you understand the VimTeX plugin.
+
 1. [Getting started with **the VimTeX plugin**]({% link tutorials/vim-latex/vimtex.md %}): navigating the VimTeX documentation; LaTeX-specific text objects; an overview of VimTeX's default key mappings and how to customize them if desired; practical manipulation and navigation of LaTeX source code using VimTeX's commands; customizing VimTeX's default settings, and more.
 
 1. [**Compiling** LaTeX documents from within Vim]({% link tutorials/vim-latex/compilation.md %}): setting up the compilation interface provided by [the VimTeX plugin](https://github.com/lervag/vimtex); an explanation of how to use the `pdflatex` and `latexmk` programs manually; building an asynchronous Vim compiler plugin for LaTeX for those who want to.

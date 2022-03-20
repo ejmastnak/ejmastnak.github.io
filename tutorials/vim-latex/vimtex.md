@@ -4,7 +4,7 @@ title: The vimtex Plugin \| Setting Up Vim for LaTeX Part 2
 # First steps with the VimTeX plugin
 
 ## About the series
-This is part three in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part four in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article describes the excellent [VimTeX plugin](https://github.com/lervag/vimtex/), a modular Vim and Neovim plugin that implements a host of useful features for writing LaTeX files.
 
 ## Contents of this article

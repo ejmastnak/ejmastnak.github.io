@@ -4,7 +4,7 @@ title: Snippets \| Setting up Vim for LaTeX Part 1
 # UltiSnips and LaTeX
 
 ## About the series
-This is part two in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
 ## Contents of this article

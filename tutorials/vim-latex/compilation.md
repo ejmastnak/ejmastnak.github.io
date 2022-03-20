@@ -4,7 +4,7 @@ title: Compilation \| Setting up Vim for LaTeX Part 3
 # Compiling LaTeX Documents in a Vim-Based Workflow
 
 ## About the series
-This is part four in a [six-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part five in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers compilation and should explain what you need to get started compiling LaTeX documents from within Vim using either the VimTeX plugin's compilation features or a custom compilation set-up of your own design.
 
 ## Contents of this article

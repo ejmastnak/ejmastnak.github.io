@@ -4,7 +4,7 @@ title: PDF Reader \| Setting up Vim for LaTeX Part 4
 
 # Setting Up a PDF Reader for Writing LaTeX with Vim
 
-This is part five in a [six part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part six in a [seven part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article explains, for both Linux and macOS, how to set up a PDF reader for displaying the PDF file associated with the LaTeX source file being edited in Vim.
 
 ## Contents of this article
