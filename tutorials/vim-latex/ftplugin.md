@@ -1,4 +1,7 @@
-## About the series
+---
+title: The Vim ftplugin system \| Vim and LaTeX Series Part 3
+---
+# The Vim `ftplugin` system
 This is part three in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers explains Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
 Understanding this article will give you a clearer mental model of how the VimTeX plugin works.

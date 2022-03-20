@@ -1,9 +1,7 @@
 ---
-title: PDF Reader \| Setting up Vim for LaTeX Part 4
+title: PDF Reader for LaTeX and Vim \| Vim and LaTeX Series Part 6
 ---
-
 # Setting Up a PDF Reader for Writing LaTeX with Vim
-
 This is part six in a [seven part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article explains, for both Linux and macOS, how to set up a PDF reader for displaying the PDF file associated with the LaTeX source file being edited in Vim.
 
@@ -124,10 +122,6 @@ You will hear two bits of jargon throughout this article:
   Informally, inverse search is like the user asking, "hey, PDF viewer, please take me to the position in the LaTeX source file corresponding to my current position in the PDF file".
 
 Positions in the PDF file are linked to positions in the LaTeX source file using a utility called SyncTeX, which is implemented in a binary program called `synctex` that should ship by default with a standard TeX installation.
-
-<!-- **Note** Vim might not create a listen address at `/tmp/texsocket` if a file `/tmp/texsocket` already exists there from a different LaTeX document. -->
-<!-- In this case `v:servername` will default to something random and it will seem like backward search won't work. -->
-<!-- Deleting the existing `/tmp/texsocket` should solve the problem. -->
 
 ### Compiling with SyncTeX
 For forward and backward search to work properly, your LaTeX documents must be compiled with `synctex` enabled.
@@ -271,7 +265,6 @@ Here is what to do:
 
 - In Zathura, use `<Ctrl>-<Left-Mouse-Click>` (i.e. a left mouse click while holding the control key) to trigger inverse search, which should open Vim and switch focus to the correct line in the LaTeX source file.
   Inverse search should "just work"---this is because Zathura implements SyncTeX integration in a way (using Zathura's `--synctex-forward` and `--syntex-editor-command` options) that lets VimTeX launch Zathura with the relevant synchronization steps taken care of under the hood.
-  <!-- TODO: if curious, you can see how to manually set up forward and inverse search on Zathura by scrolling down to the section on REFERENCE -->
 
 ### Ensure your Zathura is SyncTeX-enabled
 Zathura must be compiled with `libsynctex` for forward and inverse search to work properly.
@@ -323,7 +316,8 @@ Here's what to do:
    Using `silent execute` instead of just `execute` suppresses `Press ENTER or type command to continue` messages, although you may want to start with just `execute` for debugging purposes.
    Although it is hacky, I have empirically found the `sleep 200m` wait ensures the subsequent window focus executes properly (you may want to tweak the exact sleep time for your hardware and window manager).
    The `redraw!` command refreshes Vim's screen.
-   <!-- TODO: you can read more about Vimscript functions in the Vimscript article. -->
+
+   If interested, you can read more about writing Vimscript functions in this series's [Vimscript article]({% link tutorials/vim-latex/vimscript.md %}), which is the next and final article in the series.
 
 1. Finally, define the following Vimscript autocommand group in your `ftplugin/tex.vim`:
    ```vim

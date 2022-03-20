@@ -1,9 +1,7 @@
 ---
-title: Compilation \| Setting up Vim for LaTeX Part 3
+title: Compiling LaTeX Documents in Vim \| Vim and LaTeX Series Part 5
 ---
 # Compiling LaTeX Documents in a Vim-Based Workflow
-
-## About the series
 This is part five in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers compilation and should explain what you need to get started compiling LaTeX documents from within Vim using either the VimTeX plugin's compilation features or a custom compilation set-up of your own design.
 
@@ -23,7 +21,7 @@ This article covers compilation and should explain what you need to get started 
   * [Possible options for latexmk](#possible-options-for-latexmk)
   * [You can use other options, too...](#you-can-use-other-options-too)
   * [Warning: compiling when using the minted package](#warning-compiling-when-using-the-minted-package)
-* [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin)
+* [Writing a simple LaTeX compiler plugin by hand](#writing-a-simple-latex-compiler-plugin-by-hand)
   * [File structure](#file-structure)
   * [Aside: Specifying file names with Vim's file macros](#aside-specifying-file-names-with-vims-file-macros)
   * [Compilation commands using Vim filename macros](#compilation-commands-using-vim-filename-macros)
@@ -164,7 +162,7 @@ VimTeX offers plenty of compilation goodies beyond the scope of this article tha
 
 ## How to use `pdflatex` and `latexmk`
 This section is written for new users who have not worked directly with  `pdflatex` and `latexmk` before;
-if you are familiar with these programs, feel free to jump ahead to the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin).
+if you are familiar with these programs, feel free to jump ahead to the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin-by-hand).
 
 ### About pdflatex and latexmk
 Both `pdflatex` and `latexmk` are command line programs that read a plain text LaTeX file as input and produce a PDF file as output.
@@ -259,7 +257,7 @@ I encourage you to read through the `pdflatex` and `latexmk` documentation and e
 The [`minted` package](https://github.com/gpoore/minted) provides expressive syntax highlighting for LaTeX documents, which is useful when you include samples of computer code in your LaTeX documents.
 (If you don't use `minted`, feel free to skip this section.)
 
-**TODO** Here is an image of a code block highlighted using `minted`:
+<!-- **TODO** Here is an image of a code block highlighted using `minted`: -->
 
 The `minted` package works by leveraging the [Pygments syntax highlighting library](https://github.com/pygments/pygments).
 For `minted` to have access to Pygments during compilation, you *must compile LaTeX documents with `pdflatex` or `latexmk`'s `-shell-escape` option* enabled.
@@ -282,7 +280,7 @@ Basically the lessons here are:
   The idea of malicious LaTeX code might sound strange, and I am not sure myself what the details of implementation would look like, but I trust the `minted` developers that using `-shell-escape` is a security risk one should be aware of.
 
 
-## Writing a simple LaTeX compiler plugin
+## Writing a simple LaTeX compiler plugin by hand
 
 Here is the big picture:
 
@@ -516,7 +514,7 @@ Thankfully this is very simple---like with most Tim Pope plugins, Dispatch does 
 Here's what to do:
 1. Install Tim Pope's [Dispatch plugin](https://github.com/tpope/vim-dispatch) just like you would any other Vim plugin.
 
-1. Assuming that you used `compiler/tex.vim` as the name of the compiler plugin described earlier in this article in the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin),
+1. Assuming that you used `compiler/tex.vim` as the name of the compiler plugin described earlier in this article in the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin-by-hand),
    somewhere inside `ftplugin/tex.vim` include the line
    ```vim
    " Load the compiler settings in the file `compiler/tex.vim`

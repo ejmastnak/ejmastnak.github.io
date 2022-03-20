@@ -1,9 +1,7 @@
 ---
-title: The vimtex Plugin \| Setting Up Vim for LaTeX Part 2
+title: A VimTeX Plugin Guide \| Vim and LaTeX Series Part 4
 ---
-# First steps with the VimTeX plugin
-
-## About the series
+# Getting started with the VimTeX plugin
 This is part four in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article describes the excellent [VimTeX plugin](https://github.com/lervag/vimtex/), a modular Vim and Neovim plugin that implements a host of useful features for writing LaTeX files.
 
@@ -12,6 +10,7 @@ This article describes the excellent [VimTeX plugin](https://github.com/lervag/v
 
 * [The point of this article](#the-point-of-this-article)
     * [Getting started with VimTeX](#getting-started-with-vimtex)
+    * [Some things to keep in mind](#some-things-to-keep-in-mind)
 * [Overview of features](#overview-of-features)
 * [How to read VimTeX's documentation of mappings](#how-to-read-vimtexs-documentation-of-mappings)
   * [Map definitions and command descriptions](#map-definitions-and-command-descriptions)
@@ -43,6 +42,10 @@ My reasoning is that many new users---I am often guilty of this too---quickly be
 My goal is certainly not to replace the VimTeX documentation, which remains essential reading for any serious VimTeX user.
 Instead, I hope to quickly bring new users up to a level of comfort at which the documentation becomes useful rather than overwhelming, and to offer pointers as to where in the VimTeX documentation to look when interested about a given feature.
 
+**Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which is used as part of Vim's filetype plugin system to implement LaTeX-specific Vim configuration.
+To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
+In case you are just dropping in now, these topics were covered in the [previous article in this series]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
+
 #### Getting started with VimTeX
 Install VimTeX like any other Vim plugin using your plugin installation method of choice.
 The requirements for using VimTeX are mostly straightforward, for example:
@@ -56,7 +59,8 @@ Note that you will need a LaTeX compilation program (e.g. `latexmk` and `pdflate
 You also need a Vim version compiled with the `+clientserver` feature to use VimTeX's inverse search feature with PDF readers (note that `+clientserver` ships by default with Neovim).
 I cover compilation and setting up a PDF reader in detail in the next two articles in this series, so you can postpone these requirements until then.
 
-As you get started, here are a few things to keep in mind:
+#### Some things to keep in mind
+As you get started with the VimTeX plugin, here are a few things to keep in mind:
 
 - Assuming you have installed VimTeX and meet the above-described requirements, you can check that VimTeX has loaded by opening a file with the `.tex` extension and issuing the command `:VimtexInfo`.
   If this opens a window with various system status information, VimTeX has loaded and you're good to go.
@@ -98,8 +102,8 @@ The VimTeX plugin offers more than any one user will probably ever require;
 you can view a complete list of features at `:help vimtex-features`, or see an [online version on the VimTeX GitHub page](https://github.com/lervag/vimtex#features).
 
 This article will cover the following features:
-- LaTeX-specific text objects (for environments, commands, etc...) and their associated operator-pending motions
-- Motion commands through sections, environments, matching delimiters, item lists, etc...
+- LaTeX-specific text objects (for environments, commands, etc.) and their associated operator-pending motions
+- Motion commands through sections, environments, matching delimiters, item lists, etc.
 - LaTeX-specific commands for manipulating environments, commands, and delimiters
 - Syntax highlighting, including support for common LaTeX packages
 - The potential for math context detection for snippet triggers
@@ -125,12 +129,11 @@ Here is a representative example of what the list looks like:
  id               <plug>(vimtex-id)                             xo
  ae               <plug>(vimtex-ae)                             xo
 ```
-To fully appreciate what's going on, you should understand how Vim mappings work,
+To have a clear mental image of what's going on here, you should understand how Vim mappings work,
 what the `<leader>` and `<localleader>` keys do, and what the `<plug>` keyword means.
-These topics are described in TODO: link to Vimscript article; you can read that first if you want, but it isn't strictly necessary.
+If you want to learn about these topics now, take a detour and read through [the Vimscript article]({% link tutorials/vim-latex/vimscript.md %}), which is the final article in this series.
 
 For the present purposes, here is how to interpret the table:
-<!-- - Each row corresponds to a specific VimTeX feature (command, action, or text object). -->
 
 - Each entry in the middle, `RHS`, column is a Vim `<Plug>` mapping corresponding to a specific VimTeX feature (e.g. a command, action, or text object).
   For example, `<plug>(vimtex-info)` displays status information about the VimTeX plugin and `<plug>(vimtex-ac)` corresponds to VimTeX's "a command" text object (analogous to Vim's built-in `aw` for "a word" or `ap` for "a paragraph").
@@ -172,7 +175,7 @@ For convenience, here is a table of VimTeX's text-objects, taken directly from `
 | `aP`, `iP` | Sections |
 | `am`, `im` | Items in `itemize` and `enumerate` environments|
 
-The `ad` and `id` delimiter text object covers all of `()`, `[]`, `{}`, etc... *and* their `\left \right`, `\big \big`, etc... variants, which is very nice.
+The `ad` and `id` delimiter text object covers all of `()`, `[]`, `{}`, etc. *and* their `\left \right`, `\big \big`, etc. variants, which is very nice.
 
 <!-- **TODO** GIFs of each VimTeX text object in visual mode. -->
 
@@ -403,7 +406,7 @@ You can...
   Check the VimTeX documentation for the similar shortcuts `]M` and `[M`, described in `:help <plug>(vimtex-]M)` and `:help <plug>(vimtex-[M)`.
 
 - Jump to the beginning of the next or previous math zone using `]n` and `<plug>(vimtex-]n)`, and `[n` and `<plug>(vimtex-]n)`.
-  These motions apply to `$...$`, `\[...\]`, and math environments (including from the `amsmath` package) such as `equation`, `align`, etc..
+  These motions apply to `$...$`, `\[...\]`, and math environments (including from the `amsmath` package) such as `equation`, `align`, etc.
 
   Check the VimTeX documentation for the similar shortcuts `]N` and `[N`, described in `:help <plug>(vimtex-]N)` and `:help <plug>(vimtex-[N)`.
 

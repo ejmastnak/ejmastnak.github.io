@@ -1,9 +1,7 @@
 ---
-title: Snippets \| Setting up Vim for LaTeX Part 1
+title: UltiSnips Plugin Guide for LaTeX \| Vim and LaTeX Series Part 2
 ---
-# UltiSnips and LaTeX
-
-## About the series
+# An UltiSnips guide for LaTeX workflows
 This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
@@ -449,8 +447,6 @@ In no particular order, here are some tips based on my personal experience:
      endsnippet
      ```
      This snippet triggers after alphanumeric characters and closing delimiters, and includes a visual placeholder.
-
-     **TODO** example LaTeX output of upright-text subscripts.
 
      Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me.
      The point here is just to get you thinking about using the home-row keys as efficient snippet triggers.

@@ -6,9 +6,9 @@ title: Setting Up Vim for Efficiently Writing LaTeX
 This series aims to make it easier for new users to set up the Vim, Neovim, gVim, or MacVim text editors for efficiently writing LaTeX documents.
 It is intended for anyone who...
 
-<!-- - is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed, -->
 - wants a more pleasant and efficient experience writing LaTeX,
 - is interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
+- is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed,
 - just wants to browse someone else's workflow and configuration out of curiosity.
 
 As proof that the concepts in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written real-time during lecture (although grammar and style were improved after).

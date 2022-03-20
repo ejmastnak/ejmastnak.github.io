@@ -1,9 +1,7 @@
 ---
-title: Vimscript Theory \| Setting Up Vim for LaTeX Part 5
+title: Vimscript Primer for Filetype-Specific Workflows  \| Vim and LaTeX Series Part 7
 ---
-# Vimscript Theory for Filetype-Specific Workflows
-
-## About the series
+# A Vimscript Primer for Filetype-Specific Workflows
 This is part seven in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article provides a theoretical background for use of Vimscript in filetype-specific workflows and aims to give you a foundation for understanding the filetype plugin system, key mapping syntax, and Vimscript functions used earlier in this series.
 
