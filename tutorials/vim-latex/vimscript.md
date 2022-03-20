@@ -22,11 +22,13 @@ This article provides a theoretical background for use of Vimscript in filetype-
 * [Key mappings](#key-mappings)
   * [Writing key mappings](#writing-key-mappings)
     * [Remapping: `map` and `noremap`](#remapping-map-and-noremap)
+    * [Choosing LHS keys](#choosing-lhs-keys)
     * [Map modes](#map-modes)
     * [The leader key](#the-leader-key)
     * [The local leader key](#the-local-leader-key)
     * [Map arguments](#map-arguments)
-  * [Listing mappings and getting information](#listing-mappings-and-getting-information)
+    * [The useful `<Cmd>` keyword](#the-useful-cmd-keyword)
+  * [Diagnostics: Listing mappings and getting information](#diagnostics-listing-mappings-and-getting-information)
   * [Script-local mappings](#script-local-mappings)
     * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
     * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
@@ -188,12 +190,13 @@ Keep your `init.vim` for global settings you want to apply to all files.
 Vim key mappings allow you to customize the meaning of typed keys,
 and I would count them among the fundamental Vim configuration tools.
 In the context of this series, key mappings are mostly used to define shortcuts for calling commands and functions that would be tedious to type out in full (similar to aliases in, say, the Bash shell).
+This section is a whirlwind tour through Vimscript key mappings, from the basic definition syntax to practical mappings actually used in this tutorial.
 
 ### Writing key mappings
-The `Key mapping` chapter in the documentation file `map.txt`, which you can access with `:help key-mapping`, contains the official documentation of key mappings.
+The official documentation of key mappings lives in the `Key mapping` chapter of the Vim documentation file `map.txt`, and you can access it with `:help key-mapping`.
 I will summarize here what I deem necessary for understanding the key mappings used in this series. 
 
-The general syntax for defining a key mapping is
+The basic syntax for defining a key mapping is
 ```vim
 :map {lhs} {rhs}
 ```
@@ -204,27 +207,54 @@ Here is what's involved in the mapping definition:
 
 The command `:map {lhs} {rhs}` then maps the key sequence `{lhs}` to the key sequence `{rhs}` in the Vim mode in which the mapping applies.
 
-You probably already have some key mappings in your `vimrc` or `init.vim`.
+You probably already have some key mappings in your `vimrc` or `init.vim`,
+but in case you haven't seen mappings yet, here are some very simple examples to get you started:
+```vim
+" Map `Y` to `y$` (copy from current cursor position to the end of the line),
+" which makes Y work analogously to `D` and `C`.
+" (Not vi compatible, and enabled by default on Neovim)
+noremap Y y$
+
+" Map `j` to `gj` and `k` to `gk`, which makes it easier to navigate wrapped lines.
+noremap j gj
+noremap k gk
+```
+Using `noremap` instead of `map` is a standard Vimscript best practice, described in the following section immediately below.
 
 #### Remapping: `map` and `noremap`
-I will cover this topic only briefly (its really not too complicated), and refer you to Steve Losh's nice description of the same content in [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough treatment.
+I will cover this topic only briefly (its really not too complicated in practice), and refer you to Steve Losh's nice description of the same content in [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough treatment.
 
 Here is the TLDR version:
 - Vim offers two types of mapping commands
   1. The *recursive* commands `map`, `nmap`, `imap`, and their other `*map` relatives
   2. The *non-recursive* commands `noremap`, `nnoremap`, `inoremap`, and their other `*noremap` relatives
-- Both `:map {lhs} {rhs}` and `:noremap {lhs} {rhs}` will map `{lhs}` to `{rhs}`, but if any keys in the `{rhs}` of a `:map` mapping have been used the `{lhs}` of a second mapping (e.g. somewhere else in your Vim config or in third-party plugin), then the second mapping will be triggered as a result of the first (often with unexpected results!).
+- Both `:map {lhs} {rhs}` and `:noremap {lhs} {rhs}` will map `{lhs}` to `{rhs}`, but here is the difference:
+  - **`map`:** If any keys in the `{rhs}` of a `:map` mapping have been used the `{lhs}` of a *second* mapping (e.g. somewhere else in your Vim config or in third-party plugin), then the second mapping will in turn be triggered as a result of the first (often with unexpected results!).
 
-  Using `:noremap {lhs} {rhs}` is safer---it ensures that even if `{rhs}` contains the `{lhs}` of a second mapping, the second mapping won't interfere with the first.
-  *In practice, you should always use* `noremap` *or its* `*noremap` *relatives unless you have a very good reason not to* (e.g. when working with `<Plug>` or `<SID>` mappings, which are meant to be remapped, and which I cover later in this article).
+  - **`noremap`:** Using `:noremap {lhs} {rhs}` is safer---it ensures that even if `{rhs}` contains the `{lhs}` of a second mapping, the second mapping won't interfere with the first.
+    In everyday terms, `noremap` and its relatives ensure mappings do what you meant them to do.
+  
+- *Best practice: always use* `noremap` *or its* `*noremap` *relatives unless you have a very good reason not to* (e.g. when working with `<Plug>` or `<SID>` mappings, which are meant to be remapped, and which I cover later in this article).
   <!-- **TODO** reference -->
 
-Again, if desired, check out [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough discussion of `map` and `noremap`.
+Again, if desired, consult [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough discussion of `map` and `noremap`.
+
+#### Choosing LHS keys
+- Super useful (tucked away at the bottom of `:help map-which-keys`): use the command `:help {key}<C-D>` to see which commands/mappings start with `{key}` (where `<C-D>` is `CTRL-D`).
+  For example `:help s<C-D>` shows all commands starting with `s`.
+  Type a command you wish to get help on and press enter to go to the corresponding help page.
+
+- See `:help <>` for explanation of `<>` notation for special keys, e.g. `<Esc>` for the escape key or `<CR>` for the Return key.
+
+  See also `:help keycodes` for a list of all special key codes that can be used with the `:map command`.
+
 
 #### Map modes
-The documentation at `:help map-modes` gives an overview of the various map commands (`nmap`, `imap`, `map`, etc...) and the Vim modes in which they apply.
-For your convenience, here is table summarizing Vim's command and map modes, taken from `:help map-table`.
-You don't need to memorize it, of course---just remember it exists either on this website or at `:help map-table`, and come back for refresher as needed.
+Not every mapping will expand in every Vim mode;
+you control the Vim mode in which a given key mapping applies with your choice of `nmap`, `imap`, `map`, etc., which each correspond to a different mode.
+The Vim documentation at `:help map-modes` states exactly which map command corresponds to which Vim mode(s).
+For your convenience, here is a table summarizing which command applies to which mode, taken from `:help map-table`.
+You don't need to memorize it, of course---just remember it exists either on this website or at `:help map-table`, and come back for refresher when needed.
 
   |       | normal | insert | command | visual | select | operator-pending | terminal | lang-arg |
   | -----------  |------|-----|-----|-----|-----|-----|------|------| 
@@ -240,7 +270,7 @@ You don't need to memorize it, of course---just remember it exists either on thi
   | `t[nore]map` |  -   |  -  |  -  |  -  |  -  |  -  | yes  |  -   |
   | `l[nore]map` |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
 
-This series uses mostly `map`, `nmap`, `omap`, `xmap`, `vmap`, and their `noremap` equivalents.
+This series will use mostly `noremap` and `nnoremap`,  and occasionally `omap`, `xmap`, `vmap`, and their `noremap` equivalents.
 
 #### The leader key
 Vim offers something called a *leader key*, which works as a prefix you can use to begin the `{lhs}` of key mappings.
@@ -283,15 +313,14 @@ Here's how the leader key business works in practice:
    noremap <leader>U :call UltiSnips#RefreshSnippets()<CR>
  
    " Use <leader>c to save and comile the current document
-   noremap <leader>c :write<CR>VimtexCompileS<CR>
+   noremap <leader>c :write<CR>:VimtexCompile<CR>
    ```
 1. Enjoy!
    For example, you could then type `<leader>s` in normal mode, of course replacing `<leader>` with the value of your leader key, to call `:set spell!<CR>` and toggle Vim's spell-checking on and off.
 
 Disclaimer: A few of the above example mappings are actually poor Vimscript---Vim offer a better way to call commands from key mappings using a special `<Cmd>` keyword.
 But because I haven't introduced it yet, the above mappings use `:` to enter Command mode.
-We'll fix this later in 
-**TODO** reference.
+We'll fix this later in this article the section [The useful `<Cmd>` keyword](#the-useful-cmd-keyword).
 
 #### The local leader key
 Vim is flexible, and allows you (if you wanted) to define a different leader key for each Vim buffer.
@@ -311,11 +340,9 @@ In practice, most users will want to set `maplocalleader` to the same value as t
 See `:help maplocalleader` for official documentation of the local leader key.
 
 #### Map arguments
-What Vim calls map arguments are special keywords that allow you to customize a key mapping's functionality;
-the official documentation may be found at `:help map-arguments`.
-Vim defines for 6 map arguments,
-`<buffer>`, `<nowait>`, `<silent>`, `<script>`, `<expr>` and `<unique>`, which may be used in any order.
-They must appear right after the `:map` command, the mappings `{lhs}`.
+Vim defines 6 map arguments, which are special keywords that allow you to customize a key mapping's functionality.
+Their possible values are `<buffer>`, `<nowait>`, `<silent>`, `<script>`, `<expr>` and `<unique>`, and the official documentation may be found at `:help map-arguments`.
+These keywords can be combined and used in any order, but as a whole must appear immediately after the `:map` command and before a mapping's `{lhs}`.
 Here is a short summary, which you can reference later, as needed:
 
 - `<silent>` stops a mapping from producing output on Vim's command line.
@@ -334,28 +361,51 @@ Here is a short summary, which you can reference later, as needed:
 
 - The `<nowait>` and `<expr>` keywords are not needed for this series; see `:help map-nowait` and `:help map-expression` if interested.
 
-
-**Useful: the `<Cmd>` keyword**
-
+#### The useful `<Cmd>` keyword
 Vim defines one more keyword: `<Cmd>`.
 You can use `<Cmd>` mappings to execute Vim commands directly in the current mode (without using `:` to enter Vim's command mode).
-Using `<Cmd>` avoids unnecessary mode changes and associated autommand events, improves performance, and is generally the best way to run Vim commands.
-The official documentation lives at `:help map-<cmd>`; here are some examples for reference
+The official documentation lives at `:help map-<cmd>`;
+for our purposes, using `<Cmd>` avoids unnecessary mode changes and associated autocommand events, improves performance, and is generally the best way to run Vim commands.
+
+Here are some examples for reference, which correct some of the mappings defined earlier in this article in the section [The leader key](#the-leader-key), before we had introduced the `<Cmd>` keyword.
+```vim
+" Best practice: using <Cmd> to execute commands
+noremap <leader>c <Cmd>write<CR><Cmd>VimtexCompile<CR>
+
+" Poor practice: manually entering command mode with `:`
+noremap <leader>c :write<CR>:VimtexCompile<CR>
+
+" Another example using `<leader>b` to move to the next Vim buffer
+noremap <leader>b <Cmd>bnext<CR>
+
+" Use `<leader>i` in normal mode to call `:VimtexInfo`
+nnoremap <leader>i <Cmd>VimtexInfo<CR>
 ```
-noremap e <Cmd>echo "Hello world!"<CR>
+
+### Diagnostics: Listing mappings and getting information
+You can see a list of all mappings currently defined in a given map mode using the `:map`, `:nmap`, `imap`, etc. commands without any arguments.
+For example, `:nmap` will list all mappings defined in normal mode, `:imap` all mappings defined in insert mode, etc.
+
+To filter the search down, you can use `:map {characters}` to show a list of all mappings with a `{lhs}` starting with `{characters}`.
+For example, `:nmap \` will show all normal mode mappings beginning with `\`, `:imap <leader>g` will show all insert mode mappings beginning with `<leader>g`, etc.
+
+An example output of `:map <leader>` (which would show all mappings in normal, visual, and operator-pending modes beginning with the leader key) might look something like this:
+```vim
+  " Using some of the mappings defined earlier in this article,
+  " and assuming <Space> is the leader key.
+  <Space>c   * <Cmd>write<CR><Cmd>VimtexCompile<CR>
+  <Space>b   * <Cmd>bnext<CR>
+n <Space>i   * <Cmd>VimtexInfo<CR>
 ```
-**TODO** do the compilation and update thing.
+This output has four columns:
 
-### Listing mappings and getting information
-- `:help map-listing` for an explanation of the syntax used when listing mappings with e.g. `:map`, `imap`, etc...
+| **Mode** | **LHS** | **Remap status** | **RHS** |
+| - | - | - | - |
+| A single character indicating the mode in which the mapping applies | The mapping's full `{lhs}` | A single character indicating if the mapping can be remapped or not | The mapping's full `{rhs}` |
 
-- Super useful (tucked away at the bottom of `:help map-which-keys`): use the command `:help {key}<C-D>` to see which commands/mappings start with `{key}` (where `<C-D>` is `CTRL-D`).
-  For example `:help s<C-D>` shows all commands starting with `s`.
-  Type a command you wish to get help on and press enter to go to the corresponding help page.
-
-- See `:help <>` for explanation of `<>` notation for special keys, e.g. `<Esc>` for the escape key or `<CR>` for the Return key.
-
-  See also `:help keycodes` for a list of all special key codes that can be used with the `:map command`.
+The values of the mode column are mostly self-explanatory---`n` means normal mode (the result of `nmap`), ` ` (space) means `nvo` mode (the result of `map`), `i` means insert mode (the result of `imap`), etc.
+See `:help map-listing` for a list of all codes.
+The remap status column will usually only show `*` (meaning a mapping is not remappable; the result of `noremap`) and ` ` (meaning a mapping is remappable; the result of `map`), but other values are possible---again, see `:help map-listing` for a list of all codes.
 
 ### Script-local mappings 
 Keep the big picture in mind: (from `:help script-local`)
