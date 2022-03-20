@@ -29,9 +29,7 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Map arguments](#map-arguments)
     * [The useful `<Cmd>` keyword](#the-useful-cmd-keyword)
   * [Diagnostics: Listing mappings and getting information](#diagnostics-listing-mappings-and-getting-information)
-  * [Script-local mappings](#script-local-mappings)
-    * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
-    * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
+  * [Plug mappings](#plug-mappings)
 * [Writing Vimscript functions](#writing-vimscript-functions)
   * [About this section](#about-this-section)
   * [Function definition syntax](#function-definition-syntax)
@@ -41,6 +39,9 @@ This article provides a theoretical background for use of Vimscript in filetype-
     * [Scope of script-local functions](#scope-of-script-local-functions)
     * [Why use script-local functions?](#why-use-script-local-functions)
     * [Calling script-local functions using SID key mappings](#calling-script-local-functions-using-sid-key-mappings)
+  * [Script-local mappings](#script-local-mappings)
+    * [Recipe: mapping to script-local functions](#recipe-mapping-to-script-local-functions)
+    * [Understanding what could go wrong if you don't follow best practices](#understanding-what-could-go-wrong-if-you-dont-follow-best-practices)
   * [Autoload functions](#autoload-functions)
 
 <!-- vim-markdown-toc -->
@@ -248,7 +249,6 @@ Again, if desired, consult [Chapter 5 of Learn Vimscript the Hard Way](https://l
 
   See also `:help keycodes` for a list of all special key codes that can be used with the `:map command`.
 
-
 #### Map modes
 Not every mapping will expand in every Vim mode;
 you control the Vim mode in which a given key mapping applies with your choice of `nmap`, `imap`, `map`, etc., which each correspond to a different mode.
@@ -407,94 +407,30 @@ The values of the mode column are mostly self-explanatory---`n` means normal mod
 See `:help map-listing` for a list of all codes.
 The remap status column will usually only show `*` (meaning a mapping is not remappable; the result of `noremap`) and ` ` (meaning a mapping is remappable; the result of `map`), but other values are possible---again, see `:help map-listing` for a list of all codes.
 
-### Script-local mappings 
-Keep the big picture in mind: (from `:help script-local`)
+### Plug mappings
+- Nothing scary, but something you will inevitably see in the wild and should know about.
 
-> When using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
-> To avoid this, they can be made local to the script.
+A plugin author maps some (potentially complicated) plugin functionality to a `<Plug>` mapping, and leaves it up to the user to define a convenient `{lhs}` mapping to call the `<Plug>` mapping, which in turn triggers the plugin functionality.
 
-- The point of `<SID>` is to give each function a unique "script ID" so that it won't conflict with functions with the same name in other scripts; `<SID>` is just the identification number of the script in which a script-local function is define.
-  It allows Vim to find a script-local function, without the possibility that functions with the same name in other scripts would conflict with each other.
+Basically an API for calling plugin functionality.
 
-  Again: `<SID>` is the unique identifier of a script in which a function was defined.
+- a keyword no one would reasonably use in a `{lhs}`, 
+- intentionally weird so their is no risk anyone would use it
+- intended for plugin authors (hence `<Plug>`) to give users flexibility
 
-**TODO**: clean up language
-- `<Plug>` doesn't have special meaning beyond the letters themselves.
-  It just understood to mean... hmmm IDK.
-  You use it "for mappings the user might want to map a key sequence to".
-  It's an in-between step.
-  Kind of API-like.
-  The plugin author maps some complicated expression for function call to `<Plug>XYZ`, and then the user, to access the complicated stuff, has to map (using `map` and not `noremap!`) a familiar sequence to `<Plug>XYZ`.
+According to the Vim docs at `:help using-<Plug>`, Vim seems to interpret `<Plug>` as a special code that a physical keyboard key can never produce.
 
-  `<Plug>` is a buffer.
-  The hold point is that a user would never *accidentally* type `<Plug>`.
-  It avoids the scenario in which a plugin author maps idk `gg` or something to a function call and the user wouldn't expect it, and trigger the mapping by accident in everyday use.
-  So the plugin author maps function call to a `<Plug>` mapping and indicates this in the plugin documentation.
-  Then the user has a very low risk of triggering the mapping in unwanted scenarios, since who would every type `<Plug>` in everyday usage?
+Examples from the VimTeX plugin:
+```vim
+nmap <leader>i <plug>(vimtex-info)
+nmap <leader>v <plug>(vimtex-view)
 
-- From `:help using-<Plug>`, the suggested naming convention to make it VERY unlikely that mappings from different scripts interfere with each other is
-  
-  > `<Plug>{Script-abbreviation}{Map-description};`
-
-  Only the first letter of the script name and the first letter of the map description should be uppercase, to clearly distinguish the two.
-  A semicolon is added to the end intentionally.
-  The semicolon is excessive for me.
-
-- `scriptnames` show the names of all sourced scripts in order of increasing `<SNR>` number
-
-#### Recipe: mapping to script-local functions
-- Make functions script-local `function s:{function-name}()`
-
-- Then:
-  ```vim
-  function! s:TexCompile()
-    " function body would go here
-  endfunction
-
-  " define key map here
-  nmap <leader>c <Plug>TexCompile
-  nnoremap <script> <Plug>TexCompile <SID>TexCompile
-  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
-  ```
-  (To fully understand what is happens, you should understand the general difference between `map` and `noremap`.)
-
-  Note the use of:
-  - `nmap` in `nmap <leader>c <Plug>TexCompile`, since we want to remap `<leader>c` to `<Plug>TexCompile` (we want `<leader>c` to trigger the same thing that `<Plug>TexCompile` is mapped to one line below.)
-
-
-  - `nnoremap <script>` in `<nnoremap> <script> <Plug>TexCompile <SID>TexCompile`.
-
-    First what this does: `noremap <script> {lhs} <SID>{rhs}` will only remap `<SID>{rhs}` to mappings defined in the script with script ID `<SID>`.
-
-    Using `noremap <script>` really means "use `remap` if the mapping's RHS occurs in the script with script ID `<SID>`, and use `noremap` otherwise".
-
-    This is a peculiarity of the `<script>` keyword and is described in `:map-script`, if not in perfectly clear language.
-
-  - `nnoremap` in `nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>`.
-    This ensures the mapping's RHS, i.e. `:call <SID>TexCompile()<CR>`, is executed verbatim.
-
-#### Understanding what could go wrong if you don't follow best practices
-It helps to understand the consequences (which often aren't terribly severe), so you can make an informed decision for yourself.
-Often, regular users writing plugins for themselves won't find compelling reasons to take all of the safety measures listed above, because the extra bother outweights the potential benefits.
-
-- If you don't use `<unique>` with mappings, any existing mapping with the same `{lhs}` will be overwritten.
-  If you do use `<unique>`, the new mapping will fail with an error message, so that you can debug the problem.
-
-  If writing mappings for your own use that you know you want to be the way they are, there is no compelling reason to use use `<unique>`.
-  You would use `<unique>` as a plugin author to prevent the possibility that users of your plugin, who won't be looking at its source code, won't have their mappings overwritten.
-
-  I rarely see `<unique>` out in the wild, although you can find it in Tim Pope's `vim-fugitive` in `autoload/fugitive.vim`
-
-- If you don't use `<SID>`, there is a possibility that functions with the same name, but defined in different scripts, will conflict.
-  One will end up overwriting the other and you will get confusing results.
-
-  Again, this is relevant more for plugin authors than for users.
-  If you're sure a function name doesn't occur anywhere else in your Vim directory (which is reasonable if you prefix your function name with a short abbreviation of your script and have your external plugins under control), you'll be fine not using `<SID>`
-
-  `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
-
-- `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
-
+omap am <plug>(vimtex-a$)
+xmap am <plug>(vimtex-a$)
+omap im <plug>(vimtex-i$)
+xmap im <plug>(vimtex-i$)
+```
+Recall [the VimTeX article]({% link tutorials/vim-latex/vimtex.md %}).
 
 ## Writing Vimscript functions
 ### About this section
@@ -692,6 +628,95 @@ nnoremap <script> <Plug>ABC <SID>XYZ
 nnoremap <SID>XYZ :call <SID>TexCompile()<CR>
 ```
 But it is conventional to use similar names for the `<Plug>` mapping, `<SID` mapping, and function definition.
+
+### Script-local mappings 
+Keep the big picture in mind: (from `:help script-local`)
+
+> When using several Vim script files, there is the danger that mappings and functions used in one script use the same name as in other scripts.
+> To avoid this, they can be made local to the script.
+
+- The point of `<SID>` is to give each function a unique "script ID" so that it won't conflict with functions with the same name in other scripts; `<SID>` is just the identification number of the script in which a script-local function is define.
+  It allows Vim to find a script-local function, without the possibility that functions with the same name in other scripts would conflict with each other.
+
+  Again: `<SID>` is the unique identifier of a script in which a function was defined.
+
+**TODO**: clean up language
+- `<Plug>` doesn't have special meaning beyond the letters themselves.
+  It just understood to mean... hmmm IDK.
+  You use it "for mappings the user might want to map a key sequence to".
+  It's an in-between step.
+  Kind of API-like.
+  The plugin author maps some complicated expression for function call to `<Plug>XYZ`, and then the user, to access the complicated stuff, has to map (using `map` and not `noremap!`) a familiar sequence to `<Plug>XYZ`.
+
+  `<Plug>` is a buffer.
+  The hold point is that a user would never *accidentally* type `<Plug>`.
+  It avoids the scenario in which a plugin author maps idk `gg` or something to a function call and the user wouldn't expect it, and trigger the mapping by accident in everyday use.
+  So the plugin author maps function call to a `<Plug>` mapping and indicates this in the plugin documentation.
+  Then the user has a very low risk of triggering the mapping in unwanted scenarios, since who would every type `<Plug>` in everyday usage?
+
+- From `:help using-<Plug>`, the suggested naming convention to make it VERY unlikely that mappings from different scripts interfere with each other is
+  
+  > `<Plug>{Script-abbreviation}{Map-description};`
+
+  Only the first letter of the script name and the first letter of the map description should be uppercase, to clearly distinguish the two.
+  A semicolon is added to the end intentionally.
+  The semicolon is excessive for me.
+
+- `scriptnames` show the names of all sourced scripts in order of increasing `<SNR>` number
+
+#### Recipe: mapping to script-local functions
+- Make functions script-local `function s:{function-name}()`
+
+- Then:
+  ```vim
+  function! s:TexCompile()
+    " function body would go here
+  endfunction
+
+  " define key map here
+  nmap <leader>c <Plug>TexCompile
+  nnoremap <script> <Plug>TexCompile <SID>TexCompile
+  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
+  ```
+  (To fully understand what is happens, you should understand the general difference between `map` and `noremap`.)
+
+  Note the use of:
+  - `nmap` in `nmap <leader>c <Plug>TexCompile`, since we want to remap `<leader>c` to `<Plug>TexCompile` (we want `<leader>c` to trigger the same thing that `<Plug>TexCompile` is mapped to one line below.)
+
+
+  - `nnoremap <script>` in `<nnoremap> <script> <Plug>TexCompile <SID>TexCompile`.
+
+    First what this does: `noremap <script> {lhs} <SID>{rhs}` will only remap `<SID>{rhs}` to mappings defined in the script with script ID `<SID>`.
+
+    Using `noremap <script>` really means "use `remap` if the mapping's RHS occurs in the script with script ID `<SID>`, and use `noremap` otherwise".
+
+    This is a peculiarity of the `<script>` keyword and is described in `:map-script`, if not in perfectly clear language.
+
+  - `nnoremap` in `nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>`.
+    This ensures the mapping's RHS, i.e. `:call <SID>TexCompile()<CR>`, is executed verbatim.
+
+#### Understanding what could go wrong if you don't follow best practices
+It helps to understand the consequences (which often aren't terribly severe), so you can make an informed decision for yourself.
+Often, regular users writing plugins for themselves won't find compelling reasons to take all of the safety measures listed above, because the extra bother outweights the potential benefits.
+
+- If you don't use `<unique>` with mappings, any existing mapping with the same `{lhs}` will be overwritten.
+  If you do use `<unique>`, the new mapping will fail with an error message, so that you can debug the problem.
+
+  If writing mappings for your own use that you know you want to be the way they are, there is no compelling reason to use use `<unique>`.
+  You would use `<unique>` as a plugin author to prevent the possibility that users of your plugin, who won't be looking at its source code, won't have their mappings overwritten.
+
+  I rarely see `<unique>` out in the wild, although you can find it in Tim Pope's `vim-fugitive` in `autoload/fugitive.vim`
+
+- If you don't use `<SID>`, there is a possibility that functions with the same name, but defined in different scripts, will conflict.
+  One will end up overwriting the other and you will get confusing results.
+
+  Again, this is relevant more for plugin authors than for users.
+  If you're sure a function name doesn't occur anywhere else in your Vim directory (which is reasonable if you prefix your function name with a short abbreviation of your script and have your external plugins under control), you'll be fine not using `<SID>`
+
+  `<SID>`: ensures multiple instances of the same function name in different scripts don't conflict
+
+- `<Plug>`: ensures multiple instances of a mapping LHS in different scripts don't conflict.
+
 
 ### Autoload functions
 I briefly cover autoload functions here only for the sake of completeness.
