@@ -1,3 +1,34 @@
+---
+---
+$nord0: #2e3440;
+$nord1: #3b4252;
+$nord2: #434c5e;
+$nord3: #4c566a;
+
+$nord4: #d8dee9;
+$nord5: #e5e9f0;
+$nord6: #eceff4;
+
+$nord7: #8fbcbb;
+$nord8: #88c0d0;
+$nord9: #81a1c1;
+$nord10: #5e81ac;
+
+$nord11: #bf616a;
+$nord12: #d08770;
+$nord13: #ebcb8b;
+$nord14: #a3be8c;
+$nord15: #b48ead;
+
+$light0: #fbfbfc;
+$light1: #f8f9fb;
+
+$text-color: $nord1;
+$background-color: $light0;
+$link-color: #0079c0;
+$block-code-background-color: $nord5;
+$inline-code-background-color: $nord6;
+
 .markdown-body .octicon {
   display: inline-block;
   fill: currentColor;
@@ -55,15 +86,31 @@
   content: ' ';
   display: inline-block;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z'%3E%3C/path%3E%3C/svg%3E");
-}.markdown-body {
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+}
+
+
+// Note: main text and background color
+body {
   line-height: 1.5;
-  color: #24292e;
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  color: $text-color;
+  background-color: $background-color;
+  font-family: 'Computer Modern Sans', sans-serif; 
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
+}
+
+// Note: text and background color
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  line-height: inherit;
+  color: inherit;
+  background-color: inherit;
+  font-family: inherit; 
+  font-size: inherit;
+  line-height: inherit;
+  word-wrap: inherit;
 }
 
 .markdown-body details {
@@ -100,7 +147,7 @@
 .markdown-body code,
 .markdown-body kbd,
 .markdown-body pre {
-  font-family: monospace,monospace;
+  font-family: 'Computer Modern Typewriter',monospace;
   font-size: 1em;
 }
 
@@ -134,8 +181,9 @@
   line-height: inherit;
 }
 
+// Note: link text color
 .markdown-body a {
-  color: #0366d6;
+  color: $link-color;
   text-decoration: none;
 }
 
@@ -180,10 +228,11 @@
   cursor: pointer;
 }
 
+// Unidentified!
 .markdown-body kbd {
   display: inline-block;
   padding: 3px 5px;
-  font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font: 11px  'Computer Modern Typewriter',monospace;
   line-height: 10px;
   color: #444d56;
   vertical-align: middle;
@@ -274,10 +323,12 @@
   margin-left: 0;
 }
 
+// Note: Code text color---inline and block
 .markdown-body code,
 .markdown-body pre {
-  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-family: 'Computer Modern Typewriter',monospace;
   font-size: 12px;
+  color: inherit;
 }
 
 .markdown-body pre {
@@ -314,14 +365,17 @@
   border-radius: 3px!important;
 }
 
+// Unidentified
 .markdown-body .bg-white {
   background-color: #fff!important;
 }
 
+// Unidentified
 .markdown-body .bg-gray-light {
   background-color: #fafbfc!important;
 }
 
+// Unidentified
 .markdown-body .text-gray-light {
   color: #6a737d!important;
 }
@@ -592,10 +646,11 @@
   border-bottom-color: #eee;
 }
 
+// Unidentified
 .markdown-body kbd {
   display: inline-block;
   padding: 3px 5px;
-  font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font: 11px 'Computer Modern Typewriter' ,monospace;
   line-height: 10px;
   color: #444d56;
   vertical-align: middle;
@@ -790,7 +845,7 @@
   padding: .2em .4em;
   margin: 0;
   font-size: 85%;
-  background-color: rgba(27,31,35,.05);
+  background-color: $inline-code-background-color;
   border-radius: 3px;
 }
 
@@ -817,16 +872,18 @@
   word-break: normal;
 }
 
+// Note: Background color of code blocks
 .markdown-body .highlight pre,
 .markdown-body pre {
   padding: 16px;
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  background-color: #f6f8fa;
+  background-color: $block-code-background-color;
   border-radius: 3px;
 }
 
+// Note: Background of text inside code blocks
 .markdown-body pre code {
   display: inline;
   max-width: auto;
@@ -841,7 +898,7 @@
 
 .markdown-body .commit-tease-sha {
   display: inline-block;
-  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-family: 'Computer Modern Typewriter',monospace;
   font-size: 90%;
   color: #444d56;
 }
@@ -866,7 +923,7 @@
   min-width: 50px;
   padding-right: 10px;
   padding-left: 10px;
-  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-family: 'Computer Modern Typewriter',monospace;
   font-size: 12px;
   line-height: 20px;
   color: rgba(27,31,35,.3);
@@ -898,7 +955,7 @@
 
 .markdown-body .blob-code-inner {
   overflow: visible;
-  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+  font-family: 'Computer Modern Typewriter',monospace;
   font-size: 12px;
   color: #24292e;
   word-wrap: normal;
