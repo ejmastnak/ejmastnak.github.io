@@ -1,7 +1,16 @@
 ---
 title: A VimTeX Plugin Guide \| Vim and LaTeX Series Part 4
+
+prev-filename: "ftplugin"
+prev-display-name: "« 3. Vim's ftplugin system"
+next-filename: "compilation"
+next-display-name: "5. Compilation »"
+
 ---
-# Getting started with the VimTeX plugin
+
+{% include vim-latex-navbar.html %}
+
+# 4. Getting started with the VimTeX plugin
 This is part four in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article describes the excellent [VimTeX plugin](https://github.com/lervag/vimtex/), a modular Vim and Neovim plugin that implements a host of useful features for writing LaTeX files.
 
@@ -541,3 +550,5 @@ Here are a few more features to look into to learn about once you master the bas
   you can read more about this feature at `:help vimtex-includeexpr`
   - You can access the documentation of LaTeX packages imported with `\usepackage{}` using the `:VimtexDocPackage` command, which is mapped to `K` by default.
     See `:help vimtex-latexdoc` for more information. 
+
+{% include vim-latex-navbar.html %}

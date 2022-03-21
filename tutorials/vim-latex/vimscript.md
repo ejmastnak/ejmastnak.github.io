@@ -1,7 +1,16 @@
 ---
 title: Vimscript Primer for Filetype-Specific Workflows  \| Vim and LaTeX Series Part 7
+
+prev-filename: "pdf-reader"
+prev-display-name: "« 6. PDF Reader"
+next-filename: "Introduction"
+next-display-name: ""
+
 ---
-# A Vimscript Primer for Filetype-Specific Workflows
+
+{% include vim-latex-navbar.html %}
+
+# 7. A Vimscript Primer for Filetype-Specific Workflows
 This is part seven in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article provides a theoretical background for use of Vimscript in filetype-specific workflows and aims to give you a foundation for understanding the filetype plugin system, key mapping syntax, and Vimscript functions used earlier in this series.
 
@@ -559,3 +568,5 @@ You can find official documentation of autoload functions at `:help autoload-fun
 <!-- - For declaring internal variables, see `:help internal-variables` -->
 <!-- - `:help variable-scope` -->
 <!-- The period is the Vimscript string concatenation operator; see `:help expr5` for the official documentation. -->
+
+{% include vim-latex-navbar.html %}

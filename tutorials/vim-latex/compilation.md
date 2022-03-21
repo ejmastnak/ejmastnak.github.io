@@ -1,7 +1,16 @@
 ---
 title: Compiling LaTeX Documents in Vim \| Vim and LaTeX Series Part 5
+
+prev-filename: "vimtex"
+prev-display-name: "« 4. The VimTeX plugin"
+next-filename: "pdf-reader"
+next-display-name: "6. PDF Reader »"
+
 ---
-# Compiling LaTeX Documents in a Vim-Based Workflow
+
+{% include vim-latex-navbar.html %}
+
+# 5. Compiling LaTeX Documents in a Vim-Based Workflow
 This is part five in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers compilation and should explain what you need to get started compiling LaTeX documents from within Vim using either the VimTeX plugin's compilation features or a custom compilation set-up of your own design.
 
@@ -702,3 +711,5 @@ setlocal errorformat+=%Cl.%l\ %m
 " Ignore unmatched lines
 setlocal errorformat+=%-G%.%#
 ```
+
+{% include vim-latex-navbar.html %}

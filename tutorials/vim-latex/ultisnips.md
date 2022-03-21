@@ -1,7 +1,16 @@
 ---
 title: UltiSnips Plugin Guide for LaTeX \| Vim and LaTeX Series Part 2
+
+prev-filename: prerequisites
+prev-display-name: "« 1. Prerequisites"
+next-filename: ftplugin
+next-display-name: "3. Vim's ftplugin system »"
+
 ---
-# An UltiSnips guide for LaTeX workflows
+
+{% include vim-latex-navbar.html %}
+
+# 2. An UltiSnips guide for LaTeX workflows
 This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
@@ -488,3 +497,4 @@ endsnippet
 but this would make the UltiSnips parser think that the line `snippet ${1:trigger}...` starts a new snippet definition, when the goal is to insert the literal string `snippet ${1:trigger}...` into another file.
 In any case, this problem is specific to using the string `snippet` inside a snippet, and most snippets are much easier to write than this.
 
+{% include vim-latex-navbar.html %}

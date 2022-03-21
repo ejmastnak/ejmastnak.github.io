@@ -1,7 +1,15 @@
 ---
 title: The Vim ftplugin system \| Vim and LaTeX Series Part 3
+prev-filename: "ultisnips"
+prev-display-name: "« 2. Snippets"
+next-filename: "vimtex"
+next-display-name: "4. The VimTeX plugin »"
+
 ---
-# The Vim `ftplugin` system
+
+{% include vim-latex-navbar.html %}
+
+# 3. The Vim `ftplugin` system
 This is part three in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers explains Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
 Understanding this article will give you a clearer mental model of how the VimTeX plugin works.
@@ -151,4 +159,4 @@ As a best practice, keep filetype-specific settings in dedicated `{filetype}.vim
 Think of `ftplugin/{filetype.vim}` as a `vimrc` for that file type only.
 Keep your `init.vim` for global settings you want to apply to all files.
 
-
+{% include vim-latex-navbar.html %}

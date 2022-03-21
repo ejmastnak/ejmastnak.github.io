@@ -1,7 +1,16 @@
 ---
 title: Prerequisites for Vim-LaTeX Workflows \| Vim and LaTeX Series Part 1
+
+prev-filename: "intro"
+prev-display-name: "« Introduction"
+next-filename: "ultisnips"
+next-display-name: "2. Snippets »"
+
 ---
-# Suggested Prerequisites for Writing LaTeX in Vim
+
+{% include vim-latex-navbar.html %}
+
+# 1. Suggested Prerequisites for Writing LaTeX in Vim
 This is part one in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
 This article covers the prerequisites you should probably meet to get the most out of this series.
 These prerequisites are listed below; each includes a suggestion or mini-tutorial for getting up to speed.
@@ -187,3 +196,5 @@ The abbreviations you should know for this series are:
   
 Probably thanks to their conciseness, "e.g." and "i.e." commonly appear in technical and academic writing;
 they look weird the first time you see them, but you quickly get used to and come to appreciate them.
+
+{% include vim-latex-navbar.html %}

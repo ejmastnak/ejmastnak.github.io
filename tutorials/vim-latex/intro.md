@@ -8,10 +8,10 @@ It is intended for anyone who...
 
 - wants a more pleasant and efficient experience writing LaTeX,
 - is interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
-- is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed,
+- is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed, or
 - just wants to browse someone else's workflow and configuration out of curiosity.
 
-As proof that the concepts in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written real-time during lecture (although grammar and style were improved after).
+As proof that the concepts in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during lecture in real time (although grammar and style were improved after).
 
 ### This series walks you through...
 1. Suggested [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of this series, along with references that should get you up to speed if needed.
@@ -31,7 +31,7 @@ As proof that the concepts in this tutorial work, here are [1500+ pages of types
 
 The series is written with the voice, format, notation, and explanation style I would have liked to have read if I were once again an inexperienced undergraduate learning the material for the first time myself.
 All of the small discoveries I inefficiently scraped together from official documentation, online tutorials, YouTube, Stack Overflow, Reddit, and other online forums are compiled here and (hopefully) synthesized into a self-contained work.
-References to official documentation are provided for any material deemed beyond the scope of this series.
+References to official documentation are provided for any material deemed beyond the scope of the series.
 
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
