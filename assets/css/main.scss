@@ -26,9 +26,10 @@ $light1: #f8f9fb;
 $text-color: $nord1;
 $background-color: $light0;
 $link-color: #0079c0;
-$code-text-color: $nord15;
-$block-code-background-color: $nord5;
+$inline-code-text-color: $nord1;
 $inline-code-background-color: $nord6;
+$block-code-text-color: $nord5;
+$block-code-background-color: $nord2;
 
 .markdown-body .octicon {
   display: inline-block;
@@ -324,12 +325,12 @@ body {
   margin-left: 0;
 }
 
-// Note: Code text color---inline and block
+// Note: Code text color: both inline and block 
+// But is overwritten below for inline and block separately
 .markdown-body code,
 .markdown-body pre {
   font-family: 'Computer Modern Typewriter',monospace;
   font-size: 12px;
-  color: $code-text-color;
 }
 
 .markdown-body pre {
@@ -842,11 +843,13 @@ body {
   padding-right: 20px;
 }
 
+// Note: Text color and background color of inline code
 .markdown-body code {
   padding: .2em .4em;
   margin: 0;
   font-size: 85%;
   background-color: $inline-code-background-color;
+  color: $inline-code-text-color;
   border-radius: 3px;
 }
 
@@ -884,7 +887,7 @@ body {
   border-radius: 3px;
 }
 
-// Note: Background of text inside code blocks
+// Note: Text color and background color inside code blocks
 .markdown-body pre code {
   display: inline;
   max-width: auto;
@@ -894,6 +897,7 @@ body {
   line-height: inherit;
   word-wrap: normal;
   background-color: initial;
+  color: $block-code-text-color;
   border: 0;
 }
 
