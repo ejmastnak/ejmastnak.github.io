@@ -26,6 +26,7 @@ $light1: #f8f9fb;
 $text-color: $nord1;
 $background-color: $light0;
 $link-color: #0079c0;
+$code-text-color: $nord15;
 $block-code-background-color: $nord5;
 $inline-code-background-color: $nord6;
 
@@ -89,7 +90,7 @@ $inline-code-background-color: $nord6;
 }
 
 
-// Note: main text and background color
+// Note: body text and background color
 body {
   line-height: 1.5;
   color: $text-color;
@@ -100,7 +101,7 @@ body {
   word-wrap: break-word;
 }
 
-// Note: text and background color
+// Note: markdown text and background color
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -328,7 +329,7 @@ body {
 .markdown-body pre {
   font-family: 'Computer Modern Typewriter',monospace;
   font-size: 12px;
-  color: inherit;
+  color: $code-text-color;
 }
 
 .markdown-body pre {
