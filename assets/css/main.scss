@@ -23,11 +23,17 @@ $nord15: #b48ead;
 $light0: #fbfbfc;
 $light1: #f8f9fb;
 
+// Block quote border, horizontal rule, table border
+$border-color: $nord6;
+
 $text-color: $nord1;
 $background-color: $light0;
 $link-color: #0079c0;
+$quote-text-color: $nord3;
+
 $inline-code-text-color: $nord1;
 $inline-code-background-color: $nord6;
+
 $block-code-text-color: $nord5;
 $block-code-background-color: $nord2;
 
@@ -197,13 +203,14 @@ body {
   font-weight: 600;
 }
 
+// Note: color of horizontal rule
 .markdown-body hr {
   height: 0;
   margin: 15px 0;
   overflow: hidden;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #dfe2e5;
+  border-bottom: 1px solid $border-color;
 }
 
 .markdown-body hr:after,
@@ -705,10 +712,11 @@ body {
   border: 0;
 }
 
+// Note: block quote text and border bar color
 .markdown-body blockquote {
   padding: 0 1em;
-  color: #6a737d;
-  border-left: .25em solid #dfe2e5;
+  color: $quote-text-color;
+  border-left: .25em solid $border-color;
 }
 
 .markdown-body blockquote>:first-child {
@@ -814,17 +822,20 @@ body {
   font-weight: 600;
 }
 
+// Note: table border color
 .markdown-body table td,
 .markdown-body table th {
   padding: 6px 13px;
-  border: 1px solid #dfe2e5;
+  border: 1px solid $border-color;
 }
 
+// Note: table row background color 1
 .markdown-body table tr {
   background-color: #fff;
   border-top: 1px solid #c6cbd1;
 }
 
+// Note: table row background color 2
 .markdown-body table tr:nth-child(2n) {
   background-color: #f6f8fa;
 }
