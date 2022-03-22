@@ -11,7 +11,7 @@ It is intended for anyone who...
 - is interested in switching from a different LaTeX editor to Vim, and is unsure how to proceed, or
 - just wants to browse someone else's workflow and configuration out of curiosity.
 
-As proof that the concepts in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during lecture in real time (although grammar and style were improved after).
+As evidence that the concepts in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during lecture in real time (although grammar and style were improved after).
 
 ### This series walks you through...
 1. Suggested [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of this series, along with references that should get you up to speed if needed.

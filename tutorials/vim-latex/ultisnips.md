@@ -117,7 +117,7 @@ UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets
 Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
 ```
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " on Vim
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']   " on Neovim
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " on Neovim
 ```
 This behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
 (The `.` joining `$HOME` and `'/.vim/UltiSnips'` is the Vimscript string concatenation operator.)

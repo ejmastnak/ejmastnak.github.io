@@ -118,7 +118,7 @@ You can always manually type out the commands `:VimtexCompile` or `:VimtexCompil
 But since all that typing is inefficient, VimTeX offers  `<localleader>ll` as a default shortcut for calling `:VimtexCompile`, meaning you can type `<localleader>ll` (in normal mode) to trigger the `:VimtexCompile` command.
 Setting your own shortcut is really easy!
 For example, to use `<localleader>c` to trigger compilation, place the following code in your `ftplugin/tex.vim` file:
-```
+```vim
 " Use `<localleader>c` to trigger continuous compilation...
 noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompile<CR>
 

@@ -1,5 +1,6 @@
 ---
 title: The Vim ftplugin system \| Vim and LaTeX Series Part 3
+
 prev-filename: "ultisnips"
 prev-display-name: "« 2. Snippets"
 next-filename: "vimtex"

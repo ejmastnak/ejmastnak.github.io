@@ -2,7 +2,7 @@
 title: Prerequisites for Vim-LaTeX Workflows \| Vim and LaTeX Series Part 1
 
 prev-filename: "intro"
-prev-display-name: "« Introduction"
+prev-display-name: ""
 next-filename: "ultisnips"
 next-display-name: "2. Snippets »"
 
