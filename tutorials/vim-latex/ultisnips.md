@@ -206,9 +206,9 @@ Based on my (subjective) experience, with a focus on LaTeX files, here are some 
 Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`.
 Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content.
 You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
-Since that might sound vague, here is an example:
+Since that might sound vague, here is refresher from earlier:
 
-**TODO** GIF jumping through a figure or table environment.
+**TODO** GIF jumping through a figure or table environment; reuse above
 
 Paraphrasing from `:help UltiSnips-tabstops`:
 
@@ -389,8 +389,8 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
    ```
-   I don't use this one often, but here is one example I really like:
-   - Make `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
+   I don't use this one often, but here is one example I really like.
+   It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
    ```
    snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
    `!p snip.rv = match.group(1)`_{0}
@@ -409,11 +409,12 @@ Here's an example use case:
 
 - Solution: call `UltiSnips#RefreshSnippets` using `:call UltiSnips#RefreshSnippets()`.
 
-This workflow comes up regularly if you use snippets often, and I suggest writing a key binding in your `vimrc` for `:call UltiSnips#RefreshSnippets()`, for example
+This workflow comes up regularly if you use snippets often, and I suggest writing a key binding in your `vimrc` to call the `UltiSnips#RefreshSnippets()` function, for example
 ```vim
 " Use <leader>u in normal mode to refresh UltiSnips snippets
-nnoremap <leader>u :call UltiSnips#RefreshSnippets()<CR>
+nnoremap <leader>u <Cmd>call UltiSnips#RefreshSnippets()<CR>
 ```
+In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a standard Vim configuration tool described in much more detail in the series's final article, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 ## (Subjective) practical tips for fast editing
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
