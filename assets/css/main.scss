@@ -22,20 +22,26 @@ $nord15: #b48ead;
 
 $light0: #fbfbfc;
 $light1: #f8f9fb;
+$light1: #f8f9fb;
 
 // Block quote border, horizontal rule, table border
 $border-color: $nord6;
 
 $text-color: $nord1;
 $background-color: $light0;
+
+$table-row-color-light: $background-color;
+$table-row-color-dark: $nord6;
+$table-border-color: $nord4;
+
 $link-color: #0079c0;
 $quote-text-color: $nord3;
 
 $inline-code-text-color: $nord1;
-$inline-code-background-color: $nord6;
+$inline-code-background-color: $nord5;
 
-$block-code-text-color: $nord5;
-$block-code-background-color: $nord2;
+$block-code-text-color: $nord4;
+$block-code-background-color: $nord1;
 
 .markdown-body .octicon {
   display: inline-block;
@@ -103,7 +109,7 @@ body {
   color: $text-color;
   background-color: $background-color;
   font-family: 'Computer Modern Sans', sans-serif; 
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.5;
   word-wrap: break-word;
 }
@@ -739,6 +745,7 @@ body {
   line-height: 1.25;
 }
 
+// Note: Heading font sides set here
 .markdown-body h1 {
   font-size: 2em;
 }
@@ -826,20 +833,21 @@ body {
 .markdown-body table td,
 .markdown-body table th {
   padding: 6px 13px;
-  border: 1px solid $border-color;
+  border: 1px solid $table-border-color;
 }
 
 // Note: table row background color 1
 .markdown-body table tr {
-  background-color: #fff;
+  background-color: $table-row-color-light;
   border-top: 1px solid #c6cbd1;
 }
 
 // Note: table row background color 2
 .markdown-body table tr:nth-child(2n) {
-  background-color: #f6f8fa;
+  background-color: $table-row-color-dark;
 }
 
+// Note: image properties set here
 .markdown-body img {
   max-width: 100%;
   box-sizing: initial;
@@ -892,7 +900,7 @@ body {
 .markdown-body pre {
   padding: 16px;
   overflow: auto;
-  font-size: 85%;
+  font-size: 90%;
   line-height: 1.45;
   background-color: $block-code-background-color;
   border-radius: 3px;
@@ -1057,10 +1065,11 @@ body {
   vertical-align: middle;
 }
 
+// Note: markdown body width set here
 .markdown-body {
   box-sizing: border-box;
   min-width: 200px;
-  max-width: 980px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 45px;
 }
