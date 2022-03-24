@@ -186,7 +186,7 @@ The `ad` and `id` delimiter text object covers all of `()`, `[]`, `{}`, etc. *an
 
 Here is a visual mode example of the delimeter and environment text objects:
 
-<image src="/assets/images/vim-latex/vimtex/text-objects.gif" alt="VimTeX's text objects."  /> 
+<image src="/assets/images/vim-latex/vimtex/text-objects.gif" alt="VimTeX's text objects"  /> 
 
 ### Example: Changing a default text object mapping
 Every default mapping provided by VimTeX can be changed to anything you like.
@@ -320,7 +320,7 @@ You can...
                                 \end{equation}
   ```
   Note the correct indentation inside the `equation` environment!
-  <image src="/assets/images/vim-latex/vimtex/csm.gif" alt="Demonstrating the csm action"  /> 
+  <image src="/assets/images/vim-latex/vimtex/csm.gif" alt="Changing inline math to an equaiton with the csm action"  /> 
 
 - Delete surrounding delimiters (e.g. `()`, `[]`, `{}`, and any of their `\left \right`, `\big \big` variants) without changing the enclosed content
   using `dsd` (delete surrounding delimiter)

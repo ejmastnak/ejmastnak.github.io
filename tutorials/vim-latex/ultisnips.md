@@ -46,7 +46,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character) triggers.
 Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly.
 
-<image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Snippets demonstration"  /> 
+<image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with auto-trigger snippets"  /> 
 
 ## Getting started with UltiSnips
 This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
@@ -207,7 +207,7 @@ Tabstops allow you to efficiently navigate through a snippet's variable content 
 You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
 Since that might sound vague, here is an example of jumping through the tabstops in a LaTeX `figure` environment:
 
-<image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Tabstop demonstration"  /> 
+<image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Showing how snippet tabstops work"  /> 
 
 Paraphrasing from `:help UltiSnips-tabstops`:
 
@@ -233,7 +233,7 @@ snippet ff "The LaTeX \frac{}{} command"
 endsnippet
 ```
 Here are the above `\texttt{}` and `\frac{}{}` snippets in action:
-<image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="Example snippets"  /> 
+<image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action"  /> 
 
 #### Useful: tabstop placeholders
 Placeholders are used to enrich a tabstop with a description or default text.
@@ -247,14 +247,14 @@ endsnippet
 ```
 Here is what this snippet looks like in practice:
 
-<image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Tabstop placeholder demonstration"  /> 
+<image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Demonstrating the tabstop placeholder"  /> 
 
 #### Useful: mirrored tabstops
 Mirrors allow you to reuse a tabstop's content in multiple locations throughout the snippet body.
 In practice, you might use mirrored tabstops for the `\begin` and `\end` fields of a LaTeX environment.
 Here is an example:
 
-<image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Mirrored tabstop demonstration"  /> 
+<image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Demonstrating mirrored tabstops"  /> 
 
 The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
 For example, following is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
@@ -283,7 +283,7 @@ endsnippet
 ```
 And here is what this snippet looks like in action:
 
-<image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Visual placeholder demonstration"  /> 
+<image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Demonstrating the visual placeholder"  /> 
 
 The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
 
@@ -400,7 +400,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    ```
    Here is the above snippet in action:
 
-   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="0 subscript snippet demonstration"  /> 
+   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
 
    
 Combined with math-context expansion, these two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
@@ -488,7 +488,7 @@ endsnippet
 This will insert a snippet template when you type `snip`, followed by the snippet trigger key stored in `g:UltiSnipsExpandTrigger`, at the beginning of a line in a `*.snippets` file in insert mode.
 Here's what this looks like in practice:
 
- <image src="/assets/images/vim-latex/ultisnips/snip-snippet.gif" alt="Snippet-writing snippet demonstration"  /> 
+ <image src="/assets/images/vim-latex/ultisnips/snip-snippet.gif" alt="The snippet-writing snippet in action"  /> 
 
 The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
 The naive implementation would be to write

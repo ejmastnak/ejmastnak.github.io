@@ -142,7 +142,7 @@ Here is an example in which VimTeX detects missing inline math around the math-m
 recognizes that the error occurs on line `8`,
 and displays the LaTeX error `Missing $ inserted` in the QuickFix menu.
 After the error is fixed, the QuickFix menu disappears.
-<image src="/assets/images/vim-latex/compilation/quickfix-error-short.gif" alt="Demonstrating the QuickFix menu"  /> 
+<image src="/assets/images/vim-latex/compilation/quickfix-error-short.gif" alt="The QuickFix menu showing LaTeX errors after compilation"  /> 
 
 Here are two VimTeX-related QuickFix settings you might be interested in tweaking:
 - By default, VimTeX opens the QuickFix menu if compilation produces warning messages but no error messages.
