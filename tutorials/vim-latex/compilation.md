@@ -60,7 +60,7 @@ Read *all* of this article if...
 
 **My suggestion for new users**: begin with VimTeX's built-in compilation interface, which means you only need to read the section [Using VimTeX's compilation interface](#using-vimtexs-compilation-interface).
 VimTeX's compilation features are tested by thousands of users, thoroughly debugged, and require minimal work to set up on your part, and so are are good place to begin as a new user.
-As you get more comfortable, you can write your own compilation plugin if you find VimTeX's features unsatisfactory.
+As you get more comfortable, you can write your own compilation plugin if you find VimTeX's features unsatisfactory---in that case you would need to read all of the article.
 
 As a personal anecdote, I did the exact opposite of what I recommend now: motivated by a naive desire to build everything from scratch, I spent many hours putting together my own compiler setup.
 This was great as a learning experience but completely impractical, since it generated needless code to maintain without solving anything VimTeX hadn't already solved.
@@ -100,6 +100,7 @@ Here is a short summary:
   You can get a summary of your compiler status using the command `VimtexInfo`;
   a default set-up will produce something like this:
   ```vim
+  " Example output of VimtexInfo, showing compilation information
   compiler: latexmk      " the VimTeX compiler backend in use
     engine: -pdf         " the LaTeX engine uesd by `latexmk`
     options:             " command-line options used by `latexmk`
@@ -111,12 +112,13 @@ Here is a short summary:
     continuous: 1        " whether `latexmk` should run in continuous mode
     executable: latexmk  " the name of the `latexmk` executable
   ```
-  If interested, you can scroll down to the optional section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) for more information about both `latexmk` and `pdflatex`.
+  If interested, you can scroll down to the optional section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) for more information about what the above `latexmk` options do.
 
 ### Shortcut for compilation
 You can always manually type out the commands `:VimtexCompile` or `:VimtexCompileSS` to start compilation.
 But since all that typing is inefficient, VimTeX offers  `<localleader>ll` as a default shortcut for calling `:VimtexCompile`, meaning you can type `<localleader>ll` (in normal mode) to trigger the `:VimtexCompile` command.
-Setting your own shortcut is really easy!
+
+If you prefer, setting your own shortcut is really easy!
 For example, to use `<localleader>c` to trigger compilation, place the following code in your `ftplugin/tex.vim` file:
 ```vim
 " Use `<localleader>c` to trigger continuous compilation...
@@ -126,15 +128,21 @@ noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompile<CR>
 noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompileSS<CR>
 ```
 You could then use the shortcut `<localleader>c` in normal or visual mode to call either `:VimtexCompile` or `:VimtexCompileSS`, depending on your choice of continuous or single-shot compilation.
-The `update` command saves your document if needed before performing compilation (see `:help update` for reference).
+The `update` command saves your document, if needed, before performing compilation (see `:help update` for reference).
 
 Note that the above mappings use the `<Cmd>` keyword (see `:help map-cmd` for documentation), which lets you call commands directly without switching Vim modes.
-(The more common alternative would be `nnoremap <localleader>r :update<CR>:VimtexCompileSS<CR>`.)
+The final article in the series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), explains key mappings in more detail.
 
 ### A QuickFix menu crash course
-VimTeX will automatically open the QuickFix menu if warnings or errors are detected during compilation (the QuickFix menu stays closed if compilation completes successfully).
+After compiling with `:VimtexCompile` or `:VimtexCompileSS`, VimTeX will automatically open the QuickFix menu if warnings or errors occured during compilation (the QuickFix menu stays closed if compilation completes successfully).
 For most compilation errors, the QuickFix menu will display the error's line number and a (hopefully) useful error message.
-In such cases you can use the Vim command `:cn` (short for `:cnext`, which also works), to jump directly to the offending line.
+In such cases you can use the Vim commands `:cc` and `:cn` (short for `:cnext`, which also works), to jump directly to the offending line.
+
+Here is an example in which VimTeX detects missing inline math around the math-mode `\int` command,
+recognizes that the error occurs on line `8`,
+and displays the LaTeX error `Missing $ inserted` in the QuickFix menu.
+After the error is fixed, the QuickFix menu disappears.
+<image src="/assets/images/vim-latex/compilation/quickfix-error-short.gif" alt="Demonstrating the QuickFix menu"  /> 
 
 Here are two VimTeX-related QuickFix settings you might be interested in tweaking:
 - By default, VimTeX opens the QuickFix menu if compilation produces warning messages but no error messages.
@@ -266,7 +274,7 @@ I encourage you to read through the `pdflatex` and `latexmk` documentation and e
 The [`minted` package](https://github.com/gpoore/minted) provides expressive syntax highlighting for LaTeX documents, which is useful when you include samples of computer code in your LaTeX documents.
 (If you don't use `minted`, feel free to skip this section.)
 
-<!-- **TODO** Here is an image of a code block highlighted using `minted`: -->
+<!-- **TODO:** Here is an image of a code block highlighted using `minted`: -->
 
 The `minted` package works by leveraging the [Pygments syntax highlighting library](https://github.com/pygments/pygments).
 For `minted` to have access to Pygments during compilation, you *must compile LaTeX documents with `pdflatex` or `latexmk`'s `-shell-escape` option* enabled.
@@ -303,8 +311,6 @@ For our purposes, at least for getting started,
 - You use Vim's `errorformat` option to specify how to parse the compilation command's output log for errors.
 - You use Vim's `:make` command to trigger the compilation command stored in `makeprg`.
 - You can view the command's output, along with any errors, in an IDE-style QuickFix menu built in to Vim, which you can open with `:copen`.
-
-Here is a GIF showing what this looks like in practice: **TODO** definitely a GIF showing `:make` and how the QuickFix menu opens.
 
 This section will explain:
 - how to translate the `pdflatex` and `latexmk` commands described earlier in this article at [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) into something understood by Vim's `makeprg` option,
@@ -396,7 +402,6 @@ Here's why you might want to switch between the two:
 - `pdflatex` always performs a single pass of compilation.
   This is fast, but won't always resolve cross-references (you might see a `?` symbol instead of the correct equation number for a `\ref` command, for example).
   I use `pdflatex` when I want quick visual feedback of text I just edited, but don't need all `\label`, `\ref`, and `\cite` commands to work correctly .
-<!-- TODO: example of unresolved reference with source code and PDF in separate columns? Then "An example of an unresolved reference. Using `latexmk` solves this, but can be overkill when you just want quick visual feedback" -->
 - `latexmk` performs as many compilation passes as needed to perfectly resolve all cross-references.
   This is slow if you just want basic visual feedback, but vital if, for example, you're about to send a paper out for publication.
 
@@ -444,7 +449,7 @@ nnoremap <script> <Plug>TexToggleLatexmk <SID>TexToggleLatexmk
 nnoremap <SID>TexToggleLatexmk :call <SID>TexToggleLatexmk()<CR>
 ```
 You could then use `<leader>tl` in normal mode to toggle between `pdflatex` and `latexmk` compilation.
-The `<Plug>` and `<SID>` syntax for script-local mapping is explained in **TODO** reference Vimscript article.
+The `<Plug>` and `<SID>` syntax for script-local mapping is explained in detail in the final article in this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 ### Setting the `makeprg` option
 To actually set Vim's `makeprg` option to your custom compilation command, assuming you're using the `s:TexSetMakePrg` function defined above, add the following line to `compiler/tex.vim`
@@ -455,10 +460,7 @@ call s:TexSetMakePrg()  " set value of Vim's `makeprg` option
 ### Implementing error message parsing
 Vim turns the `makeprg` command's log output into useful error messages using the `errorformat` option.
 A properly configured `errorformat` can show you file name, line number, and error description, and also makes it easy to jump to the error location in the offending source code.
-You can find the details of the `:make` and error-parsing cycle in `:help :make`.
-
-**TODO** GIF: here is an example of error message parsing in action.
-Show e.g. source code of a document with an obvious error, and how the QuickFix shows the line number.
+You can find the details of the `:make` and error-parsing cycle in `:help :make`, and scroll back up the section [A QuickFix menu crash course](#a-quickfix-menu-crash-course) for a GIF of the QuickFix menu in action.
 
 Vim's `errorformat` uses a similar format to the C function `scanf`, which is rather cryptic to new users.
 I won't cover `errorformat` design in this series, and will only quote some `errorformat` values, taken from the [VimTeX](https://github.com/lervag/vimtex) plugin, that should satisfy most use cases.
@@ -509,7 +511,6 @@ Put simply, that sucks.
 Asynchronous build plugins allow you to run shell commands asynchronously from within Vim without freezing up your editor.
 For this series I recommend using Tim Pope's [`vim-dispatch`](https://github.com/tpope/vim-dispatch).
 You can install Dispatch, just like any other Vim plugin, with the installation method of your choice.
-<!-- TODO? reference prerequisites about plugin installation --> 
 
 Dispatch provides a `:Make` command that serves as an asynchronous equivalents of `:make`.
 Here is a concrete example:
@@ -579,7 +580,16 @@ function! s:TexSetMakePrg() abort
   endif
 endfunction
 ```
-TODO: key binding?
+And here is some Vimscript to let you call the `TexToggleShellEscape()` function with a keyboard shortcut, e.g. `<leader>te`:
+```vim
+" This code would go in compiler/tex.vim
+" Use <leader>te to toggle -shell-escape compilation on and off
+nmap <leader>te <Plug>TexToggleShellEscape
+nnoremap <script> <Plug>TexToggleShellEscape <SID>TexToggleShellEscape
+nnoremap <SID>TexToggleShellEscape :call <SID>TexToggleShellEscape()<CR>
+```
+You could then use `<leader>te` in normal mode to toggle `-shell-escape` compilation on and off.
+See the final article in this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), for an explanation of the `<Plug>` and `<SID>` syntax.
 
 **A simple way to automatically detect `minted`**
 
@@ -606,7 +616,8 @@ I then use Vim's `v:shell_error` variable to check the `grep` command's exit sta
 This command is naive, I'm sure.
 Aside from probably being inefficient, it won't work, for example, if you keep your preamble in a separate file and access it with the `\input` command.
 If you know a better way, e.g. using `awk`, please tell me and I'll update this article.
-<!-- TODO: However, even if the automatic `minted` detection does not work, you can always manually toggle shell escape compilation on and off -->
+
+However, even if the automatic `minted` detection does not work, you can always manually toggle shell escape compilation on and off using the key mapping from a few paragraphs above that calls the `TexToggleShellEscape()` function.
 
 ### Complete compiler plugin
 The code is explained earlier in this article in the section [writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin).

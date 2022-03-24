@@ -46,9 +46,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character) triggers.
 Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly.
 
-**TODO** Gifs of e.g. `itemize` environment followed by items, `figure` environment with tabstops, Greek letters
-
-Snippets in the specific context of efficient, Vim-written LaTeX were probably first introduced to the Internet by Gilles Castel, and I encourage you to [read his original snippet article](https://castel.dev/post/lecture-notes-1/#snippets) in addition to this one.
+<image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Snippets demonstration"  /> 
 
 ## Getting started with UltiSnips
 This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
@@ -71,11 +69,8 @@ Whether you download someone else's snippets, write your own, or use a mixture o
 1. how to write and edit snippets to suit your particular needs.
 
 Both questions are answered in this article.
-<!-- avoid the trap of blindly copying from the Internet without understanding what's going on under the hood. -->
 
 ### First steps: snippet trigger and tabstop navigation keys
-**TODO** screen-keys GIF showing what the trigger key does and what the tabstop navigation does.
-
 After installing UltiSnips you should configure...
 1. the key you use to trigger (expand) snippets, which is set using the global variable `g:UltiSnipsExpandTrigger`,
 1. the key you use to move forward through a snippet's tabstops, which is set using `g:UltiSnipsJumpForwardTrigger`, and
@@ -84,13 +79,17 @@ After installing UltiSnips you should configure...
 For orientation, here is an example configuration, which you would place the code in your `vimrc` or `init.vim`:
 ```vim
 " This code should go in your vimrc or init.vim
-let g:UltiSnipsExpandTrigger = '<Tab>'          " use Tab to expand snippets
-let g:UltiSnipsJumpForwardTrigger = '<Tab>'     " use Tab to move forward through tabstops
+let g:UltiSnipsExpandTrigger       = '<Tab>'    " use Tab to expand snippets
+let g:UltiSnipsJumpForwardTrigger  = '<Tab>'    " use Tab to move forward through tabstops
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'  " use Shift-Tab to move backward through tabstops
 ```
 Explanation: this code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops (yes, UltiSnips lets you use the same key for both expansion and tabstop navigation), and make the key combination `<Shift>`+`<Tab>` navigate backward through tabstops.
 
-See `:help UltiSnips-trigger-key-mappings` for relevant documentation.
+In the above GIF, I am actually using `jk` as the `g:UltiSnipsJumpForwardTrigger` key.
+I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to;
+scroll down to the [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the bottom of this article for more on using `jk` as a jump-forward key and similar tips.
+
+See `:help UltiSnips-trigger-key-mappings` for official documentation of trigger keys.
 For fine-grained control one can also work directly with functions controlling expand and jump behavior; for more information on this see `:help UltiSnips-trigger-functions`.
 For most users just setting the three global trigger key variables, as in the example above, should suffice.
 
@@ -115,7 +114,7 @@ For example, to use `MySnippets` as a snippet directory, you would place the fol
 UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets` directories in your Vim `runtimepath`.
 
 Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
-```
+```vim
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " on Vim
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " on Neovim
 ```
@@ -130,7 +129,7 @@ Again, this behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
 As a concrete example, a selection of my UltiSnips directory looks like this:
 ```sh
 ${HOME}/.vim/UltiSnips/           # Vim
-${HOME}/.config/nvim/UltiSnips/    # Neovim
+${HOME}/.config/nvim/UltiSnips/   # Neovim
 ├── all.snippets
 ├── markdown.snippets
 ├── python.snippets
@@ -206,9 +205,9 @@ Based on my (subjective) experience, with a focus on LaTeX files, here are some 
 Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`.
 Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content.
 You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
-Since that might sound vague, here is refresher from earlier:
+Since that might sound vague, here is an example of jumping through the tabstops in a LaTeX `figure` environment:
 
-**TODO** GIF jumping through a figure or table environment; reuse above
+<image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Tabstop demonstration"  /> 
 
 Paraphrasing from `:help UltiSnips-tabstops`:
 
@@ -224,7 +223,7 @@ As far as I'm aware, this is a similar tabstop syntax to that used in the popula
 #### Some example LaTeX snippets
 For orientation, here are two examples: one maps `tt` to the `\texttt` command and the other maps `ff` to the `\frac` command.
 Note that (at least for me) the snippet expands correctly without escaping the `\`, `{`, and `}` characters as suggested in `:help UltiSnips-character-escaping` (see the second bullet in [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)).
-```
+```sh
 snippet tt "The \texttt{} command for typewriter-style font"
 \texttt{$1}$0
 endsnippet
@@ -233,31 +232,33 @@ snippet ff "The LaTeX \frac{}{} command"
 \frac{$1}{$2}$0
 endsnippet
 ```
-
-**TODO** show example used in above GIF.
+Here are the above `\texttt{}` and `\frac{}{}` snippets in action:
+<image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="Example snippets"  /> 
 
 #### Useful: tabstop placeholders
 Placeholders are used to enrich a tabstop with a description or default text.
 The syntax for defining placeholder text is `${1:placeholder}`.
 Placeholders are documented at `:help UltiSnips-placeholders`.
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
-```
+```sh
 snippet hr "The hyperref package's \href{}{} command (for url links)"
 \href{${1:url}}{${2:display name}}$0
 endsnippet
 ```
-**TODO** GIF here is what this looks like in practice:
+Here is what this snippet looks like in practice:
+
+<image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Tabstop placeholder demonstration"  /> 
 
 #### Useful: mirrored tabstops
 Mirrors allow you to reuse a tabstop's content in multiple locations throughout the snippet body.
 In practice, you might use mirrored tabstops for the `\begin` and `\end` fields of a LaTeX environment.
 Here is an example:
 
-**TODO** GIF showing an `environment` snippet.
+<image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Mirrored tabstop demonstration"  /> 
 
 The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
-For example, here is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
-```
+For example, following is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
+```sh
 snippet env "New LaTeX environment" b
 \begin{$1}
     $2
@@ -271,18 +272,19 @@ Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
 #### Useful: the visual placeholder
 The visual placeholder enables you to use text selected in Vim's visual mode as the content of a snippet body.
 The visual placeholder is useful when you want to surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command or to surround a word with quotation marks).
-Here is an example:
-
-**TODO** GIF with e.g. `textit`
-
 You can have one visual placeholder per snippet, and you specify it with the `${VISUAL}` keyword.
 This usually is (but does not have to be) integrated into tabstops.
-Here is the code for the example in the above GIF:
-```
+
+As an example, here is a snippet to the LaTeX `\textit` command, using a visual placeholder to make it easer to surround text in italics:
+```sh
 snippet tii "The \textit{} command for italic font"
 \textit{${1:${VISUAL:}}}$0
 endsnippet
 ```
+And here is what this snippet looks like in action:
+
+<image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Visual placeholder demonstration"  /> 
+
 The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
 
 
@@ -308,7 +310,7 @@ The VimTeX plugin, among many other things, provides the user with the function 
 This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
 You can integrate VimTeX's math zone detection with UltiSnips' `context` feature as follows:
-```
+```sh
 # include this code block at the top of a *.snippets file...
 # ----------------------------- #
 global !p
@@ -374,7 +376,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    If sounds vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the trigger disappears.
 
 1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
-   ```
+   ```sh
    snippet "([\w])trigger" "Expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
@@ -391,11 +393,15 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    ```
    I don't use this one often, but here is one example I really like.
    It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
-   ```
+   ```sh
    snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
    `!p snip.rv = match.group(1)`_{0}
    endsnippet
    ```
+   Here is the above snippet in action:
+
+   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="0 subscript snippet demonstration"  /> 
+
    
 Combined with math-context expansion, these two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
 Note that you can do much fancier stuff than this.
@@ -471,7 +477,7 @@ In no particular order, here are some tips based on my personal experience:
 ## Tip: A snippet for writing snippets
 The following snippet makes it easier to write more snippets.
 To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
-```vim
+```sh
 snippet snip "A snippet for writing Ultisnips snippets" b
 `!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:options}
 $4
@@ -482,11 +488,11 @@ endsnippet
 This will insert a snippet template when you type `snip`, followed by the snippet trigger key stored in `g:UltiSnipsExpandTrigger`, at the beginning of a line in a `*.snippets` file in insert mode.
 Here's what this looks like in practice:
 
-**TODO** GIF showing the `snip` snippet.
+ <image src="/assets/images/vim-latex/ultisnips/snip-snippet.gif" alt="Snippet-writing snippet demonstration"  /> 
 
 The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
 The naive implementation would be to write
-```
+```sh
 # THIS SNIPPET WON'T WORK---IT'S JUST FOR EXPLANATION!
 snippet snip "A snippet for writing Ultisnips snippets" b
 snippet ${1:trigger} "${2:Description}" ${3:options}

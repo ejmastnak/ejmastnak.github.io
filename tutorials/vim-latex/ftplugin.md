@@ -41,13 +41,13 @@ To be pedantic, what most people (myself included) refer to in everyday usage as
 That's irrelevant; the point is that plugins and packages are just Vimscript files used to extend Vim's default functionality, and, if you have ever written a `vimrc` or `init.vim`, it is within your means to write more advanced plugins, too.
 
 ### Runtimepath: where Vim looks for files to load
-Your Vim *`runtimepath`* is a list of directories, both in your home directory and system-wide, that Vim searches for files to load at runtime, i.e. when opening Vim.
+Vim's `runtimepath` is a list of directories, both in your home directory and system-wide, that Vim searches for files to load at runtime, i.e. when opening Vim.
 Below is a list of some directories on Vim's default `runtimepath`, taken from `:help runtimepath`---you will probably recognize some of them from your own Vim setup.
 
 | Directory or File | Description |
 | ----------------- | ----------- |
 | `filetype.vim` |	Used to set a file's Vim filetype |
-| `autoload` |	Scripts loaded dynamicly using Vim's `autoload` feature |
+| `autoload` |	Scripts loaded dynamically using Vim's `autoload` feature |
 | `colors/` | Vim colorscheme files conventionally go here | 
 | `compiler/` | Contains files related to compilation and `make` functionality | 
 | `doc/` | Contains documentation and help files | 
@@ -156,8 +156,9 @@ For our purposes:
 
   - a directory `ftplugin/{filetype}` (e.g. `ftplugin/tex` for the `filetype=tex`), then Vim loads all `.vim` files inside the `{filetype}` directory.
 
-As a best practice, keep filetype-specific settings in dedicated `{filetype}.vim` files inside `ftplugin/`.
-Think of `ftplugin/{filetype.vim}` as a `vimrc` for that file type only.
-Keep your `init.vim` for global settings you want to apply to all files.
+As a best practice, keep filetype-specific settings in either in a dedicated `{filetype}.vim` file at `ftplugin/{filetype}.vim`,
+or split up among multiple files in `ftplugin/{filetype}/*.vim`.
+Think of the `ftplugin` files as a `vimrc` for one file type only,
+and keep your actual `vimrc` for global settings you want to apply to *all* file types.
 
 {% include vim-latex-navbar.html %}

@@ -89,7 +89,7 @@ noremap k gk
 Using `noremap` instead of `map` is a standard Vimscript best practice, described in the following section immediately below.
 
 #### Remapping: `map` and `noremap`
-I will cover this topic only briefly (its really not too complicated in practice), and refer you to Steve Losh's nice description of the same content in [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough treatment.
+I will cover this topic only briefly (it's really not too complicated in practice), and refer you to Steve Losh's nice description of the same content in [Chapter 5 of Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/chapters/05.html) for a more thorough treatment.
 
 Here is the TLDR version:
 - Vim offers two types of mapping commands

@@ -125,10 +125,15 @@ and leave OS-specific implementation details for later in the article.
 You will hear two bits of jargon throughout this article:
 - *Forward search* is the process jumping from Vim to the position in the PDF document corresponding the current cursor position in the LaTeX source file in Vim.
   In everyday language, forward search is a text editor telling a PDF reader: "hey, PDF reader, display the position in the PDF file corresponding to my current position in the LaTeX file".
-  <!-- TODO: GIF -->
+
+  Here is a demonstration of forward search:
+  <image src="/assets/images/vim-latex/pdf-reader/forward-search.gif" alt="Demonstration of forward search"  /> 
 
 - *Inverse search* (also called *backward search*) is the process of switching focus from a line in the PDF document to the corresponding line in the LaTeX source file. 
   Informally, inverse search is like the user asking, "hey, PDF viewer, please take me to the position in the LaTeX source file corresponding to my current position in the PDF file".
+
+  Here is a demonstration of inverse search:
+  <image src="/assets/images/vim-latex/pdf-reader/inverse-search.gif" alt="Demonstration of inverse search"  /> 
 
 Positions in the PDF file are linked to positions in the LaTeX source file using a utility called SyncTeX, which is implemented in a binary program called `synctex` that should ship by default with a standard TeX installation.
 
