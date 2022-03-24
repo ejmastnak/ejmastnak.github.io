@@ -70,9 +70,8 @@ The canonical option on macOS is [Skim](https://skim-app.sourceforge.io/), which
 Good news: it is also possible to build Zathura on macOS---see the [`homebrew-zathura` GitHub page](https://github.com/zegervdv/homebrew-zathura) if interested---so I have included a section for setting up Zathura on macOS at the end of this article.
 
 ### A PDF reader on Windows
-I have not tested it myself and will not cover it in this article (reminder of the [series prerequisites for operating system]({% link tutorials/vim-latex/prerequisites.md %})), but the SumatraPDF viewer supposedly supports both forward and backward search.
-One can read more in the VimTeX plugin's documentation at `:help vimtex_viewer_sumatrapdf`.
-See also `:help g:vimtex_view_method` for other PDF reader possibilities on Windows.
+I have not tested PDF readers on Windows (reminder of the [series prerequisites for operating system]({% link tutorials/vim-latex/prerequisites.md %})),
+but you can find an overview of PDF reader possibilities on Windows in the VimTeX documentation section `:help g:vimtex_view_method`.
 
 ## Summary: What works on what platform
 I tested 9 combinations of editor, OS, and PDF reader when preparing this article, and the results are summarized in the table below---the more green check marks the better.
