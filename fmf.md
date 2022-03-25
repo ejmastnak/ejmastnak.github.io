@@ -7,21 +7,15 @@ The notes are probably of interest primarily to FMF students taking the same cou
 For orientation, you might be interested in [reading a condensed summary of the FMF curriculum]({% link fmf-pdfs/meta/fmf-courses.pdf %}).
 
 ## Year 3
-- [Continuum mechanics]({% link fmf-course-pages/year3/contmech.md %})
 - [Electromagnetism]({% link fmf-course-pages/year3/emp.md %})
+- [Quantum mechanics]({% link fmf-course-pages/year3/qm.md %})
+- [Continuum mechanics]({% link fmf-course-pages/year3/contmech.md %})
 - [Measurement of ionizing radiation]({% link fmf-course-pages/year3/meris.md %})
 - [Optics]({% link fmf-course-pages/year3/optics.md %})
 - [Physical measurements]({% link fmf-course-pages/year3/fizmer.md %})
-- [Quantum mechanics]({% link fmf-course-pages/year3/qm.md %})
 - [Solid state physics]({% link fmf-course-pages/year3/ss.md %})
 
 Missing: Laboratory 5, Data acquisition and processing, Mathematical physics practicum
-
-{% comment %} 
-- [Data acquisition and processing]({% link fmf-course-pages/year3/dsp.md %})
-- [Mathematical physics practicum]({% link fmf-course-pages/year3/mfp.md %})
-- [Physics lab 5]({% link fmf-course-pages/year3/fizprak5.md %})
-{% endcomment %}
 
 ## Year 2
 - [Classical mechanics]({% link fmf-course-pages/year2/cm.md %})
