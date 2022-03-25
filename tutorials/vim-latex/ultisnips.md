@@ -44,13 +44,15 @@ This article covers snippets, which are templates of commonly reused code that, 
 
 ## What snippets do
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character) triggers.
-Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly.
+Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly. 
+Here is a simple example:
+<!-- **TODO:** see the showing off section for full-speed --> 
 
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with auto-trigger snippets"  /> 
 
 ## Getting started with UltiSnips
 This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
-If you use Neovim, note that UltiSnips' support of Neovim is "best-effort only".
+If you use Neovim, note that UltiSnips's support of Neovim is "best-effort only".
 Don't let this discourage you---I and many other Neovim users daily drive Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
 If you use regular Vim, you should be fine in any case.
 
@@ -148,7 +150,7 @@ Quite a few years ago now, Holger Rapp, the author of UltiSnips, created four sc
 - [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/)
 - [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/)
 
-They're old but gold, and pack an impressively thorough demonstration of UltiSnips' capabilities into about 20 minutes of video.
+They're old but gold, and pack an impressively thorough demonstration of UltiSnips's capabilities into about 20 minutes of video.
 I strongly suggest your watch them---you will find many of the features described in this article covered from a different perspective in the screencasts.
 
 
@@ -297,7 +299,7 @@ I will only cover two examples I subjectively find to be most useful:
 1. accessing characters captured by regular expression trigger's capture groups.
 
 #### Custom context expansion and VimTeX's syntax detection
-UltiSnips' custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
+UltiSnips's custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
 As an example of why this might be useful:
 
 - Problem: good snippet triggers tend to interfere with words typed in regular text.
@@ -309,7 +311,7 @@ You will need GitHub user `lervag`'s [VimTeX plugin](https://github.com/lervag/v
 The VimTeX plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
 This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
-You can integrate VimTeX's math zone detection with UltiSnips' `context` feature as follows:
+You can integrate VimTeX's math zone detection with UltiSnips's `context` feature as follows:
 ```sh
 # include this code block at the top of a *.snippets file...
 # ----------------------------- #
