@@ -2,17 +2,13 @@
 title: Home
 ---
 # Welcome
-You have reached an early version of Elijan J. Mastnak's website. For the time being, you have three possibilities:
+You have reached an early version of Elijan J. Mastnak's website.
+For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or read through the following:
 
 ### Physics notes
 [1500+ pages of undergraduate physics notes typeset with LaTeX]({% link fmf.md %})
 
+<!-- [*Classical Physics*]({% link klf/klf.md %}), a general physics textbook in the making -->
+
 ### Projects
-- [Undergraduate thesis]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)
-
-### Tutorials
-- [Writing LaTeX in real-time with Vim]({% link tutorials/vim-latex/intro.md %})
-
-### Résumé
-- [PDF version]({% link cv/cv.pdf %})
-- [Web version]({% link cv/cv.md %}) (read the PDF version though---it looks much nicer)
+[Undergraduate "mini-thesis"]({% link seminar/seminar.md %}) (convolutional neural networks in particle physics classification problems)

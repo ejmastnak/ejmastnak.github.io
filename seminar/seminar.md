@@ -2,7 +2,9 @@
 title: Seminar
 ---
 # Convolutional Neural Networks and Particle Physics
-This project explores the use of convolutional neural networks for classifying the products of high-energy collisions produced in particle physics experiments like the Large Hadron Collider at CERN; the project came to be in the scope of the *Seminar* course requirements at the Faculty of Math and Physics at the University of Ljubljana. See [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below for context. 
+This project explores the use of convolutional neural networks for classifying the products of high-energy collisions produced in particle physics experiments like the Large Hadron Collider at CERN and was written in the scope of *Seminar* course requirements at the Faculty of Math and Physics at the University of Ljubljana.
+The Seminar course plays a similar role to an undergraduate thesis, except that the seminar paper must be reduced to a length more befitting of a journal article than a traditional thesis.
+See [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below for context. 
 
 You might be interested in...
 
@@ -10,7 +12,7 @@ You might be interested in...
 - [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
 
 ## About the project
-The project explores the use of convolutional neural networks for classifying the products of high-energy particle collisions using low-level, image-based detector data. Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you are a research group interested in announcing the discovery of a new elementary particle.
+Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you are a research group interested in announcing the discovery of a new elementary particle.
 
 This project is distinguished by its focus on performing classification using as raw, low-level data as possible (i.e. the data produced directly by a particle detector's trackers and calorimeters, without further processing). Classification techniques that produce results directly from low-level data are called "end-to-end" classifiers. End-to-end classifiers are interesting because:
 - they eliminate complicated intermediate processing and particle flow reconstruction, and
@@ -26,14 +28,12 @@ The [paper]({% link seminar/paper.pdf %}) and presentations address the followin
 - What are convolutional neural networks and how do they work? (At a level within the scope of a 20 page paper.)
 - Show me a concrete example of CNN-based end-to-end classification! (We summarize the results of the 2020 paper [*End-to-End Physics Event Classification with CMS Open Data*](https://link.springer.com/article/10.1007/s41781-020-00038-8) by M. Andrews, M. Paulini, S. Gleyzer, and B. Poczos in the **Journal of Computing and Software for Big Science**.)
 
-
-
 ## About the Seminar course at FMF
-*Seminar* is a required course for students in the final semester of the undergraduate physics program at the Faculty of Mathematics and Physics at the University of Ljubljana. In the scope of the course, students, under the guidance of a faculty mentor, write an undergraduate thesis on a currently relevant physics topic and present the topic to their classmates. 
+*Seminar* is a required course for students in the final semester of the undergraduate physics program at the Faculty of Mathematics and Physics at the University of Ljubljana. In the scope of the course, students, under the guidance of a faculty mentor, write a short undergraduate thesis on a currently relevant physics topic and present the topic to their classmates and professors.
 
 The project encompasses two parts:
 
-- a written paper (no more than about 20 pages)
+- a written paper (which should be no more than about 25 pages)
 - a 35 to 40-minute slide-show presentation to the student's classmates, course coordinator, and mentor, followed by questions from the audience and a seminar-style discussion of the topic.
 
 The project is intended primarily as an exercise in clear scientific writing and presentation, a training, in some sense, for giving presentations at scientific conferences. However, undergraduate students are neither expected nor encouraged to produce original research in the scope of the *Seminar* course, simply to clearly present their chosen topic at a level suitable (i.e. not too advanced) for a general final-year undergraduate audience.

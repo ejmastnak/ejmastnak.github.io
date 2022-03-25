@@ -1,4 +1,6 @@
 #!/bin/bash
+# Used to transfer PDF files from FMF folder to website.
+
 # Usage fmf-transfer [document-keys]
 # EXAMPLE usage: 
 # fmf-transfer.sh  # (applies to all keys in include.txt)
