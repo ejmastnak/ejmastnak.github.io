@@ -1,0 +1,17 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lipsum}
+\usepackage{titlesec}
+\usepackage[breakable]{tcolorbox}
+
+\tcbset{breakable,
+    title={\huge Inverse search demo},
+    fontupper=\huge,
+    fontlower=\huge,
+    enlarge bottom by=1ex,
+    enlarge top by=1ex}
+\pagenumbering{gobble}
+\setcounter{secnumdepth}{0}
+
+\titleformat{\section}
+  {\normalfont\fontsize{28}{30}\bfseries}{\thesection}{1em}{}
