@@ -72,6 +72,7 @@ Say you want to write a plugin that applies only to LaTeX files.
 Here's what to do:
 1. Add the following lines to your `vimrc`
    (these settings are enabled by default on Neovim---see `:help nvim-defaults`---but it can't hurt to place them in your `init.vim`, too):
+
    ```vim
    filetype on             " enable filetype detection
    filetype plugin on      " load file-specific plugins
@@ -79,6 +80,7 @@ Here's what to do:
    ```
    These lines enable filetype detection and filetype-specific plugins and indentation.
    To get an overview of your current filetype status, use the `:filetype` command; you want an output that reads:
+
    ```vim
    " With Vim's filetype-specific functionality enabled, the output looks like this
    filetype detection:ON  plugin:ON  indent:ON
@@ -93,6 +95,7 @@ Here's what to do:
    To do this, create the file structure `~/.vim/ftplugin/tex/*.vim`.
    Any Vimscript files inside `~/.vim/ftplugin/tex/` will then load automatically when editing files with the `tex` filetype.
    As a concrete example, you might design your `ftplugin` directory like this:
+
    ```sh
    # Two ways to have LaTeX-specific configuration; note the dedicated `tex` folder in the second example
    ftplugin/                  ftplugin/
@@ -132,6 +135,7 @@ Here's what to do for manual filetype detection:
 
 1. Create the file `~/.vim/ftdetect/lilypond.vim` (the file name, in this case `lilypond.vim`, can technically be anything ending in `.vim`, but by convention should match the value of `filetype`).
    Inside the file add the single line
+
    ```
    autocommand BufNewFile,BufRead *.ly set filetype=lilypond
    ```

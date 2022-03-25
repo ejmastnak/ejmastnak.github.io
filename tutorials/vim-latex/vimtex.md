@@ -22,7 +22,6 @@ This article describes the excellent [VimTeX plugin](https://github.com/lervag/v
     * [Some things to keep in mind](#some-things-to-keep-in-mind)
 * [Overview of features](#overview-of-features)
 * [How to read VimTeX's documentation of mappings](#how-to-read-vimtexs-documentation-of-mappings)
-  * [Map definitions and command descriptions](#map-definitions-and-command-descriptions)
 * [Text objects](#text-objects)
   * [Table of VimTeX text objects](#table-of-vimtex-text-objects)
   * [Example: Changing a default text object mapping](#example-changing-a-default-text-object-mapping)
@@ -38,6 +37,7 @@ This article describes the excellent [VimTeX plugin](https://github.com/lervag/v
 * [Commands](#commands)
 * [Syntax highlighting](#syntax-highlighting)
 * [Other features](#other-features)
+* [Appendix: Troubleshooting failed VimTeX loading](#appendix-troubleshooting-failed-vimtex-loading)
 
 <!-- vim-markdown-toc -->
 
@@ -64,7 +64,7 @@ See `:help vimtex-requirements` for details on requirements for using VimTeX.
 
 Note that you will need a LaTeX compilation program (e.g. `latexmk` and `pdflatex`) installed on your computer to be able use VimTeX's compilation features.
 You also need a Vim version compiled with the `+clientserver` feature to use VimTeX's inverse search feature with PDF readers (note that `+clientserver` ships by default with Neovim).
-I cover compilation and setting up a PDF reader in detail in the [next]({% link tutorials/vim-latex/compilation.md %}) [two]({% link tutorials/vim-latex/pdf-reader.md %}) articles in this series, so you can postpone these requirements until then.
+I cover compilation and setting up a PDF reader in the [next]({% link tutorials/vim-latex/compilation.md %}) [two]({% link tutorials/vim-latex/pdf-reader.md %}) articles in this series, so you can postpone these requirements until then.
 
 #### Some things to keep in mind
 As you get started with the VimTeX plugin, here are a few things to keep in mind:
@@ -75,7 +75,8 @@ As you get started with the VimTeX plugin, here are a few things to keep in mind
   If the command `:VimtexInfo` returns `E492: Not an editor command: VimtexInfo`, VimTeX has not loaded.
   Double-check that VimTeX is installed and that you meet the plugin requirements described just above in the section [Getting started with VimTeX](#getting-started-with-vimtex).
 
-  If that fails and VimTeX still doesn't load, scroll down four bullet points and see if the long bullet point about overriding VimTeX with a user-defined filetype plugin applies to you.
+  If that fails and VimTeX still doesn't load, scroll down to this article's [Appendix](#appendix-troubleshooting-failed-vimtex-loading)
+  and see if problem of overriding VimTeX with a user-defined filetype plugin applies to you.
   If *that* fails, turn to the Internet for help.
 
 - The VimTeX documentation, accessed in Vim with `:help vimtex`, is your friend.
@@ -83,29 +84,8 @@ As you get started with the VimTeX plugin, here are a few things to keep in mind
 
 - All VimTeX features are enabled by default, and disabling features is up to the user---disabling and configuring features is described later in this article in the section on [VimTeX's options](#options).
 
-- As described in `:help vimtex-tex-flavor`, VimTeX overrides Vim's internal `ftplugin`, i.e. the one in `$VIMRUNTIME/ftplugin`. 
-  
-- I first want to note: if you are new to Vim, the VimTeX plugin loads without any problem, and you have no idea what I'm talking about in this bullet point, don't worry and skip it.
-  The point is to make sure that VimTeX loads, and if VimTeX loads for you without issues, you're good to go.
-
-  Warning aside, here is the potential problem: the VimTeX plugin respects (and will not override) a user-defined `tex` filetype plugin.
-  You must be careful though---there is a risk of *your* `tex` filetype plugin overriding VimTeX!
-  Namely, VimTeX will not load if you set the Vimscript variable `let b:did_ftplugin = 1` in your user-defined `tex` plugin, for example with the common boilerplate code
-  ```vim
-  " This common piece of boilerplate code will prevent VimTeX from loading
-  " if placed in a user-defined LaTeX filetype plugin in `~/.vim/ftplugin/tex.vim`.
-	if exists("b:did_ftplugin")
-	  finish
-	endif
-	let b:did_ftplugin = 1
-  " Using a variable like `b:did_my_ftplugin` will solve the problem.
-  ```
-  Here is the problem: VimTeX *also* uses the variable `b:did_ftplugin` to avoid loading twice in the same Vim buffer.
-  User-defined filetype plugins load before VimTeX, so if *you* set `let b:did_ftplugin = 1`, then VimTeX will see `b:did_ftplugin = 1` and not load (you can see this behavior for yourself in the VimTeX source code in the file `vimtex/ftplugin/tex.vim`).
-  
-  If you want to use both VimTeX and your own `tex` filetype plugin and currently have `let b:did_ftplugin = 1` in your own plugin, just change to a variable name like `b:did_my_ftplugin` instead, which won't conflict with VimTeX's use of `b:did_ftplugin`.
-
-  (The `let b:did_ftplugin = 1` business is a standard safety mechanism described in the Vim documentation at `:help ftplugin` that gives the user control over loading filetype plugins.)
+- As described in `:help vimtex-tex-flavor`, VimTeX overrides Vim's internal `ftplugin`, i.e. the one in `$VIMRUNTIME/ftplugin`,
+  but respects any user-defined LaTeX configuration in `ftplugin/tex.vim`.
   
 ## Overview of features
 The VimTeX plugin offers more than any one user will probably ever require;
@@ -115,10 +95,8 @@ This article will cover the following features:
 - LaTeX-specific text objects (for environments, commands, etc.) and their associated operator-pending motions
 - Motion commands through sections, environments, matching delimiters, item lists, etc.
 - LaTeX-specific commands for manipulating environments, commands, and delimiters
-- Syntax highlighting, including support for common LaTeX packages
-- The potential for math context detection for snippet triggers
-- Indentation support
 - Snippet-like insert mode mappings
+- Syntax highlighting, including support for common LaTeX packages and the potential for math context detection for snippet triggers
 
 VimTeX also provides a compilation interface and PDF viewer support, which I have left out of this article and describe in two [dedicated]({% link tutorials/vim-latex/compilation.md %}) [articles]({% link tutorials/vim-latex/pdf-reader.md %}) later in the series.
 
@@ -145,7 +123,7 @@ If you want to learn about these topics now, take a detour and read through [the
 
 For the present purposes, here is how to interpret the table:
 
-- Each entry in the middle, `RHS`, column is a Vim `<Plug>` mapping corresponding to a specific VimTeX feature (e.g. a command, action, or text object).
+- Each entry in the middle (`RHS`) column is a Vim `<Plug>` mapping corresponding to a specific VimTeX feature (e.g. a command, action, or text object).
   For example, `<plug>(vimtex-info)` displays status information about the VimTeX plugin and `<plug>(vimtex-ac)` corresponds to VimTeX's "a command" text object (analogous to Vim's built-in `aw` for "a word" or `ap` for "a paragraph").
   
   The meaning of every entry in the `RHS` column is described in a dedicated section of the VimTeX documentation, which can be jumped to by hovering over a `RHS` entry and pressing `<Ctrl>]`.
@@ -159,13 +137,12 @@ For the present purposes, here is how to interpret the table:
   For example, `ae <plug>(vimtex-ae) xo` works in visual (`x`) and operator-pending (`o`) mode, while `tse <plug>(vimtex-env-toggle-star) n` works in normal (`n`) mode.
   For more information about map modes and key mappings, see the Vim documentation section `:help map-listing` and the [Vimscript article]({% link tutorials/vim-latex/vimscript.md %}) later in this series.
 
-### Map definitions and command descriptions
-The VimTeX documentation sections `COMMANDS` (accessed with `:help vimtex-commands`) and `MAP DEFINITIONS` (accessed with `:help vimtex-mappings`) list and explain the commands and mappings provided by VimTeX.
+The VimTeX documentation sections `COMMANDS` (accessed with `:help vimtex-commands`) and `MAP DEFINITIONS` (accessed with `:help vimtex-mappings`) list and explain the commands and mappings in the `RHS` of the above table.
 I recommend skimming through the table in `:help vimtex-default-mappings`, then referring to `:help vimtex-commands` or `:help vimtex-mappings` for more information about any mapping that catches your eye.
 
 ## Text objects
 VimTeX provides a number of LaTeX-specific text objects.
-If you don't know what text objects are, stop what you're doing and go learn about them.
+If you don't yet know what text objects are, stop what you're doing and go learn about them.
 As suggested in `:help vimtex-text-objects`, a good place to start would be the Vim documentation section `:help text-objects` and the famous Stack Overflow answer [*Your problem with Vim is that you don't grok vi*](http://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118).
 
 VimTeX's text objects are listed in the table in `:help vimtex-default-mappings` and described in more detail in `:help vimtex-mappings`;
@@ -187,7 +164,6 @@ For convenience, here is a table of VimTeX's text-objects, taken directly from `
 | `am`, `im` | Items in `itemize` and `enumerate` environments|
 
 The `ad` and `id` delimiter text object covers all of `()`, `[]`, `{}`, etc. *and* their `\left \right`, `\big \big`, etc. variants, which is very nice.
-
 Here is a visual mode example of the delimeter and environment text objects:
 
 <image src="/assets/images/vim-latex/vimtex/text-objects.gif" alt="VimTeX's text objects"  /> 
@@ -269,6 +245,7 @@ You can...
   using the default shortcut `dse` (delete surrounding environment)
   or the `<Plug>` mapping `<plug>(vimtex-env-delete)`.
   For example, using `dse` in a `quote` environment produces:
+
   ```tex
   \begin{quote}                     dse
   Using VimTeX is lots of fun!  -->  Using VimTeX is lots of fun!
@@ -280,6 +257,7 @@ You can...
   using `cse` (change surrounding environment)
   or the `<Plug>` mapping `<Plug>(vimtex-env-change)`.
   For example, one could quickly change an `equation` to an `align` environment as follows:
+
   ```tex
   \begin{equation*}   cse align   \begin{align*}
       % contents         -->          % contents 
@@ -291,11 +269,13 @@ You can...
   using `dsc` (delete surrounding command)
   or the `<Plug>` mapping `<Plug>(vimtex-cmd-delete)`.
   For example, typing `dsc` anywhere inside `\textit{Hello, dsc!}` produces:
+
   ```tex
                          dsc
   \textit{Hello, dsc!}  -->  Hello, dsc!
   ```
   The `dsc` also recognizes and correctly deletes parameters inside square brackets, for example:
+
   ```tex
                    dsc
   \sqrt[n]{a}  -->  a
@@ -307,6 +287,7 @@ You can...
   using `ds$` (delete surrounding math)
   or the `<Plug>` mapping `<Plug>(vimtex-env-delete-math)`.
   Here is an example:
+
   ```tex
                   ds$
   $ 1 + 1 = 2 $   -->  1 + 1 = 2
@@ -318,6 +299,7 @@ You can...
   using `cs$` (change surrounding math)
   or the `<Plug>` mapping `<Plug>(vimtex-env-change-math)`.
   For example, you could change inline math to an `equation` environment as follows:
+
   ```tex
                  cs$ equation
   $ 1 + 1 = 2 $       -->       \begin{equation}
@@ -332,6 +314,7 @@ You can...
   or the `<Plug>` mapping `<Plug>(vimtex-delim-delete)`.
   This command applies to the same delimiters as the `ad` and `id` text objects above.
   Here are two examples of deleting delimiters with `dsd`:
+
   ```tex
            dsd
   (x + y)  -->  x + y
@@ -346,12 +329,14 @@ You can...
   using `csd` (change surrounding delimiter)
   or the `<Plug>` mapping `<Plug>(vimtex-delim-change-math)`.
   For instance, you could change parentheses to square brackets as follows:
+
   ```tex
            csd [
   (a + b)   -->   [b + b]
   ```
   The `csd` command is "smart"---it recognizes and preserves `\left \right`-style modifiers.
   For example, `csd [` inside `\left( \right)` delimiters produces:
+
   ```tex
                         csd [
   \left(A + B\right)   -->   \left[A + B\right]  % as opposed to [A + B]
@@ -375,6 +360,7 @@ You can...
 
 - Toggle starred commands and environments using `tsc` `<Plug>(vimtex-cmd-toggle-star)` and `tse` `<Plug>(vimtex-env-toggle-star)`.
   The following example uses `tse` inside an `equation` environment to toggle equation numbering, and `tsc` in a `\section` command to toggle section numbering:
+
   ```tex
                       tsc                       tsc
   \section{Toggling}  -->  \section*{Toggling}  -->  \section{Toggling}
@@ -388,6 +374,7 @@ You can...
 
 - Change between plain and `\left`/`\right` versions of delimiters using `tsd` `<Plug>(vimtex-delim-toggle-modifier)`.
   The following example uses `tsd` to toggle `\left` and `\right` modifiers around parentheses:
+
   ```tex
             tsd                        tsd  
   (x + y)   -->   \left(x + y\right)   -->   (x + y)
@@ -577,4 +564,28 @@ Here are a few more features to look into to learn about once you master the bas
   - You can access the documentation of LaTeX packages imported with `\usepackage{}` using the `:VimtexDocPackage` command, which is mapped to `K` by default.
     See `:help vimtex-latexdoc` for more information. 
 
+## Appendix: Troubleshooting failed VimTeX loading
+If you are new to Vim, the VimTeX plugin loads without any problem, and you have no idea what I'm talking about here, don't worry and skip it.
+The point is to make sure that VimTeX loads, and if VimTeX loads for you without issues, you're good to go.
+
+Warning aside, here is the potential problem: the VimTeX plugin respects (and will not override) a user-defined `tex` filetype plugin.
+You must be careful though---there is a risk of *your* `tex` filetype plugin overriding VimTeX!
+Namely, VimTeX will not load if you set the Vimscript variable `let b:did_ftplugin = 1` in your user-defined `tex` plugin, for example with the common piece of boilerplate code shown below
+```vim
+" This common piece of boilerplate code would prevent VimTeX from loading if...
+" ...placed in a user-defined LaTeX filetype plugin, e.g. `~/.vim/ftplugin/tex.vim`.
+if exists("b:did_ftplugin")
+  finish
+endif
+let b:did_ftplugin = 1
+" Using a variable like `b:did_my_ftplugin` will solve the problem.
+```
+Here is the problem: VimTeX *also* uses the variable `b:did_ftplugin` to avoid loading twice in the same Vim buffer.
+User-defined filetype plugins load before VimTeX, so if *you* set `let b:did_ftplugin = 1`, then VimTeX will see `b:did_ftplugin = 1` and not load (you can see this behavior for yourself in the VimTeX source code in the file `vimtex/ftplugin/tex.vim`).
+
+If you want to use both VimTeX and your own `tex` filetype plugin and currently have `let b:did_ftplugin = 1` in your own plugin, just change to a variable name like `b:did_my_ftplugin` instead, which won't conflict with VimTeX's use of `b:did_ftplugin`.
+
+(The `let b:did_ftplugin = 1` business is a standard safety mechanism described in the Vim documentation at `:help ftplugin` that gives the user control over loading filetype plugins.)
+
 {% include vim-latex-navbar.html %}
+

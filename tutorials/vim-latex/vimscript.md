@@ -65,6 +65,7 @@ I will summarize here what I deem necessary for understanding the key mappings u
 
 ### Writing key mappings
 The basic syntax for defining a key mapping, which you can find at `:help map-commands`, is
+
 ```vim
 :map {lhs} {rhs}
 ```
@@ -77,6 +78,7 @@ The command `:map {lhs} {rhs}` then maps the key sequence `{lhs}` to the key seq
 
 You probably already have some key mappings in your `vimrc` or `init.vim`,
 but in case you haven't seen mappings yet, here are some very simple examples to get you started:
+
 ```vim
 " Map `Y` to `y$` (copy from current cursor position to the end of the line),
 " which makes Y work analogously to `D` and `C`.
@@ -166,6 +168,7 @@ Here's how the leader key business works in practice:
  
 1. In your `vimrc` or `init.vim`, store your chosen leader key in Vim's built-in `mapleader` variable.
    Here are some examples:
+
    ```vim
    " Use space as the leader key
    let mapleader = " "
@@ -182,6 +185,7 @@ Here's how the leader key business works in practice:
 1. Use the leader key in key mappings with the special `<leader>` keyword in the mapping's `{lhs}`.
    You can think of `<leader>` as a sort of alias for the content of the `mapleader` variable.
    For illustrative purposes, here are some concrete examples:
+
    ```vim
    " Use <leader>s to toggle Vim's spell-checking on and off;
    " <CR> (carriage return) is just the mapping keycode for the Enter key.
@@ -211,6 +215,7 @@ The local leader key gives you the possibility of a different leader key for eac
 
 The VimTeX plugin uses `<localleader>` in its default mappings (as a precaution to avoid override your own `<leader>` mappings), so it is important to set a local leader key for LaTeX files.
 To do this, add the following code to your `ftplugin/tex.vim` file:
+
 ```vim
 " This code would go in ftplugin/tex.vim, and sets
 " space as the leader leader key for `tex` filetype.
@@ -249,6 +254,7 @@ The official documentation lives at `:help map-<cmd>`;
 for our purposes, using `<Cmd>` avoids unnecessary mode changes and associated autocommand events, improves performance, and is generally the best way to run Vim commands.
 
 Here are some examples for reference, which correct some of the mappings defined earlier in this article in the section [The leader key](#the-leader-key), before we had introduced the `<Cmd>` keyword.
+
 ```vim
 " Best practice: using <Cmd> to execute commands
 noremap <leader>c <Cmd>write<CR><Cmd>VimtexCompile<CR>
@@ -271,6 +277,7 @@ To filter the search down, you can use `:map {characters}` to show a list of all
 For example, `:nmap \` will show all normal mode mappings beginning with `\`, `:imap <leader>g` will show all insert mode mappings beginning with `<leader>g`, etc.
 
 An example output of `:map <leader>` (which would show all mappings in normal, visual, and operator-pending modes beginning with the leader key) might look something like this:
+
 ```vim
   " Using some of the mappings defined earlier in this article,
   " and assuming <Space> is the leader key.
@@ -315,6 +322,7 @@ And here is a real-life example of the exact three-step `<Plug>` process describ
 
 1. A user reads the VimTeX docs, sees that the `:VimtexCompile` command is mapped to `<Plug>(vimtex-compile)`, and decides they want to use the shortcut `<leader>c` to call `:VimtexCompile`.
    They then define (for example in `ftplugin/vimtex.vim`) the mapping
+
    ```vim
    " Using `<leader>c` to call `:VimtexCompile` via VimTeX's plug mapping
    nmap <leader>c <Plug>(vimtex-compile)
@@ -362,6 +370,7 @@ But by using uppercase function names, you *ensure* your functions won't conflic
 
 #### Function definition syntax
 The general syntax for defining Vimscript functions, defined at `:help E124`, is
+
 ```vim
 function[!] {name}([arguments]) [range] [abort] [dict] [closure]
   " function body
@@ -369,6 +378,7 @@ endfunction
 ```
 Anything in square brackets is optional.
 Most Vimscript functions used in this series use the following syntax:
+
 ```vim
 function! {name}([arguments]) abort
   " function body
@@ -384,6 +394,7 @@ Here is an explanation of what each piece means:
 
 - Function arguments are placed between parentheses, separated by commas, and are accessed from within the function by prepending `a:` (for "argument").
   To give you a feel for the syntax:
+
   ```vim
   " A function without arguments
   function MyFunction()
@@ -405,6 +416,7 @@ You can use the `:function` command to list all loaded user functions (expect a 
 #### Tip: Best practice for naming functions
 As suggested in the `PACKAGING` section of `:help 41.10`, prepend a unique, memorable string before all related functions in a Vimscript file, for example an abbreviation of the script name.
 For example, a LaTeX-related script might use a `Tex` prefix, as in
+
 ```vim
 function TexCompile
   " function body
@@ -420,6 +432,7 @@ Prepending a short, memorable string to related functions keeps your Vimscript m
 
 #### Note: Another way of defining functions
 When defining Vimscript functions you can use either of the following:
+
 ```vim
 " Overrides any existing instance of `MyFunction` currently in memory
 function! MyFunction()
@@ -482,6 +495,7 @@ In Vimscript, defining key mappings that call script-local functions is a multi-
 <!-- adapted from the official documentation; you can see the original source in the `PIECES` section of `:help write-plugin`. -->
 Following is a concrete example of this multi-step process: we will define a script-local plugin called `s:TexCompile()` in the file `ftplugin/tex.vim`, and use the short key sequence `,c` in normal mode to call this function in all Vim buffers with the `tex` filetype.
 Here is the code that would achieve this:
+
   ```vim
   " In the file ftplugin/tex.vim (for instance)...
 
@@ -514,6 +528,7 @@ Kind of a bother, right? Oh well, consider it a peculiarity of Vim.
 And, if followed, this technique ensure functions from different scripts won't conflict, which is important for maintaining a healthy plugin ecosystem.
 
 Note that, in principle, the `<SID>` and `<Plug>` mappings and the function name could all be different! Both of the following would let you use `,c` to call a script-local `TexCompile()` function:
+
 ```vim
 nmap ,c <Plug>TexCompile
 nnoremap <script> <Plug>TexCompile <SID>TexCompile
@@ -552,6 +567,7 @@ Here is the basic workflow for using autoload functions:
 - In an `autoload/` directory somewhere in your Vim `runtimepath`, create a Vimscript file, for example `my_function_script.vim`.
 
 - Inside `autoload/my_function_script.vim`, define a function with the syntax
+
   ```
   function my_function_script#function_name()
     " function body

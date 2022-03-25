@@ -99,6 +99,7 @@ Here is a short summary:
 
   You can get a summary of your compiler status using the command `VimtexInfo`;
   a default set-up will produce something like this:
+
   ```vim
   " Example output of VimtexInfo, showing compilation information
   compiler: latexmk      " the VimTeX compiler backend in use
@@ -120,6 +121,7 @@ But since all that typing is inefficient, VimTeX offers  `<localleader>ll` as a 
 
 If you prefer, setting your own shortcut is really easy!
 For example, to use `<localleader>c` to trigger compilation, place the following code in your `ftplugin/tex.vim` file:
+
 ```vim
 " Use `<localleader>c` to trigger continuous compilation...
 noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompile<CR>
@@ -148,6 +150,7 @@ Here are two VimTeX-related QuickFix settings you might be interested in tweakin
 - By default, VimTeX opens the QuickFix menu if compilation produces warning messages but no error messages.
   LaTeX's warning messages are often unhelpful, so some users will want to open the QuickFix menu only if compilation fails with error messages.
   To do this, place the following code in your `ftplugin/tex.vim` file:
+
   ```
   " Don't open QuickFix for warning messages if no errors are present
   let g:vimtex_quickfix_open_on_warning = 0  
@@ -158,6 +161,7 @@ Here are two VimTeX-related QuickFix settings you might be interested in tweakin
   To do so, use the variable `g:vimtex_quickfix_ignore_filters` to define a set of Vim regular expression filters;
   the compilation messages that match these filters will then disappear from the QuickFix menu.
   See `:help regular-expression` for a review of Vim's regular expression syntax; here are some examples to get you started:
+
   ```vim
   " Filter out some compilation warning messages from QuickFix display
   let g:vimtex_quickfix_ignore_filters = [
@@ -198,6 +202,7 @@ You just don't see this directly because the `pdflatex` calls are hidden behind 
 
 ### Possible options for pdflatex
 The full `pdflatex` command I use to compile `tex` files, with all options shown, is
+
   ```
   pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir={output-directory} -synctex=1 {sourcefile.tex}
   ```
@@ -209,6 +214,7 @@ The full `pdflatex` command I use to compile `tex` files, with all options shown
 You can find full documentation of `pdflatex` options by running `man pdflatex` on a command line; for our purposes, here is an explanation of each option used above:
 - `-file-line-error` prints error  messages in the form `file:line:error`.
   As a concrete example, here is what the command `pdflatex -file-line-error ~/test/myfile.tex` reports if I incorrectly leave out the `\item` command in an `itemize` environment on line 15 of the file `test.tex`:
+
   ```
   /home/user/test/test.tex:15: LaTeX Error: Something's wrong--perhaps a missing item
   ```
@@ -240,10 +246,12 @@ You can find full documentation of `pdflatex` options by running `man pdflatex` 
 
 ### Possible options for latexmk
 When compiling `tex` files with `latexmk` instead of with `pdflatex`, I use the command
+
 ```
 latexmk -pdf -output-directory={output-directory} {sourcefile.tex}
 ```
 *together with the following* `latexmkrc` *file*:
+
 ```sh
 # This file lives at ~/.config/latexmk/latexmkrc
 # and contains the single line...
@@ -279,6 +287,7 @@ The [`minted` package](https://github.com/gpoore/minted) provides expressive syn
 The `minted` package works by leveraging the [Pygments syntax highlighting library](https://github.com/pygments/pygments).
 For `minted` to have access to Pygments during compilation, you *must compile LaTeX documents with `pdflatex` or `latexmk`'s `-shell-escape` option* enabled.
 A `pdflatex` call with `-shell-escape` enabled might look like this:
+
 ```sh
 pdflatex -shell-escape myfile.tex
 ```
@@ -326,6 +335,7 @@ If you just want to see the final script, you can jump to the section [Complete 
 Compiler plugins should be stored in Vim's `~/.vim/compiler/` directory (you might need to create a `compiler` directory if you don't have one yet).
 For a LaTeX compiler plugin, create the file `~/.vim/compiler/tex.vim` (you could name it whatever you want, e.g. `mytex.vim`, but using the name of the target file type---in this case `tex`---is conventional).
 For orientation, here are the relevant parts of my Vim directory tree:
+
 ```sh
 ${HOME}/.config/nvim/       # or ${HOME}/.vim/ for Vim
 ├── compiler/
@@ -361,11 +371,13 @@ For orientation, you can always try evaluating the macro expressions yourself in
 
 ### Compilation commands using Vim filename macros
 For review, to save you from scrolling back up, the compilation commands suggested earlier in this article in the section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) were:
+
 ```sh
 pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir={output-directory} -synctex=1 {sourcefile.tex}
 latexmk -pdf -output-directory={output-directory} {sourcefile.tex}
 ```
 Using Vim's macros, `{output-directory}` is replaced by `%:h` and `{sourcefile.tex}` is replaced with `%`, and the result is
+
 ```sh
 pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir=%:h -synctex=1 %
 latexmk -pdf -output-directory=%:h %
@@ -376,6 +388,7 @@ Vim's `makeprg` option is used to store shell-style compilation commands.
 You have two ways to set `makeprg`:
 1. Set `makeprg` directly using `:set` or `:setlocal`, in which case you must escape spaces with `\`.
    For example, you would use the following code to set `makeprg` to the command `latexmk -pdf -output-directory=%:h %`:
+
    ```vim
    " This code would go in compiler/tex.vim
    setlocal makeprg=latexmk\ -pdf\ -output-directory=%:h\ %
@@ -383,6 +396,7 @@ You have two ways to set `makeprg`:
 
 2. Store the desired value of `makeprg` in a variable as a literal Vimscript string (in which case you don't need to escape spaces),
    then programatically set the `makeprg` option to the value of the variable with Vim's `:let &{option}` syntax:
+
    ```vim
    " This code would go in compiler/tex.vim
 
@@ -409,6 +423,7 @@ Here's why you might want to switch between the two:
 
 If you want to toggle between compilation commands, first create a boolean-like variable, for example `b:tex_use_latexmk`, to store the current buffer's `pdflatex` or `latexmk` state.
 You can then implement toggle logic as follows:
+
 ```vim
 " This code would go in compiler/tex.vim
 
@@ -442,6 +457,7 @@ function! s:TexSetMakePrg() abort
 endfunction
 ```
 And here is some Vimscript to map the toggle function to a keyboard shortcut, for example `<leader>tl`:
+
 ```vim
 " This code would go in compiler/tex.vim
 
@@ -455,6 +471,7 @@ The `<Plug>` and `<SID>` syntax for script-local mapping is explained in detail 
 
 ### Setting the `makeprg` option
 To actually set Vim's `makeprg` option to your custom compilation command, assuming you're using the `s:TexSetMakePrg` function defined above, add the following line to `compiler/tex.vim`
+
 ```vim
 call s:TexSetMakePrg()  " set value of Vim's `makeprg` option
 ```
@@ -516,6 +533,7 @@ You can install Dispatch, just like any other Vim plugin, with the installation 
 
 Dispatch provides a `:Make` command that serves as an asynchronous equivalents of `:make`.
 Here is a concrete example:
+
 ```vim
 :!pdflatex %                     " compile the current file synchronously with vanilla pdflatex
 :make                            " compile *synchronously* using current `makeprg` settings
@@ -528,6 +546,7 @@ Here's what to do:
 
 1. Assuming that you used `compiler/tex.vim` as the name of the compiler plugin described earlier in this article in the section [Writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin-by-hand),
    somewhere inside `ftplugin/tex.vim` include the line
+
    ```vim
    " Load the compiler settings in the file `compiler/tex.vim`
    compiler tex
@@ -541,6 +560,7 @@ Here's what to do:
    Assuming you have properly set Vim's `:makeprg` option, everything should "just work".)
 
 1. Optionally, create a convenient key mapping to call `:Make`, for example
+
    ```vim
    " Use <leader>m in normal mode to call `:Make`
    noremap <leader>m <Cmd>Make<CR>
@@ -553,6 +573,7 @@ For more details on the Vim Dispatch plugin, including how to tinker with its va
 ### Implementing `minted` detection and using `--shell-escape`
 Feel free to ignore this section if you don't use `minted` for code highlighting and have no needed for `shell-escape` compilation.
 The logic for toggling `-shell-escape` on and off is the same as for toggling between `pdflatex` and `latexmk`.
+
 ```vim
 " Create a variable to store shell-escape state
 let b:tex_use_shell_escape = 0
@@ -568,6 +589,7 @@ function! s:TexToggleShellEscape() abort
 endfunction
 ```
 The `TexSetMakePrg` function would then need to be generalized to
+
 ```vim
 " Sets the value of `makeprg` based on current values of both
 " `b:tex_use_latexmk` and `b:tex_use_shell_escape`.
@@ -583,6 +605,7 @@ function! s:TexSetMakePrg() abort
 endfunction
 ```
 And here is some Vimscript to let you call the `TexToggleShellEscape()` function with a keyboard shortcut, e.g. `<leader>te`:
+
 ```vim
 " This code would go in compiler/tex.vim
 " Use <leader>te to toggle -shell-escape compilation on and off
@@ -596,6 +619,7 @@ See the final article in this series, [A Vimscript Primer for Filetype-Specific 
 **A simple way to automatically detect `minted`**
 
 Finally, here is a (naive but functional) way to detect `minted` using the Unix utilities `sed` and `grep`:
+
 ```
 " Create a variable to store shell-escape state
 " Possible values: 0 for shell-escape off; 1 for shell-escape on
@@ -610,6 +634,7 @@ else  " search was successful; 'minted' found in preamble
 endif
 ```
 On the command line, without all the extra Vimscript jargon, the `sed` and `grep` call would read
+
 ```
 sed "/\\begin{document}/q" myfile.tex | grep "minted" > /dev/null
 ```
@@ -624,6 +649,7 @@ However, even if the automatic `minted` detection does not work, you can always 
 
 ### Complete compiler plugin
 The code is explained earlier in this article in the section [writing a simple LaTeX compiler plugin](#writing-a-simple-latex-compiler-plugin).
+
 ```vim
 " Settings for compiling LaTeX documents
 if exists("current_compiler")

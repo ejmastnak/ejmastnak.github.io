@@ -79,6 +79,7 @@ After installing UltiSnips you should configure...
 1. the key you use to move backward through a snippet's tabstops, which is set with `g:UltiSnipsJumpBackwardTrigger`.
 
 For orientation, here is an example configuration, which you would place the code in your `vimrc` or `init.vim`:
+
 ```vim
 " This code should go in your vimrc or init.vim
 let g:UltiSnipsExpandTrigger       = '<Tab>'    " use Tab to expand snippets
@@ -109,6 +110,7 @@ From `:help UltiSnips-how-snippets-are-loaded`,
 defined in `g:UltiSnipsSnippetDirectories` in the order they are defined.
 
 For example, to use `MySnippets` as a snippet directory, you would place the following Vimscript in your `vimrc` or `init.vim`:
+
 ```vim
 " Use both `UltiSnips` and `MySnippets` as snippet directories
  let g:UltiSnipsSnippetDirectories=["UltiSnips", "MySnippets"]
@@ -116,6 +118,7 @@ For example, to use `MySnippets` as a snippet directory, you would place the fol
 UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets` directories in your Vim `runtimepath`.
 
 Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
+
 ```vim
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " on Vim
 let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " on Neovim
@@ -129,6 +132,7 @@ To do so, make a folder named with the target `filetype` inside your snippets di
 UltiSnips will then load *all* `.snippet` files inside this folder, regardless of their basename.
 Again, this behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
 As a concrete example, a selection of my UltiSnips directory looks like this:
+
 ```sh
 ${HOME}/.vim/UltiSnips/           # Vim
 ${HOME}/.config/nvim/UltiSnips/   # Neovim
@@ -159,6 +163,7 @@ I strongly suggest your watch them---you will find many of the features describe
 
 ### Anatomy of an UltiSnips snippet
 The general form of an UltiSnips snippet is:
+
 ```
 snippet {trigger} ["description" [options]]
 {snippet body}
@@ -225,6 +230,7 @@ As far as I'm aware, this is a similar tabstop syntax to that used in the popula
 #### Some example LaTeX snippets
 For orientation, here are two examples: one maps `tt` to the `\texttt` command and the other maps `ff` to the `\frac` command.
 Note that (at least for me) the snippet expands correctly without escaping the `\`, `{`, and `}` characters as suggested in `:help UltiSnips-character-escaping` (see the second bullet in [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)).
+
 ```sh
 snippet tt "The \texttt{} command for typewriter-style font"
 \texttt{$1}$0
@@ -242,6 +248,7 @@ Placeholders are used to enrich a tabstop with a description or default text.
 The syntax for defining placeholder text is `${1:placeholder}`.
 Placeholders are documented at `:help UltiSnips-placeholders`.
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
+
 ```sh
 snippet hr "The hyperref package's \href{}{} command (for url links)"
 \href{${1:url}}{${2:display name}}$0
@@ -260,6 +267,7 @@ Here is an example:
 
 The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
 For example, following is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
+
 ```sh
 snippet env "New LaTeX environment" b
 \begin{$1}
@@ -278,6 +286,7 @@ You can have one visual placeholder per snippet, and you specify it with the `${
 This usually is (but does not have to be) integrated into tabstops.
 
 As an example, here is a snippet to the LaTeX `\textit` command, using a visual placeholder to make it easer to surround text in italics:
+
 ```sh
 snippet tii "The \textit{} command for italic font"
 \textit{${1:${VISUAL:}}}$0
@@ -312,6 +321,7 @@ The VimTeX plugin, among many other things, provides the user with the function 
 This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
 You can integrate VimTeX's math zone detection with UltiSnips's `context` feature as follows:
+
 ```sh
 # include this code block at the top of a *.snippets file...
 # ----------------------------- #
@@ -337,6 +347,7 @@ A formal explanation of regular expressions falls beyond the scope of this work,
 Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial on YouTube](https://www.youtube.com/watch?v=sa-TUpSx1JA).
 
 1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
+
    ```
    snippet "([^a-zA-Z])trigger" "Expands if 'trigger' is typed after characters other than a-z or A-Z" r
    `!p snip.rv = match.group(1)`snippet body
@@ -378,6 +389,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    If sounds vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the trigger disappears.
 
 1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
+
    ```sh
    snippet "([\w])trigger" "Expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
    `!p snip.rv = match.group(1)`snippet body
@@ -395,6 +407,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    ```
    I don't use this one often, but here is one example I really like.
    It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
+
    ```sh
    snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
    `!p snip.rv = match.group(1)`_{0}
@@ -418,6 +431,7 @@ Here's an example use case:
 - Solution: call `UltiSnips#RefreshSnippets` using `:call UltiSnips#RefreshSnippets()`.
 
 This workflow comes up regularly if you use snippets often, and I suggest writing a key binding in your `vimrc` to call the `UltiSnips#RefreshSnippets()` function, for example
+
 ```vim
 " Use <leader>u in normal mode to refresh UltiSnips snippets
 nnoremap <leader>u <Cmd>call UltiSnips#RefreshSnippets()<CR>
@@ -448,6 +462,7 @@ In no particular order, here are some tips based on my personal experience:
 
   Here are two examples I use all the time:
   1. I first define the LaTeX command `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
+
      ```
      snippet "([^a-zA-Z0-9])df" "\diff (A personal command I universally use for differentials)" rA
      `!p snip.rv = match.group(1)`\diff 
@@ -459,6 +474,7 @@ In no particular order, here are some tips based on my personal experience:
      As a side note, using a `\diff` command also makes redefinition of the differential symbols very easy---for example to adapt an article for submission to a journal that uses italic instead of upright differentials, one could just replace `\operatorname{d}\!` with `\,d` in the command definition instead of rummaging through LaTeX source code changing individual differentials.
 
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
+
      ```
      snippet "([\w]|[\}\)\]\|])sd" "Subscript with upright text" rA
      `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
@@ -480,6 +496,7 @@ In no particular order, here are some tips based on my personal experience:
 ## Tip: A snippet for writing snippets
 The following snippet makes it easier to write more snippets.
 To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
+
 ```sh
 snippet snip "A snippet for writing Ultisnips snippets" b
 `!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:options}
@@ -495,6 +512,7 @@ Here's what this looks like in practice:
 
 The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
 The naive implementation would be to write
+
 ```sh
 # THIS SNIPPET WON'T WORK---IT'S JUST FOR EXPLANATION!
 snippet snip "A snippet for writing Ultisnips snippets" b
