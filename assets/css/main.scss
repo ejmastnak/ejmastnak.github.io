@@ -22,7 +22,7 @@ $nord15: #b48ead;
 
 $light0: #fbfbfc;
 $light1: #f8f9fb;
-$light1: #f8f9fb;
+$light2: #f3f4f6;
 
 // Block quote border, horizontal rule, table border
 $border-color: $nord6;
@@ -36,6 +36,7 @@ $table-border-color: $nord4;
 
 $link-color: #0079c0;
 $quote-text-color: $nord3;
+$quote-background-color: $light2;
 
 $inline-code-text-color: $nord1;
 $inline-code-background-color: $nord5;
@@ -313,6 +314,7 @@ body {
 
 .markdown-body blockquote {
   margin: 0;
+  background-color: $quote-background-color;
 }
 
 .markdown-body ol,
