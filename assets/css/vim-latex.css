@@ -1,0 +1,14 @@
+.vim-latex-navbar {
+  width: 100%;
+  padding-top: 20px;
+  padding-right: 5%;
+  margin: 0 auto;
+}
+
+.vim-latex-navbar ul {
+  display: flex;
+  /* justify-content:space-evenly; */
+  justify-content:space-between;
+  list-style-type: none;
+  align-items: flex-end;
+}
