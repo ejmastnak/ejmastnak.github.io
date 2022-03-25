@@ -44,7 +44,7 @@ This article describes the excellent [VimTeX plugin](https://github.com/lervag/v
 ## The point of this article
 This article gives an overview of the features VimTeX provides, offers some ideas of how to use these features from the practical perspective of a real-life user, and shows where to look in the documentation for details.
 Given VimTeX's superb documentation, what is the point of this guide?
-My reasoning is that many new users---I am often guilty of this too---quickly become overwhelmed when reading extensive plain-text documentation as a means of learning new software, and perhaps the Markdown syntax, highlighted code blocks, and more personal tone in this article will make it easier for new users to digest what VimTeX offers.
+My reasoning is that many new users---I am often guilty of this too---quickly become overwhelmed when reading extensive plain-text documentation as a means of learning new software, and perhaps the Markdown syntax, animated GIFs, highlighted code blocks, and more personal tone in this article will make it easier for new users to digest what VimTeX offers.
 
 My goal is certainly not to replace the VimTeX documentation, which remains essential reading for any serious VimTeX user.
 Instead, I hope to quickly bring new users up to a level of comfort at which the documentation becomes useful rather than overwhelming, and to offer pointers as to where in the VimTeX documentation to look when interested about a given feature.
@@ -71,8 +71,10 @@ As you get started with the VimTeX plugin, here are a few things to keep in mind
 
 - Assuming you have installed VimTeX and meet the above-described requirements, you can check that VimTeX has loaded by opening a file with the `.tex` extension and issuing the command `:VimtexInfo`.
   If this opens a window with various system status information, VimTeX has loaded and you're good to go.
+  
   If the command `:VimtexInfo` returns `E492: Not an editor command: VimtexInfo`, VimTeX has not loaded.
-  Double-check that VimTeX is installed and that you meet the plugin's above-described requirements.
+  Double-check that VimTeX is installed and that you meet the plugin requirements described just above in the section [Getting started with VimTeX](#getting-started-with-vimtex).
+
   If that fails and VimTeX still doesn't load, scroll down four bullet points and see if the long bullet point about overriding VimTeX with a user-defined filetype plugin applies to you.
   If *that* fails, turn to the Internet for help.
 
@@ -100,6 +102,7 @@ As you get started with the VimTeX plugin, here are a few things to keep in mind
   ```
   Here is the problem: VimTeX *also* uses the variable `b:did_ftplugin` to avoid loading twice in the same Vim buffer.
   User-defined filetype plugins load before VimTeX, so if *you* set `let b:did_ftplugin = 1`, then VimTeX will see `b:did_ftplugin = 1` and not load (you can see this behavior for yourself in the VimTeX source code in the file `vimtex/ftplugin/tex.vim`).
+  
   If you want to use both VimTeX and your own `tex` filetype plugin and currently have `let b:did_ftplugin = 1` in your own plugin, just change to a variable name like `b:did_my_ftplugin` instead, which won't conflict with VimTeX's use of `b:did_ftplugin`.
 
   (The `let b:did_ftplugin = 1` business is a standard safety mechanism described in the Vim documentation at `:help ftplugin` that gives the user control over loading filetype plugins.)
@@ -144,6 +147,7 @@ For the present purposes, here is how to interpret the table:
 
 - Each entry in the middle, `RHS`, column is a Vim `<Plug>` mapping corresponding to a specific VimTeX feature (e.g. a command, action, or text object).
   For example, `<plug>(vimtex-info)` displays status information about the VimTeX plugin and `<plug>(vimtex-ac)` corresponds to VimTeX's "a command" text object (analogous to Vim's built-in `aw` for "a word" or `ap` for "a paragraph").
+  
   The meaning of every entry in the `RHS` column is described in a dedicated section of the VimTeX documentation, which can be jumped to by hovering over a `RHS` entry and pressing `<Ctrl>]`.
 
 - By default, VimTeX maps each entry in the `RHS` column to the short key combination in the `LHS` column.
@@ -191,6 +195,7 @@ Here is a visual mode example of the delimeter and environment text objects:
 ### Example: Changing a default text object mapping
 Every default mapping provided by VimTeX can be changed to anything you like.
 As an example to get you started with changing default mappings, VimTeX uses `am` and `im` for the item text objects "an item" and "in item" (i.e. items in `itemize` or `enumerate` environments) and `a$` and `i$` for the inline math objects "a math" and "in math".
+
 You might prefer to use (say) `am`/`im` for math and `ai`/`ii` for items, and could implement this change by placing the following code in `ftplugin/tex.vim`:
 ```vim
 " Use `am` and `im` for the inline math text object
@@ -213,13 +218,13 @@ VimTeX will leave any `<Plug>` mapping you define manually as is, and won't appl
 
 ### Example: Disabling all default mappings and selectively defining your own
 VimTeX also makes it easy to disable *all* default mappings, then selectively enable only the mappings you want, using the LHS of your choice.
+You might do this, for example, to avoid cluttering the mapping namespace with mappings you won't use.
 From `:help vimtex-default-mappings`:
 
 > If one prefers, one may disable all the default mappings through the option
 > `g:vimtex_mappings_enabled`.  Custom mappings for all desired features must
 > then be defined through the listed RHS <plug>-maps or by mapping the available commands.
 
-(You might do this, say, to avoid cluttering the mapping namespace with mappings you won't use.)
 To disable all VimTeX default mappings, place `g:vimtex_mappings_enabled = 0` in your `ftplugin/tex.vim`, then manually redefine only those mappings you want using the same mapping syntax shown above in the Example section on [Changing a default text object mapping](#example-changing-a-default-text-object-mapping).
 In case that sounds abstract, here is an example to get you started:
 ```vim
@@ -352,7 +357,7 @@ You can...
   \left(A + B\right)   -->   \left[A + B\right]  % as opposed to [A + B]
   ```
   Here are the above two examples in a GIF:
-  <image src="/assets/images/vim-latex/vimtex/csd.gif" alt="Demonstrating the csd action"  /> 
+  <image src="/assets/images/vim-latex/vimtex/csd.gif" alt="Changing delimiters with the csd action"  /> 
 
 - Change a LaTeX command while preserving the command's argument(s)
   using `csc` (change surrounding command)
@@ -362,7 +367,7 @@ You can...
                             csc textit
   \textbf{Make me italic!}     -->      \textit{Make me italic!}
   ```
-  <image src="/assets/images/vim-latex/vimtex/csc.gif" alt="Demonstrating the csc action"  /> 
+  <image src="/assets/images/vim-latex/vimtex/csc.gif" alt="Changing \textbf to \textit with the csc action"  /> 
 
 ### Toggle-style mappings
 The following commands toggle back and forth between states of various LaTeX environments and commands. 
@@ -389,7 +394,7 @@ You can...
   ```
   Delimiters other than `\left \right` (e.g. `\big`, `\Big`, etc.) can be added to the list used by `tsd` by configuring the `g:vimtex_delim_toggle_mod_list` variable; for a concrete example of how to do this, scroll down to the section [Example: Changing the default delimiter toggle list](#example-changing-the-default-delimiter-toggle-list).
   Here is an example with both `\left \right` and `\big`:
-  <image src="/assets/images/vim-latex/vimtex/tsd.gif" alt="Using the tsd shortcut"  /> 
+  <image src="/assets/images/vim-latex/vimtex/tsd.gif" alt="Using the tsd action to change delimiters"  /> 
 
   `tsD` `<Plug>(vimtex-delim-toggle-modifier-reverse)` works like `tsd`, but searches in reverse through the delimiter list.
   The observed behavior is identical to `tsd` when the delimiter list stored in `g:vimtex_delim_toggle_mod_list` contains only one entry.
@@ -400,7 +405,7 @@ You can...
                 tsf         tsf 
   \frac{a}{b}   -->   a/b   -->   \frac{a}{b}
   ```
-  <image src="/assets/images/vim-latex/vimtex/tsf.gif" alt="Demonstrating the tsf shortcut"  /> 
+  <image src="/assets/images/vim-latex/vimtex/tsf.gif" alt="Toggling fractions with tsf"  /> 
 
 ### Motion mappings
 All of the following motions accept a count and work in Vim's normal, operator-pending, and visual modes.
@@ -453,6 +458,7 @@ You can...
 VimTeX provides a number of insert mode mappings, which are described in `:help vimtex-imaps`.
 VimTeX mappings provide a similar (but less feature-rich) functionality to snippets, described in an [earlier article in this series]({% link tutorials/vim-latex/ultisnips.md %}).
 If you use a snippets plugin, you can probably safely disable VimTeX's insert mode mappings without any loss of functionality.
+
 VimTeX's insert mode mappings are enabled by default;
 disable them by setting `g:vimtex_imaps_enabled = 0` in your `ftplugin/tex.vim` file (configuring VimTeX's option variables is covered in more detail in the [Options](#options) section just below).
 
@@ -467,8 +473,7 @@ Although most users following this series will probably end up disabling VimTeX'
   If you are interested in using its insert mode mappings, read through `:help vimtex-imaps` in detail.
 
 ## Options
-VimTeX's options are used to manually enable, disable, or otherwise configure VimTeX features (e.g. the delimiter toggle list, the compilation method, the PDF reader, etc.),
-and are covered in the documentation section `:help vimtex-options`.
+VimTeX's options are used to manually enable, disable, or otherwise configure VimTeX features (e.g. the delimiter toggle list, the compilation method, the PDF reader, etc.).
 VimTeX's options are controlled by setting the values of global Vim variables somewhere in your Vim `runtimepath` before VimTeX loads (a good place would be `ftplugin/tex.vim`).
 You disable VimTeX features by un-setting a Vim variable controlling the undesired feature.
 Upon loading, VimTeX reads the values of any option variables you set manually and updates its default behavior accordingly.
@@ -515,7 +520,8 @@ The VimTeX plugin provides a number of user-defined commands, and these are list
 The commands mostly cover compilation, PDF reader integration, and system and plugin status;
 we will return to VimTeX's commands when explaining 
 [compilation]({% link tutorials/vim-latex/compilation.md %}) and [PDF reader integration]({% link tutorials/vim-latex/pdf-reader.md %}) in the next two articles in this series.
-There is nothing I have to say about that commands themselves that the documentation wouldn't say better; I suggest you skim through `:help vimtex-commands` and see if anything strikes your fancy.
+
+There is nothing much I have to say about the commands themselves that the documentation wouldn't say better; I suggest you skim through `:help vimtex-commands` and see if anything strikes your fancy.
 
 As a side note, most but not all VimTeX commands can be triggered by default using a shortcut in the `LHS` of the three-column list in `:help vimtex-default-mappings`.
 For those commands without a default shortcut mapping, defining one can be as simple as a single line of Vimscript.

@@ -49,6 +49,7 @@ This article is long.
 And parts of it are inevitably dense given the material covered.
 You don't have to read everything---in fact, if you are already familiar with Vimscript or if you find theory boring, feel free to skip the article entirely.
 The article is a selection of the Vimscript needed to understand the content of this series, presented in a way that should hopefully be easier for a new user to understand than tackling the Vim documentation directly, together with references of exactly where in the Vim docs to find more information.
+
 I suggest skimming through on a first reading, remembering this article exists, and then referring back to it, if desired, when you wish to better understand the Vimscript functions and key mappings used in the series.
 
 By the way, nothing in this article is particularly LaTeX-specific and would generalize well to Vim workflows with other file types.
@@ -283,7 +284,7 @@ This output has four columns, summarized in the following table:
 | - | - | - | - |
 | A single character indicating the mode in which the mapping applies | The mapping's full `{lhs}` | A single character indicating if the mapping can be remapped or not | The mapping's full `{rhs}` |
 
-The characters in the mode column are mostly self-explanatory---`n` means normal mode (the result of `nmap`), ` ` (space) means `nvo` mode (the result of `map`), `i` means insert mode (the result of `imap`), etc.
+The characters in the mode column are mostly self-explanatory---`n` means normal mode (the result of `nmap`), <code class="language-plaintext highlighter-rouge"> </code> (space) means `nvo` mode (the result of `map`), `i` means insert mode (the result of `imap`), etc.
 See `:help map-listing` for a list of all codes.
 The remap status column will usually only show `*` (meaning a mapping is not remappable; the result of `noremap`) and ` ` (meaning a mapping is remappable; the result of `map`), but other values are possible---again, see `:help map-listing` for a list of all codes.
 
@@ -352,8 +353,11 @@ To quote the official documentation aj `:help E124`, the name of a user-defined 
 
 Starting functions with capital letters, to the best of my knowledge, is just a sensible best practice to avoid conflicts or confusion with built-in Vim functions, which are always lowercase, 
 and the Vim documentation makes the capital letter requirement for user-defined functions sound more severe than it is.
+
 Your user functions will work fine if they start with a lower-case letter, as long as they don't conflict with existing Vim functions.
-(For example, Tim Pope's excellent [`vim-commentary`](https://github.com/tpope/vim-commentary) and [`vim-surround`](https://github.com/tpope/vim-surround) plugins include some lowercase function names.) But by using uppercase function names, you *ensure* your functions won't conflict with built-in Vim functions.
+(For example, Tim Pope's excellent [`vim-commentary`](https://github.com/tpope/vim-commentary) and [`vim-surround`](https://github.com/tpope/vim-surround) plugins include some lowercase function names.) 
+
+But by using uppercase function names, you *ensure* your functions won't conflict with built-in Vim functions.
 (Note that a special class of functions called *autoload functions* often intentionally start with lowercase letters, but autoload functions use a special syntax to avoid conflict with built-in Vim functions.)
 
 #### Function definition syntax
@@ -466,7 +470,7 @@ Meanwhile, if the scripts both used `function s:SomeFunctionName`, no problems w
 If you are certain your function names won't conflict with other scripts or plugins---especially if you don't intend to distribute your plugin to others---you don't need to make every function script-local.
 Even well-known filetype plugins from reputable authors can include global functions, such as `MarkdownFold` and `MarkdownFoldText` in Tim Pope's [`vim-markdown`](https://github.com/tpope/vim-markdown), and everything works just fine.
 
-In any case, if you do follow best practices and use script-local functions, here is how to call the functions with key mappings outside of the script in which the functions were defined.
+In any case, if you do follow best practices and use script-local functions, the following section describes how to call the functions with key mappings outside of the script in which the functions were defined.
 
 #### Calling script-local functions using SID key mappings
 In Vimscript, defining key mappings that call script-local functions is a multi-step process:

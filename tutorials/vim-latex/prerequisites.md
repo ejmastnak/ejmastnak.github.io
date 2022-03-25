@@ -90,11 +90,11 @@ The [Vim-Plug GitHub page](https://github.com/junegunn/vim-plug) contains everyt
 - If you prefer to manage your plugins manually, without third-party tools, use Vim/Neovim's built-in plugin management system.
 The relevant documentation lives at `:help packages` but is unnecessarily complicated for a beginner's purposes.
 When getting started with the built-in plugin system, it is enough to perform the following:
-1. Create the folder `pack` inside your root Vim configuration folder (i.e. create `~/.vim/pack/` if using Vim and `~/.config/nvim/pack/` if using Neovim)
+1. Create the folder `pack` inside your root Vim configuration folder (i.e. create `~/.vim/pack/` if using Vim and `~/.config/nvim/pack/` if using Neovim).
 1. Inside `pack/`, create an arbitrary number of directories used to organize your plugins by category (e.g. create `pack/global/`, `pack/file-specific/`, etc...).
    These names can be anything you like and give you the freedom to organize your plugins as you see fit.
    You probably just want to start with one plugin directory, e.g. `pack/plugins/`, and create more if needed as you plugin collection grows.
-1. Inside each of the just-created organizational directories, create a directory named `start/` (you will end up with e.g. `pack/plugins/start/`)
+1. Inside each of the just-created organizational directories, create a directory named `start/` (you will end up with e.g. `pack/plugins/start/`).
 1. Clone a plugin repository from GitHub into a `start/` directory.
    
 Since that might sound abstract, an example shell session used to install the [VimTeX](https://github.com/lervag/vimtex), [UltiSnips](https://github.com/SirVer/ultisnips), and [Vim-Dispatch](https://github.com/tpope/vim-dispatch) plugins (all used later in this series) using Vim/Neovim's built-in plugin system would look like this:

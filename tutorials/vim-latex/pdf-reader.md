@@ -22,9 +22,9 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
   * [A PDF reader on macOS](#a-pdf-reader-on-macos)
   * [A PDF reader on Windows](#a-pdf-reader-on-windows)
 * [Summary: What works on what platform](#summary-what-works-on-what-platform)
-    * [Zathura on Linux (tested with i3 on Arch)](#zathura-on-linux-tested-with-i3-on-arch)
-    * [Skim on macOS](#skim-on-macos)
-    * [Zathura on macOS](#zathura-on-macos)
+    * [Zathura on Linux (tested with i3 on Arch using Zathura 0.4.8)](#zathura-on-linux-tested-with-i3-on-arch-using-zathura-048)
+    * [Skim on macOS (tested on macOS 12.1 using Skim 1.6.9)](#skim-on-macos-tested-on-macos-121-using-skim-169)
+    * [Zathura on macOS (macOS 12.1; Zathura 0.4.9 from `homebrew-zathura`)](#zathura-on-macos-macos-121-zathura-049-from-homebrew-zathura)
 * [Cross-platform concepts](#cross-platform-concepts)
   * [Forward search and inverse search](#forward-search-and-inverse-search)
   * [Compiling with SyncTeX](#compiling-with-synctex)
@@ -77,14 +77,16 @@ but you can find an overview of PDF reader possibilities on Windows in the VimTe
 I tested 9 combinations of editor, OS, and PDF reader when preparing this article, and the results are summarized in the table below---the more green check marks the better.
 
 **Recommendations based on my testing:**
-- If you have a choice of editor, use Neovim---everything works on every OS, potentially with a few small work-arounds.
-  This is because Neovim's built-in implementation of the remote procedure call (RPC) protocol ensures inverse search works reliably on all platforms.
-  Vim has a different implementation of RPC and must be specially compiled with the `+clientserver` option to ensure inverse search works.
-  This is non-trivial on macOS; 
-  if you use terminal Vim on macOS, you will either have to sacrifice inverse search or perform some compiling-from-source wizardry beyond the scope of this series.
-- If you have a choice of OS, use Linux---nearly everything works on both Vim and Neovim.
+- If you have a choice of OS, use some flavor of Linux---everything works on both Vim and Neovim, potentially with a few manual tweaks.
 
-#### Zathura on Linux (tested with i3 on Arch)
+- If you have a choice of editor, use Neovim---everything works on every OS, potentially with a few small work-arounds.
+  This is largely because Neovim's built-in implementation of the remote procedure call (RPC) protocol ensures inverse search works reliably on all platforms.
+  Vim has a different implementation of RPC and must be specially compiled with the `+clientserver` option to ensure inverse search works.
+  
+  It turns out that getting a functional `+clientserver` Vim is non-trivial on macOS; 
+  if you currently use terminal Vim on macOS, you will either have to sacrifice inverse search or perform some compiling-from-source wizardry beyond the scope of this series.
+
+#### Zathura on Linux (tested with i3 on Arch using Zathura 0.4.8)
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Focus returns to editor after inverse search |
 | - | - | - | - | - |
@@ -95,7 +97,7 @@ I tested 9 combinations of editor, OS, and PDF reader when preparing this articl
 [^1]: If you use the `xdotool windowfocus` solution described in [Optional tip: Return focus to Vim/Neovim after forward search](#optional-tip-return-focus-to-vimneovim-after-forward-search).
 [^2]: If you use the `xdotool windowfocus` solution described in [Optional tip: Return focus to gVim after forward and inverse search](#optional-tip-return-focus-to-gvim-after-forward-and-inverse-search).
 
-#### Skim on macOS
+#### Skim on macOS (tested on macOS 12.1 using Skim 1.6.9)
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Focus returns to editor after inverse search |
 | - | - | - | - | - |
@@ -103,7 +105,7 @@ I tested 9 combinations of editor, OS, and PDF reader when preparing this articl
 | Vim | ✅ | ❌ | ✅ | ❌ |
 | MacVim | ✅ | ✅ | ✅ | ✅ |
 
-#### Zathura on macOS
+#### Zathura on macOS (macOS 12.1; Zathura 0.4.9 from [`homebrew-zathura`](https://github.com/zegervdv/homebrew-zathura))
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Focus returns to editor after inverse search |
 | - | - | - | - | - |
@@ -148,8 +150,9 @@ This type of inter-program communication is possible because of Vim's built-in [
 The details of implementation vary between Vim and Neovim 
 (see `:help remote.txt` for Vim and `:help RPC` for Neovim),
 but in both cases Vim or Neovim must run a *server* that listens for and processes requests from other programs (such as a PDF reader).
+
 In this article and in the Vim and VimTeX documentation you will hear talk about a server---what we are referring to is the server Vim/Neovim must run to communicate with a PDF reader.
-Keep in mind throughout that an RPC protocol and client-server model are required under the hood for inverse search to work.
+Remembering that an RPC protocol and client-server model are required under the hood may help clarify your mental image of inverse search.
 
 ### Ensuring you have a clientserver-enabled Vim
 Neovim, gVim, and MacVim come with client-server functionality by default; if you use any of these programs, lucky you.
@@ -327,9 +330,9 @@ Here's what to do:
    This function calls `VimtexView` to execute forward search, waits a few hundred milliseconds to let the window manager recognize focus has moved to Zathura,
    then uses `xdotool`'s `windowfocus` command to immediately refocus the window holding Vim.
    Using `silent execute` instead of just `execute` suppresses `Press ENTER or type command to continue` messages, although you may want to start with just `execute` for debugging purposes.
+   
    Although it is hacky, I have empirically found the `sleep 200m` wait ensures the subsequent window focus executes properly (you may want to tweak the exact sleep time for your hardware and window manager).
    The `redraw!` command refreshes Vim's screen.
-
    If interested, you can read more about writing Vimscript functions in this series's [Vimscript article]({% link tutorials/vim-latex/vimscript.md %}), which is the next and final article in the series.
 
 1. Finally, define the following Vimscript autocommand group in your `ftplugin/tex.vim`:
@@ -628,6 +631,7 @@ Here is how to fix the problem (the steps are similar to those for Neovim just a
 ## Further reading
 I suggest you read through the VimTeX documentation beginning at `:help g:vimtex_view_enabled` and ending at `:help g:vimtex_view_zathura_check_libsynctex`.
 Although not all of the material will be relevant to your operating system or PDF reader, you will still find plenty of interesting information and configuration options.
+
 Here is an example: VimTeX automatically opens your PDF reader when you first compile a document, even if you have not called `:VimtexView`.
 If you prefer to disable this behavior, place the following code in your `ftplugin/tex.vim`:
 ```vim

@@ -119,6 +119,7 @@ The following sections explain how loading filetype plugins works under the hood
 #### Manual filetype detection
 If Vim's default filetype detection using `filetype.vim` fails (this only happens for exotic filetypes), you can also manually configure Vim to detect the target filetype.
 Note that manual detection of exotic filetypes is not needed for this tutorial (Vim detects LaTeX files without any configuration on your part), so feel free to skip ahead.
+
 But if you're curious, here's an example using LilyPond files, which by convention have the extension `.ly`.
 ([LilyPond](https://lilypond.org/) is a free and open-source text-based system for elegantly typesetting musical notation; as an analogy, LilyPond is for music what LaTeX is for math.)
 
@@ -142,6 +143,7 @@ For our purposes:
 
 - When you open a file with Vim, assuming you have set `:filetype on`, Vim tries to determine the file's type by cross-checking the file's extension against a set of extensions found in `$VIMRUNTIME/filetype.vim`.
   Generally this method works out of the box (`filetype.vim` is over 2300 lines and covers the majority of common files).
+
   If the file's type is not detected from extension, Vim attempts to guess the file type based on file contents using `$VIMRUNTIME/scripts.vim` (reference: `:help filetype`).
   If both `$VIMRUNTIME/filetype.vim` and `$VIMRUNTIME/scripts.vim` fail, Vim checks the contents of `ftdetect` directories in your `runtimepath`, as described in the section [Manual filetype detection](#manual-filetype-detection) a few paragraphs above.
 

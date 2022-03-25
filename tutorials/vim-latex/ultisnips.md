@@ -471,6 +471,7 @@ In no particular order, here are some tips based on my personal experience:
 
 - Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops.
   The other obvious choice is the Tab key, but I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing.
+  
   Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown.
   (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
 

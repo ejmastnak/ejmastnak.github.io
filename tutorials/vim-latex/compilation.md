@@ -64,7 +64,7 @@ As you get more comfortable, you can write your own compilation plugin if you fi
 
 As a personal anecdote, I did the exact opposite of what I recommend now: motivated by a naive desire to build everything from scratch, I spent many hours putting together my own compiler setup.
 This was great as a learning experience but completely impractical, since it generated needless code to maintain without solving anything VimTeX hadn't already solved.
-(In my wise old age I now use VimTeX's compilation features; if there is an existing solution to your problem, use it!)
+(In my wise old age I now use VimTeX's compilation features---if there is an existing solution to your problem, use it!)
 
 ## Using VimTeX's compilation interface
 
@@ -292,9 +292,11 @@ arbitrary commands on your system.
 Basically the lessons here are:
 - If you want highlighted code blocks, use the `minted` package.
 - For `minted` to work, you must enable `-shell-escape` during compilation.
-- Only use `-shell-escape` if you're sure your LaTeX document doesn't contain or call malicious code, and disable `-shell-escape` if you don't need it.
+- If you want to follow best practices, only use `-shell-escape` if you're sure your LaTeX document doesn't contain or call malicious code, and disable `-shell-escape` if you don't need it.
   (Of course, if you wrote the LaTeX document yourself, you should have nothing to worry about.)
-  The idea of malicious LaTeX code might sound strange, and I am not sure myself what the details of implementation would look like, but I trust the `minted` developers that using `-shell-escape` is a security risk one should be aware of.
+
+  The idea of malicious LaTeX code might sound strange, and I am not sure myself what the details of implementation would look like (if anyone knows please write, and I'll update this article).
+  But I trust that the `minted` developers know more than I do, and so consider `-shell-escape` a security risk to be aware of.
 
 
 ## Writing a simple LaTeX compiler plugin by hand
@@ -323,9 +325,9 @@ If you just want to see the final script, you can jump to the section [Complete 
 ### File structure
 Compiler plugins should be stored in Vim's `~/.vim/compiler/` directory (you might need to create a `compiler` directory if you don't have one yet).
 For a LaTeX compiler plugin, create the file `~/.vim/compiler/tex.vim` (you could name it whatever you want, e.g. `mytex.vim`, but using the name of the target file type---in this case `tex`---is conventional).
-For orientation, here are the relevant parts of my (Neo)Vim directory tree:
+For orientation, here are the relevant parts of my Vim directory tree:
 ```sh
-${HOME}/.config/nvim/
+${HOME}/.config/nvim/       # or ${HOME}/.vim/ for Vim
 ├── compiler/
 │   └── tex.vim
 └── ftplugin/
@@ -515,7 +517,7 @@ You can install Dispatch, just like any other Vim plugin, with the installation 
 Dispatch provides a `:Make` command that serves as an asynchronous equivalents of `:make`.
 Here is a concrete example:
 ```vim
-:!pdflatex %                      " compile the current file synchronously with vanilla pdflatex
+:!pdflatex %                     " compile the current file synchronously with vanilla pdflatex
 :make                            " compile *synchronously* using current `makeprg` settings
 :Make                            " compile *asynchronously* using `makeprg` and Dispatch
 ```
@@ -613,9 +615,10 @@ sed "/\\begin{document}/q" myfile.tex | grep "minted" > /dev/null
 ```
 The `sed` call reads the file's preamble (and quits at `\begin{document}`), and the output is piped into a `grep` search for the string `"minted"`.
 I then use Vim's `v:shell_error` variable to check the `grep` command's exit status---if the search is successful, I update `b:tex_use_shell_escape`'s value to enable shell escape.
+
 This command is naive, I'm sure.
 Aside from probably being inefficient, it won't work, for example, if you keep your preamble in a separate file and access it with the `\input` command.
-If you know a better way, e.g. using `awk`, please tell me and I'll update this article.
+If you know a better way, e.g. with some `awk` magic, please tell me and I'll update this article.
 
 However, even if the automatic `minted` detection does not work, you can always manually toggle shell escape compilation on and off using the key mapping from a few paragraphs above that calls the `TexToggleShellEscape()` function.
 
