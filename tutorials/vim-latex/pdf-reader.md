@@ -79,7 +79,7 @@ I tested 9 combinations of editor, OS, and PDF reader when preparing this articl
 **Recommendations based on my testing:**
 - If you have a choice of OS, use some flavor of Linux---everything works on both Vim and Neovim, potentially with a few manual tweaks.
 
-- If you have a choice of editor, use Neovim---everything works on every OS, potentially with a few small work-arounds.
+- If you have a choice of editor, use Neovim---everything works on every OS, potentially with a few small workarounds.
   This is largely because Neovim's built-in implementation of the remote procedure call (RPC) protocol ensures inverse search works reliably on all platforms.
   Vim has a different implementation of RPC and must be specially compiled with the `+clientserver` option to ensure inverse search works.
   

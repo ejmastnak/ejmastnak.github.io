@@ -11,7 +11,7 @@ next-display-name: "5. Compilation »"
 {% include vim-latex-navbar.html %}
 
 # 4. Getting started with the VimTeX plugin
-This is part four in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part four in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editor to efficiently write LaTeX documents.
 This article describes the excellent [VimTeX plugin](https://github.com/lervag/vimtex/), a modular Vim and Neovim plugin that implements a host of useful features for writing LaTeX files.
 
 ## Contents of this article
@@ -164,7 +164,7 @@ For convenience, here is a table of VimTeX's text-objects, taken directly from `
 | `am`, `im` | Items in `itemize` and `enumerate` environments|
 
 The `ad` and `id` delimiter text object covers all of `()`, `[]`, `{}`, etc. *and* their `\left \right`, `\big \big`, etc. variants, which is very nice.
-Here is a visual mode example of the delimeter and environment text objects:
+Here is a visual mode example of the delimiter and environment text objects:
 
 <image src="/assets/images/vim-latex/vimtex/text-objects.gif" alt="VimTeX's text objects"  /> 
 

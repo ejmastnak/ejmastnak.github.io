@@ -11,7 +11,7 @@ next-display-name: "3. Vim's ftplugin system »"
 {% include vim-latex-navbar.html %}
 
 # 2. An UltiSnips guide for LaTeX workflows
-This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
 ## Contents of this article

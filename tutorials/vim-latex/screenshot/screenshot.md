@@ -4,7 +4,7 @@ Format
 - Hide Zathura status bar
   (`set guioptions none` in `zathurarc`)
 - Zathura zoom: `=`, then
-  4x `<+>` for regular notes
+  3x `<+>` for regular notes
   1x `<+>` for equation sheets
 - Screenshot geometry:
   ```

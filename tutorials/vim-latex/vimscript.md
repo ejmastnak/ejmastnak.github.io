@@ -355,7 +355,7 @@ In this series we'll be interested in user functions.
 
 #### Naming functions
 User-defined Vimscript should start with a capital letter.
-To quote the official documentation aj `:help E124`, the name of a user-defined function...
+To quote the official documentation at `:help E124`, the name of a user-defined function...
 
   > ... must be made of alphanumeric characters and `_`, and must start with either a capital letter or `s:` [...] to avoid confusion with built-in functions.
 
@@ -579,7 +579,7 @@ Here is the basic workflow for using autoload functions:
 
 - When needed, call the function using `call my_function_script#function_name()`.
   
-  Here is what happens: Vim recognizes the `{filename}#{function-name}` syntax, realizes the function is an autoload function, and searches all `autoload` directories in your Vim `runtimepath` for files name `filename`, then within these files searchs for functions named `function_name`.
+  Here is what happens: Vim recognizes the `{filename}#{function-name}` syntax, realizes the function is an autoload function, and searches all `autoload` directories in your Vim `runtimepath` for files name `filename`, then within these files searches for functions named `function_name`.
   If a match is found, a function is loaded into memory, can be called by the user, and should be visible with `:function`.
 
 You can find official documentation of autoload functions at `:help autoload-functions`.
