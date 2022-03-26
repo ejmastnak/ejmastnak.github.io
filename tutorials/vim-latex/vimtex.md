@@ -49,7 +49,7 @@ Given VimTeX's superb documentation, what is the point of this guide?
 My reasoning is that many new users---I am often guilty of this too---quickly become overwhelmed when reading extensive plain-text documentation as a means of learning new software, and perhaps the Markdown syntax, animated GIFs, highlighted code blocks, and more personal tone in this article will make it easier for new users to digest what VimTeX offers.
 
 My goal is certainly not to replace the VimTeX documentation, which remains essential reading for any serious user.
-Instead, I hope to quickly bring new users up to a level of comfort at which the documentation becomes useful rather than overwhelming, and to offer pointers as to where in the VimTeX documentation to look when interested about a given feature.
+Instead, I hope to quickly bring new users up to a level of comfort at which the documentation becomes useful rather than overwhelming, and to offer pointers as to where in the VimTeX documentation to look when interested in a given feature.
 
 **Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
 To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
@@ -112,22 +112,22 @@ Here is a representative example of what the list looks like:
 ---------------------------------------------------------------------
  LHS              RHS                                          MODE
 ---------------------------------------------------------------------
- <localleader>li  <plug>(vimtex-info)                           n
- <localleader>ll  <plug>(vimtex-compile)                        n
- csd              <plug>(vimtex-delim-change-math)              n
- tse              <plug>(vimtex-env-toggle-star)                n
- ac               <plug>(vimtex-ac)                             xo
- id               <plug>(vimtex-id)                             xo
- ae               <plug>(vimtex-ae)                             xo
+ <localleader>li  <Plug>(vimtex-info)                           n
+ <localleader>ll  <Plug>(vimtex-compile)                        n
+ csd              <Plug>(vimtex-delim-change-math)              n
+ tse              <Plug>(vimtex-env-toggle-star)                n
+ ac               <Plug>(vimtex-ac)                             xo
+ id               <Plug>(vimtex-id)                             xo
+ ae               <Plug>(vimtex-ae)                             xo
 ```
 To have a clear mental image of what's going on here, you should understand how Vim mappings work,
-what the `<leader>` and `<localleader>` keys do, and what the `<plug>` keyword means.
+what the `<leader>` and `<localleader>` keys do, and what the `<Plug>` keyword means.
 If you want to learn about these topics now, take a detour and read through [the Vimscript article]({% link tutorials/vim-latex/vimscript.md %}), which is the final article in this series.
 
 For the present purposes, here is how to interpret the table:
 
 - Each entry in the middle (`RHS`) column is a Vim `<Plug>` mapping corresponding to a specific VimTeX feature (e.g. a command, action, or text object).
-  For example, `<plug>(vimtex-info)` displays status information about the VimTeX plugin and `<plug>(vimtex-ac)` corresponds to VimTeX's "a command" text object (analogous to Vim's built-in `aw` for "a word" or `ap` for "a paragraph").
+  For example, `<Plug>(vimtex-info)` displays status information about the VimTeX plugin and `<Plug>(vimtex-ac)` corresponds to VimTeX's "a command" text object (analogous to Vim's built-in `aw` for "a word" or `ap` for "a paragraph").
   
   The meaning of every entry in the `RHS` column is described in a dedicated section of the VimTeX documentation, which can be jumped to by hovering over a `RHS` entry and pressing `<Ctrl>]`.
 
@@ -137,7 +137,7 @@ For the present purposes, here is how to interpret the table:
 
 - Each mapping works only in a given Vim mode;
   this mode is specified in the `MODE` column using Vim's conventional single-letter abbreviations for mode names.
-  For example, `ae <plug>(vimtex-ae) xo` works in visual (`x`) and operator-pending (`o`) mode, while `tse <plug>(vimtex-env-toggle-star) n` works in normal (`n`) mode.
+  For example, `ae <Plug>(vimtex-ae) xo` works in visual (`x`) and operator-pending (`o`) mode, while `tse <Plug>(vimtex-env-toggle-star) n` works in normal (`n`) mode.
   For more information about map modes and key mappings, see the Vim documentation section `:help map-listing` and the [Vimscript article]({% link tutorials/vim-latex/vimscript.md %}) later in this series.
 
 The VimTeX documentation sections `COMMANDS` (accessed with `:help vimtex-commands`) and `MAP DEFINITIONS` (accessed with `:help vimtex-mappings`) list and explain the commands and mappings in the `RHS` of the above table.
@@ -155,9 +155,9 @@ But first, let's see some practical LaTeX wizardry using VimTeX!
 ### Change and delete stuff
 You can...
 
-- Delete the `\begin{}` and `\end{}` declaration surrounding a LaTeX environment without changing the environment contents
-  using the default shortcut `dse` (delete surrounding environment)
-  or the `<Plug>` mapping `<plug>(vimtex-env-delete)`.
+- **Delete surrounding environments using `dse`:** Delete the `\begin{}` and `\end{}` declaration surrounding a LaTeX environment without changing the environment contents
+  using the default shortcut `dse` (works in normal mode, mapped to `<Plug>(vimtex-env-delete)`).
+
   For example, using `dse` in a `quote` environment produces:
 
   ```tex
@@ -165,11 +165,12 @@ You can...
   Using VimTeX is lots of fun!  -->  Using VimTeX is lots of fun!
   \end{quote}
   ```
+
   <image src="/assets/images/vim-latex/vimtex/dse.gif" alt="Deleting a surrounding quote environment with dse"  /> 
 
-- Change the type of a LaTeX environment without changing the environment contents
-  using `cse` (change surrounding environment)
-  or the `<Plug>` mapping `<Plug>(vimtex-env-change)`.
+- **Change surrounding environments using `cse`:** Change the type of a LaTeX environment without changing the environment contents
+  using the default shortcut `cse` (works in normal mode, mapped to `<Plug>(vimtex-env-change)`).
+
   For example, one could quickly change an `equation` to an `align` environment as follows:
 
   ```tex
@@ -177,11 +178,12 @@ You can...
       % contents         -->          % contents 
   \end{equation*}                 \end{align*}
   ```
+
   <image src="/assets/images/vim-latex/vimtex/cse.gif" alt="Changing equation to align with dse"  /> 
 
-- Delete a LaTeX command while preserving the command's argument(s)
-  using `dsc` (delete surrounding command)
-  or the `<Plug>` mapping `<Plug>(vimtex-cmd-delete)`.
+- **Delete surrounding commands using `dsc`:** Delete a LaTeX command while preserving the command's argument(s)
+  using the default shortcut `dsc` (works in normal mode, mapped to `<Plug>(vimtex-cmd-delete)`).
+
   For example, typing `dsc` anywhere inside `\textit{Hello, dsc!}` produces:
 
   ```tex
@@ -195,12 +197,12 @@ You can...
   \sqrt[n]{a}  -->  a
   ```
   Here are the above two examples in action:
+
   <image src="/assets/images/vim-latex/vimtex/dsc.gif" alt="Demonstrating the dsc action"  /> 
 
-- Delete surrounding delimiters (e.g. `()`, `[]`, `{}`, *and* any of their `\left \right`, `\big \big` variants) without changing the enclosed content
-  using `dsd` (delete surrounding delimiter)
-  or the `<Plug>` mapping `<Plug>(vimtex-delim-delete)`.
-  This command applies to the same delimiters as the `ad` and `id` text objects above.
+- **Delete surrounding delimiters using `dsd`:** Delete delimiters (e.g. `()`, `[]`, `{}`, *and* any of their `\left \right`, `\big \big` variants) without changing the enclosed content
+  using the default shortcut `dsd` (works in normal mode, mapped to `<Plug>(vimtex-delim-delete)`).
+
   Here are two examples of deleting delimiters with `dsd`:
 
   ```tex
@@ -211,11 +213,12 @@ You can...
   \left(X + Y\right)  -->  X + Y
   ```
   Here are the above two examples in action:
+
   <image src="/assets/images/vim-latex/vimtex/dsd.gif" alt="Demonstrating the dsd action"  /> 
 
-- Change surrounding delimiters (e.g. `()`, `[]`, `{}`, and any of their `\left \right`, `\big \big` variants) without changing the enclosed content
-  using `csd` (change surrounding delimiter)
-  or the `<Plug>` mapping `<Plug>(vimtex-delim-change-math)`.
+- **Change surrounding delimiters using `csd`:** Change delimiters (e.g. `()`, `[]`, `{}`, and any of their `\left \right`, `\big \big` variants) without changing the enclosed content
+  using the default shortcut `csd` (works in normal mode, mapped to `<Plug>(vimtex-delim-change-math)`).
+
   For instance, you could change parentheses to square brackets as follows:
 
   ```tex
@@ -230,11 +233,12 @@ You can...
   \left(A + B\right)   -->   \left[A + B\right]  % as opposed to [A + B]
   ```
   Here are the above two examples in a GIF:
+
   <image src="/assets/images/vim-latex/vimtex/csd.gif" alt="Changing delimiters with the csd action"  /> 
 
-- Delete the surrounding `$` delimiters of LaTeX inline math without changing the math contents 
-  using `ds$` (delete surrounding math)
-  or the `<Plug>` mapping `<Plug>(vimtex-env-delete-math)`.
+- **Delete surrounding math using `ds$`:** Delete surrounding math environments or the `$` delimiters of LaTeX inline math without changing the math contents 
+  using the default shortcut `ds$` (works in normal mode, mapped to `<Plug>(vimtex-env-delete-math)`).
+
   Here is an example:
 
   ```tex
@@ -242,38 +246,49 @@ You can...
   $ 1 + 1 = 2 $   -->  1 + 1 = 2
   ```
   Conveniently, the `ds$` works with all math environments, not just inline math.
+
   <image src="/assets/images/vim-latex/vimtex/dsm.gif" alt="Demonstrating the dsm action"  /> 
 
-- Change inline math `$` delimiters to an environment name, enclosed in `\begin{}` and `\end{}` environment tags,
-  using `cs$` (change surrounding math)
-  or the `<Plug>` mapping `<Plug>(vimtex-env-change-math)`.
-  For example, you could change inline math to an `equation` environment as follows:
+- **Change surrounding math using `cs$`:** Change the surrounding math environment without changing the math content
+  using the default shortcut `cs$` (works in normal mode, mapped to `<Plug>(vimtex-env-change-math)`).
+  When used inside inline math `$` delimiters, changes the inline math to an environment name, enclosed in `\begin{}` and `\end{}` environment tags.
+  Use `cs$ $` to change math environments back to inline math.
+
+  For example, you could change between inline math and an `equation` environment as follows:
 
   ```tex
                  cs$ equation
   $ 1 + 1 = 2 $       -->       \begin{equation}
                                     1 + 1 = 2 
                                 \end{equation}
+                    cs$ $
+  \begin{equation}   -->  $x + y = z$
+      x + y = z
+  \end{equation}                               
   ```
   Note the correct indentation inside the `equation` environment!
+
   <image src="/assets/images/vim-latex/vimtex/csm.gif" alt="Changing inline math to an equaiton with the csm action"  /> 
 
-- Change a LaTeX command while preserving the command's argument(s)
-  using `csc` (change surrounding command)
-  or the `<Plug>` mapping `<Plug>(vimtex-cmd-change)`.
+- **Change surrounding commands using `csc`:** Change a LaTeX command while preserving the command's argument(s)
+  using the default shortcut `csc` (works in normal mode, mapped to `<Plug>(vimtex-cmd-change)`).
+
   As an example, you could change italic text to boldface text as follows:
+
   ```tex
                             csc textit
   \textbf{Make me italic!}     -->      \textit{Make me italic!}
   ```
+
   <image src="/assets/images/vim-latex/vimtex/csc.gif" alt="Changing \textbf to \textit with the csc action"  /> 
 
 ### Toggle-style mappings
 The following commands toggle back and forth between states of various LaTeX environments and commands. 
 You can...
 
-- Toggle starred commands and environments using `tsc` `<Plug>(vimtex-cmd-toggle-star)` and `tse` `<Plug>(vimtex-env-toggle-star)`.
-  The following example uses `tse` inside an `equation` environment to toggle equation numbering, and `tsc` in a `\section` command to toggle section numbering:
+- **Toggle starred commands and environments using `tsc` and `tse`**, which both work in normal mode and are mapped to `<Plug>(vimtex-cmd-toggle-star)` and `<Plug>(vimtex-env-toggle-star)`, respectively.
+
+  The following example uses `tsc` in a `\section` command to toggle section numbering and `tse` inside an `equation` environment to toggle equation numbering:
 
   ```tex
                       tsc                       tsc
@@ -284,103 +299,122 @@ You can...
   \end{equation}           \end{equation*}           \end{equation}
   ```
   Here are the above two examples in a GIF:
+
   <image src="/assets/images/vim-latex/vimtex/tsc-tse.gif" alt="Demonstrating the tsc and tse actions"  /> 
 
-- Change between plain and `\left`/`\right` versions of delimiters using `tsd` `<Plug>(vimtex-delim-toggle-modifier)`.
+- **Toggle surrounding delimiters using `tsd`:** Change between plain and `\left`/`\right` versions of delimiters 
+  using the default shortcut `tsd` (works in normal and visual modes, mapped to `<Plug>(vimtex-delim-toggle-modifier)`).
+
   The following example uses `tsd` to toggle `\left` and `\right` modifiers around parentheses:
 
   ```tex
             tsd                        tsd  
   (x + y)   -->   \left(x + y\right)   -->   (x + y)
   ```
-  Delimiters other than `\left \right` (e.g. `\big`, `\Big`, etc.) can be added to the list used by `tsd` by configuring the `g:vimtex_delim_toggle_mod_list` variable; for a concrete example of how to do this, scroll down to the section [Example: Changing the default delimiter toggle list](#example-changing-the-default-delimiter-toggle-list).
+  Delimiters other than `\left \right` (e.g. `\big`, `\Big`, etc.) can be added to the toggle list by configuring the `g:vimtex_delim_toggle_mod_list` variable; for a concrete example of how to do this, scroll down to the section [Example: Changing the default delimiter toggle list](#example-changing-the-default-delimiter-toggle-list).
   Here is an example with both `\left \right` and `\big`:
+
   <image src="/assets/images/vim-latex/vimtex/tsd.gif" alt="Using the tsd action to change delimiters"  /> 
 
   `tsD` `<Plug>(vimtex-delim-toggle-modifier-reverse)` works like `tsd`, but searches in reverse through the delimiter list.
   The observed behavior is identical to `tsd` when the delimiter list stored in `g:vimtex_delim_toggle_mod_list` contains only one entry.
 
-- Toggle between inline and `\frac{}{}` versions of fractions using `tsf` `<Plug>(vimtex-cmd-toggle-frac)`.
+- **Toggle surrounding fractions using `tsf`:** Toggle between inline and `\frac{}{}` versions of fractions 
+  using the default shortcut `tsf` (works in normal and visual modes, mapped to `<Plug>(vimtex-cmd-toggle-frac)`).
+
   Here is an example:
+
   ```tex
                 tsf         tsf 
   \frac{a}{b}   -->   a/b   -->   \frac{a}{b}
   ```
+
   <image src="/assets/images/vim-latex/vimtex/tsf.gif" alt="Toggling fractions with tsf"  /> 
 
 ### Motion mappings
 All of the following motions accept a count and work in Vim's normal, operator-pending, and visual modes.
 You can...
 
-- Move between matching delimiters, inline-math `$` delimiters, and LaTeX environments using `%` and `<plug>(vimtex-%)`.
+- **Navigate matching content using `%`:** Move between matching delimiters, inline-math `$` delimiters, and LaTeX environments 
+  using the default shortcut `%` (works in normal, visual, and operator-pending modes (henceforth abbreviated `nxo`); mapped to `<Plug>(vimtex-%)`).
+
   Here are some examples:
+
   <image src="/assets/images/vim-latex/vimtex/move-matching.gif" alt="Demonstrating the VimTeX % motion command"  /> 
   
-- Jump to the beginning of the next `\section`, `\subsection` or `\subsubsection`, whichever comes first, using `]]` and `<plug>(vimtex-]])`.
+- **Navigate sections using `]]` and its variants:** Jump to the beginning of the next `\section`, `\subsection` or `\subsubsection`, whichever comes first, 
+  using the default shortcut `]]` (works in Vim's `nxo` modes; mapped to `<Plug>(vimtex-]])`).
 
-  Use `[[` and `<plug>(vimtex-[[)` to jump to the beginning of the *current* `\section`, `\subsection` or `\subsubsection` 
-  (in practice, this feels like jumping backward---try it yourself and see what I mean),
-  and see the similar shortcuts `][` and `[]` in the VimTeX documentation at `:help <plug>(vimtex-][)` and `:help <plug>(vimtex-[])`.
+  Use `[[` to jump to the beginning of the *current* `\section`, `\subsection` or `\subsubsection` 
+  (in practice, this feels like jumping backward---try it yourself and see what I mean).
+  See the similar shortcuts `][` and `[]` in the VimTeX documentation at `:help <Plug>(vimtex-][)` and `:help <Plug>(vimtex-[])`.
 
   Here are the `[[` and `]]` motions in action:
+
   <image src="/assets/images/vim-latex/vimtex/move-section.gif" alt="Demonstrating the VimTeX section motion command"  /> 
 
-- Jump to the next or previous environment `\begin{}` command using `]m` and`<plug>(vimtex-]m)`, and `[m` and `<plug>(vimtex-]m)`.
 
-  Check the VimTeX documentation for the similar shortcuts `]M` and `[M`, described in `:help <plug>(vimtex-]M)` and `:help <plug>(vimtex-[M)`.
+- **Navigate environments using `]m` and its variants:** Jump to the next or previous environment `\begin{}` command 
+  using the default shortcuts `]m` and `[m` (work in Vim's `nxo` modes; mapped to `<Plug>(vimtex-]m)` and `<Plug>(vimtex-[m)`).
+
+  Check the VimTeX documentation for the similar shortcuts `]M` and `[M`, described in `:help <Plug>(vimtex-]M)` and `:help <Plug>(vimtex-[M)`.
   
   Here are some of the environment motion commands in action:
 
   <image src="/assets/images/vim-latex/vimtex/move-environment.gif" alt="Demonstrating the VimTeX environment motion commands"  /> 
 
-- Jump to the beginning of the next or previous math zone using `]n` and `<plug>(vimtex-]n)`, and `[n` and `<plug>(vimtex-]n)`.
+
+- **Navigate math zones using `]n` and its variants:** Jump to the beginning of the next or previous math zone
+  using the default shortcuts `]n` and `[n` (work in Vim's `nxo` modes; mapped to `<Plug>(vimtex-]n)` and `<Plug>(vimtex-[n)`).
   These motions apply to `$...$`, `\[...\]`, and math environments (including from the `amsmath` package) such as `equation`, `align`, etc.
 
-  Check the VimTeX documentation for the similar shortcuts `]N` and `[N`, described in `:help <plug>(vimtex-]N)` and `:help <plug>(vimtex-[N)`.
+  Check the VimTeX documentation for the similar shortcuts `]N` and `[N`, described in `:help <Plug>(vimtex-]N)` and `:help <Plug>(vimtex-[N)`.
 
   Here are some examples of moving through math zones:
 
   <image src="/assets/images/vim-latex/vimtex/move-math.gif" alt="Demonstrating the VimTeX math motion commands"  /> 
 
-- Jump to the beginning of the next or previous `frame` environment (useful in `beamer` slide show presentations) using `]r` and `<plug>(vimtex-]r)`, and `[r` and `<plug>(vimtex-]r)` .
+- **Navigate Beamer frames using `]r` and its variants:** Jump to the beginning of the next or previous `frame` environment (useful in slide show documents using the `beamer` document class) 
+  using the default shortcuts `]r` and `[r` (work in Vim's `nxo` modes; mapped to `<Plug>(vimtex-]r)` and `<Plug>(vimtex-[r)`).
 
-  Check the VimTeX documentation for the similar shortcuts `]R` and `[R`, described in `:help <plug>(vimtex-]R)` and `:help <plug>(vimtex-[R)`.
+  Check the VimTeX documentation for the similar shortcuts `]R` and `[R`, described in `:help <Plug>(vimtex-]R)` and `:help <Plug>(vimtex-[R)`.
   
   Here are some of the frame motions in action:
+
   <image src="/assets/images/vim-latex/vimtex/move-frame.gif" alt="Demonstrating the VimTeX frame motion commands"  /> 
 
 <!-- **TODO:** I did not get this motion ot work in testing! -->
 <!-- - Jump to the beginning of the next or previous LaTeX comment (i.e. text beginning with `%`) -->
-<!--   using `]/` and `<plug>(vimtex-]/`, and `[/` `<plug>(vimtex-]star`). -->
+<!--   using `]/` and `<Plug>(vimtex-]/`, and `[/` `<Plug>(vimtex-]star`). -->
 
-  <!-- Check the VimTeX documentation for the similar shortcuts `]*` and `[*`, described in `:help <plug>(vimtex-]star)` and `:help <plug>(vimtex-[star)`. -->
+  <!-- Check the VimTeX documentation for the similar shortcuts `]*` and `[*`, described in `:help <Plug>(vimtex-]star)` and `:help <Plug>(vimtex-[star)`. -->
 
 ### Customization is easy
 After seeing the VimTeX actions and mappings, I want to show how to customize the default shortcut you trigger them with.
 To customize the shortcut for a VimTeX action or motion, you need to know three things:
-1. The motion's `<plug>` mapping, given above for each action and also shown in the three-column table in `:help vimtex-default-mappings`.
+1. The motion's `<Plug>` mapping, given above for each action and also shown in the three-column table in `:help vimtex-default-mappings`.
 
-1. The Vim mapping mode (e.g. normal, visual, operator-pending, etc.) the `<plug>` mapping works in; again from the table at `:help vimtex-default-mappings` or earlier in this article.
+1. The Vim mapping mode (e.g. normal, visual, operator-pending, etc.) the `<Plug>` mapping works in; again from the table at `:help vimtex-default-mappings` or earlier in this article.
 
 1. The action's default shortcut (from `:help vimtex-default-mappings` or earlier in this article) and the custom shortcut you would like to use to replace it.
 
 **Example:** Since that might sound abstract, here is a concrete example of setting a custom shortcut to trigger the "delete surrounding math" action.
 Following the steps listed above,
-1. The action's `<plug>` map is `<plug>(vimtex-env-delete-math)`
-1. The action works in normal mode, so we will use `nmap` for remapping it (use `vmap` for visual mode, `omap` for operator-pending mode, etc.)
+1. The action's `<Plug>` map is `<Plug>(vimtex-env-delete-math)`
+1. The action works in normal mode, so we will use `nmap` for remapping it (use `xmap` for visual mode, `omap` for operator-pending mode, etc.)
 1. We will replace the default mapping, `ds$` (which makes semantic sense but is a bit difficult to type), with the more convenient `dsm`.
 
 To implement this change, place the following code in your `ftplugin/tex.vim` (or similar):
 
 ```vim
 " Use `dsm` to delete surrounding math (replacing the default shorcut `ds$`)
-nmap dsm <plug>(vimtex-env-delete-math)
+nmap dsm <Plug>(vimtex-env-delete-math)
 ```
 That's it!
 You could then use `dsm` in normal mode to delete surrounding math.
 (For a background of what's going on here, you can consult the final article this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).)
 
-The key when redefining default mappings is to use your own, personally-intuitive LHS mapping (e.g. `dsm`) with VimTeX's default `<Plug>` mapping (e.g. `<plug>(vimtex-env-delete-math)`).
+The key when redefining default mappings is to use your own, personally-intuitive LHS mapping (e.g. `dsm`) with VimTeX's default `<Plug>` mapping (e.g. `<Plug>(vimtex-env-delete-math)`).
 VimTeX won't apply the default `LHS` shortcut to any `<Plug>` mapping you map to manually (this behavior is explained in `:help vimtex-default-mappings`).
 
 
@@ -419,16 +453,16 @@ As an example to get you started with changing default mappings, VimTeX uses `am
 You might prefer to use (say) `am`/`im` for math (since `$` is a bit difficult to reach) and `ai`/`ii` for items, and could implement this change by placing the following code in `ftplugin/tex.vim`:
 ```vim
 " Use `am` and `im` for the inline math text object
-omap am <plug>(vimtex-a$)
-xmap am <plug>(vimtex-a$)
-omap im <plug>(vimtex-i$)
-xmap im <plug>(vimtex-i$)
+omap am <Plug>(vimtex-a$)
+xmap am <Plug>(vimtex-a$)
+omap im <Plug>(vimtex-i$)
+xmap im <Plug>(vimtex-i$)
 
 " Use `ai` and `ii` for the item text object
-omap ai <plug>(vimtex-am)
-xmap ai <plug>(vimtex-am)
-omap ii <plug>(vimtex-im)
-xmap ii <plug>(vimtex-im)
+omap ai <Plug>(vimtex-am)
+xmap ai <Plug>(vimtex-am)
+omap ii <Plug>(vimtex-im)
+xmap ii <Plug>(vimtex-im)
 ```
 You could then use the `am` and `im` mapping to access the math text object, or `ai` an `ii` to access items.
 Note that the mappings should be defined in both operator-pending and visual mode, so we use both `omap` and `xmap` (you would know this by checking the table at `:help vimtex-default-mappings`).
@@ -440,7 +474,7 @@ From `:help vimtex-default-mappings`:
 
 > If one prefers, one may disable all the default mappings through the option
 > `g:vimtex_mappings_enabled`.  Custom mappings for all desired features must
-> then be defined through the listed RHS <plug>-maps or by mapping the available commands.
+> then be defined through the listed RHS <Plug>-maps or by mapping the available commands.
 
 To disable all VimTeX default mappings, place `g:vimtex_mappings_enabled = 0` in your `ftplugin/tex.vim`, then manually redefine only those mappings you want using the same mapping syntax shown above in the Example section on [Changing a default text object mapping](#example-changing-a-default-text-object-mapping).
 In case that sounds abstract, here is an example to get you started:
@@ -454,21 +488,21 @@ g:vimtex_mappings_enabled = 0
 " Manually redefine only the mappings you wish to use
 " --------------------------------------------- "
 " Some text objects
-omap ac <plug>(vimtex-ac)
-omap id <plug>(vimtex-id)
-omap ae <plug>(vimtex-ae)
-xmap ac <plug>(vimtex-ac)
-xmap id <plug>(vimtex-id)
-xmap ae <plug>(vimtex-ae)
+omap ac <Plug>(vimtex-ac)
+omap id <Plug>(vimtex-id)
+omap ae <Plug>(vimtex-ae)
+xmap ac <Plug>(vimtex-ac)
+xmap id <Plug>(vimtex-id)
+xmap ae <Plug>(vimtex-ae)
 
 " Some motions
-map %  <plug>(vimtex-%)
-map ]] <plug>(vimtex-]])
-map [[ <plug>(vimtex-[[)
+map %  <Plug>(vimtex-%)
+map ]] <Plug>(vimtex-]])
+map [[ <Plug>(vimtex-[[)
 
 " A few commands
-nmap <localleader>li <plug>(vimtex-info)
-nmap <localleader>ll <plug>(vimtex-compile)
+nmap <localleader>li <Plug>(vimtex-info)
+nmap <localleader>ll <Plug>(vimtex-compile)
 ```
 This example, together with the list of default mappings in `:help vimtex-default-mappings`, should be enough to get you on your way towards your own configuration.
 
