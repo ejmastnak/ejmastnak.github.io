@@ -58,4 +58,15 @@ The seminal work on the subject of Vim and LaTeX, and my inspiration for attempt
 You've probably seen it on the Internet if you dabble in Vim or LaTeX circles, and you should definitely read it if you haven't yet.
 This series builds on Castel's article by more thoroughly walking the reader through technical details of implementation (e.g. the details of setting up a PDF reader with forward and inverse search using Vim's client-server model, how to write Vimscript functions and key mappings, how Vim's `ftplugin` system works, how to manually compile LaTeX documents, and so on).
 
+#### Config
+Since someone will probably be curious, here is an overview of the setup used in this series:
+- Editor: [Neovim](https://neovim.io/)
+- Terminal: [Alacritty](https://alacritty.org/)
+- Colorscheme: [Nord](https://www.nordtheme.com/)
+- Font: [Source Code Pro](https://github.com/adobe-fonts/source-code-pro) in screenshots and GIFs and [Computer Modern](https://www.tug.org/FontCatalogue/computermodern/) on this website; at the time of writing, the fonts used on this website are available on [this demo page](https://www.checkmyworking.com/cm-web-fonts/).
+- OS: [Arch Linux](https://archlinux.org/) as a daily driver; [macOS](https://www.apple.com/macos/) for testing cross-platform functionality
+- Window manager: [i3](https://i3wm.org/) on Linux; [Amethyst](https://ianyh.com/amethyst/) on macOS
+- GIF recording and screen capture: [Menyoki](https://github.com/orhun/menyoki)
+- Dotfiles: [github.com/ejmastnak/dotfiles](https://github.com/ejmastnak/dotfiles), where you can find both my main [Neovim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) and a smaller [Vim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) for testing Vim-specific inverse search features for this series.
+
 <p style="text-align: center"><a href="/tutorials/vim-latex/prerequisites.html"><strong><em>Click to get started!</em></strong></a></p>
