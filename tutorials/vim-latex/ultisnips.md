@@ -436,7 +436,7 @@ This workflow comes up regularly if you use snippets often, and I suggest writin
 " Use <leader>u in normal mode to refresh UltiSnips snippets
 nnoremap <leader>u <Cmd>call UltiSnips#RefreshSnippets()<CR>
 ```
-In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a standard Vim configuration tool described in much more detail in the series's final article, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
+In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 ## (Subjective) practical tips for fast editing
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.

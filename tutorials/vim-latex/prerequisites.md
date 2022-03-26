@@ -11,7 +11,7 @@ next-display-name: "2. Snippets »"
 {% include vim-latex-navbar.html %}
 
 # 1. Suggested Prerequisites for Writing LaTeX in Vim
-This is part one in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part one in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers the prerequisites you should probably meet to get the most out of this series.
 These prerequisites are listed below; each includes a suggestion or mini-tutorial for getting up to speed.
 

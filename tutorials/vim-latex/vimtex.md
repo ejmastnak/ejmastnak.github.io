@@ -122,7 +122,7 @@ Here is a representative example of what the list looks like:
 ```
 To have a clear mental image of what's going on here, you should understand how Vim mappings work,
 what the `<leader>` and `<localleader>` keys do, and what the `<Plug>` keyword means.
-If you want to learn about these topics now, take a detour and read through [the Vimscript article]({% link tutorials/vim-latex/vimscript.md %}), which is the final article in this series.
+If you want to learn about these topics now, take a detour and read through the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 For the present purposes, here is how to interpret the table:
 
@@ -450,7 +450,7 @@ Here is a visual mode example of the delimiter and environment text objects:
 Every default mapping provided by VimTeX can be changed to anything you like, using the exact same procedure described a few sections above in [Customization is easy](#customization-is-easy).
 As an example to get you started with changing default mappings, VimTeX uses `am` and `im` for the item text objects (i.e. items in `itemize` or `enumerate` environments) and `a$` and `i$` for the math objects.
 
-You might prefer to use (say) `am`/`im` for math (since `$` is a bit difficult to reach) and `ai`/`ii` for items, and could implement this change by placing the following code in `ftplugin/tex.vim`:
+You might prefer to use (say) `am`/`im` for math (since `$` is a bit difficult to reach) and `ai`/`ii` for items, and could implement this change by placing the following code in `ftplugin/tex.vim` (or similar):
 ```vim
 " Use `am` and `im` for the inline math text object
 omap am <Plug>(vimtex-a$)
@@ -476,11 +476,11 @@ From `:help vimtex-default-mappings`:
 > `g:vimtex_mappings_enabled`.  Custom mappings for all desired features must
 > then be defined through the listed RHS <Plug>-maps or by mapping the available commands.
 
-To disable all VimTeX default mappings, place `g:vimtex_mappings_enabled = 0` in your `ftplugin/tex.vim`, then manually redefine only those mappings you want using the same mapping syntax shown above in the Example section on [Changing a default text object mapping](#example-changing-a-default-text-object-mapping).
+To disable all VimTeX default mappings, place `g:vimtex_mappings_enabled = 0` in your `ftplugin/tex.vim` (or similar), then manually redefine only those mappings you want using the same mapping syntax shown above in the Example section on [Changing a default text object mapping](#example-changing-a-default-text-object-mapping).
 In case that sounds abstract, here is an example to get you started:
 ```vim
 " An example of disabling all default VimTeX mappings, then selectively
-" defining your own. This code would go in ftplugin/tex.vim.
+" defining your own. This code could go in ftplugin/tex.vim.
 
 " Disable VimTeX's default mappings
 g:vimtex_mappings_enabled = 0
@@ -540,12 +540,12 @@ Here is the general workflow:
 1. While skimming through the VimTeX documentation, identify a feature you wish to disable.
    (Most of VimTeX's features are enabled by default, and it is up to the user to disable them.)
 1. From the documentation, identify the Vim variable controlling a VimTeX feature; the variable is usually clearly listed in the documentation.
-1. Set the appropriate variable value (usually this step amounts to setting a `g:vimtex_*_enabled` variable equal to zero) somewhere in your `ftplugin/tex.vim` file.
+1. Set the appropriate variable value (usually this step amounts to setting a `g:vimtex_*_enabled` variable equal to zero) somewhere in your `ftplugin/tex.vim` file (or similar).
 
   As a concrete example, one could disable VimTeX's indent, insert mode mapping, completion, and syntax concealment features by placing the following code in `ftplugin/tex.vim`:
   ```vim
   " A few examples of disabling default VimTeX features.
-  " The code would go in `ftplugin/tex.vim`.
+  " The code could go in `ftplugin/tex.vim`.
   let g:vimtex_indent_enabled   = 0      " turn off VimTeX indentation
   let g:vimtex_imaps_enabled    = 0      " disable insert mode mappings (e.g. if you use UltiSnips)
   let g:vimtex_complete_enabled = 0      " turn off completion
@@ -555,7 +555,7 @@ Here is the general workflow:
   in practice, you would of course tweak the settings to your liking after identifying the appropriate variables in the VimTeX documentation.
 
 ### Example: Changing the default delimiter toggle list
-Here is another real-life example: to add `\big \big` to the delimiter toggle list used by VimTeX's "toggle surrounding delimiter" feature (see the earlier section on [Toggle-style mappings](#toggle-style-mappings)), add the following code to you `ftplugin/tex.vim` file:
+Here is another real-life example: to add `\big \big` to the delimiter toggle list used by VimTeX's "toggle surrounding delimiter" feature (see the earlier section on [Toggle-style mappings](#toggle-style-mappings)), add the following code to you `ftplugin/tex.vim` file (or similar):
 ```vim
 " Example: adding `\big` to VimTeX's delimiter toggle list
 let g:vimtex_delim_toggle_mod_list = [

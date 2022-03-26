@@ -4,14 +4,14 @@ title: Vimscript Primer for Filetype-Specific Workflows  \| Vim and LaTeX Series
 prev-filename: "pdf-reader"
 prev-display-name: "« 6. PDF Reader"
 next-filename: "Introduction"
-next-display-name: ""
+next-display-name: "intro"
 
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 7. A Vimscript Primer for Filetype-Specific Workflows
-This is part seven in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part seven in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article provides a theoretical background for use of Vimscript in filetype-specific workflows and aims to give you a foundation for understanding the filetype plugin system, key mapping syntax, and Vimscript functions used earlier in this series.
 
 ## Contents of this article
@@ -332,7 +332,7 @@ And here is a real-life example of the exact three-step `<Plug>` process describ
 1. The user can then use `<leader>c` in normal mode to call `:VimtexCompile` and thus compile their LaTeX documents.
 
 Note that, in addition to its `<Plug>` mappings, VimTeX also defines default shortcuts for most of its commands (for example `<localleader>ll` to call `:VimtexCompile`), but any `<Plug>` remappings done by the user, such as `nmap <leader>c <Plug>(vimtex-compile)` above, will override VimTeX's default mappings and respect the user's.
-This behavior was mentioned earlier in this series in the [VimTeX article]({% link tutorials/vim-latex/vimtex.md %}), and is described in the VimTeX documentation at `:help vimtex-default-mappings`.
+This behavior was mentioned earlier in this series in the article [4. Getting started with the VimTeX plugin]({% link tutorials/vim-latex/vimtex.md %}), and is described in the VimTeX documentation at `:help vimtex-default-mappings`.
 
 ## Writing Vimscript functions
 ### About this section

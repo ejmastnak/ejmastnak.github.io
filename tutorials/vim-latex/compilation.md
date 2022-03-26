@@ -11,7 +11,7 @@ next-display-name: "6. PDF Reader »"
 {% include vim-latex-navbar.html %}
 
 # 5. Compiling LaTeX Documents in a Vim-Based Workflow
-This is part five in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part five in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers compilation and should explain what you need to get started compiling LaTeX documents from within Vim using either the VimTeX plugin's compilation features or a custom compilation set-up of your own design.
 
 ## Contents of this article
@@ -74,7 +74,7 @@ Here is a short summary:
 - Compile LaTeX documents from within Vim using the command `:VimtexCompile`, which you can either type directly as a Vim command or access with the default VimTeX mapping `<localleader>ll`.
 - Optionally, if you don't like `<localleader>ll` as the compilation shortcut, [define a custom mapping](#shortcut-for-compilation) to call `:VimtexCompile` and use that instead.
 
-Following is a more detailed decription.
+Following is a more detailed description.
 
 ### How VimTeX's compilation interface works
 VimTeX provides a variety of compilation backends, which can in turn use different LaTeX engines to perform actual compilation.
@@ -133,10 +133,10 @@ You could then use the shortcut `<localleader>c` in normal or visual mode to cal
 The `update` command saves your document, if needed, before performing compilation (see `:help update` for reference).
 
 Note that the above mappings use the `<Cmd>` keyword (see `:help map-cmd` for documentation), which lets you call commands directly without switching Vim modes.
-The final article in the series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), explains key mappings in more detail.
+The final article in the series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), explains key mappings in more detail.
 
 ### A QuickFix menu crash course
-After compiling with `:VimtexCompile` or `:VimtexCompileSS`, VimTeX will automatically open the QuickFix menu if warnings or errors occured during compilation (the QuickFix menu stays closed if compilation completes successfully).
+After compiling with `:VimtexCompile` or `:VimtexCompileSS`, VimTeX will automatically open the QuickFix menu if warnings or errors occurred during compilation (the QuickFix menu stays closed if compilation completes successfully).
 For most compilation errors, the QuickFix menu will display the error's line number and a (hopefully) useful error message.
 In such cases you can use the Vim commands `:cc` and `:cn` (short for `:cnext`, which also works), to jump directly to the offending line.
 
@@ -239,7 +239,7 @@ You can find full documentation of `pdflatex` options by running `man pdflatex` 
   so if you compile `file2.tex` without setting `pdflatex`'s `-output-dir` option to `file2.tex`'s parent directory, the output files from compiling `file2.tex` will end up in `file1.tex`'s parent directory.
   Setting `-output-dir` to `file2.tex`'s parent directory solves this problem.
 
-- `synctex=1` generates SyncTeX data for the compiled file, which enables inverse search between a PDF reader and the `tex` source file; more on this in the article on [integrating a PDF reader and Vim]({% link tutorials/vim-latex/pdf-reader.md %}).
+- `synctex=1` generates SyncTeX data for the compiled file, which enables inverse search between a PDF reader and the `tex` source file; more on this in the article [6. Setting Up a PDF Reader for Writing LaTeX with Vim]({% link tutorials/vim-latex/pdf-reader.md %}).
 
   Using `synctex=1` saves the `synctex` data in a `gz` archive with the extension `.synctex.gz`.
   Possible values of the `synctex` argument other than `1` are documented under `man synctex`
@@ -395,7 +395,7 @@ You have two ways to set `makeprg`:
    ```
 
 2. Store the desired value of `makeprg` in a variable as a literal Vimscript string (in which case you don't need to escape spaces),
-   then programatically set the `makeprg` option to the value of the variable with Vim's `:let &{option}` syntax:
+   then programmatically set the `makeprg` option to the value of the variable with Vim's `:let &{option}` syntax:
 
    ```vim
    " This code would go in compiler/tex.vim
@@ -467,7 +467,7 @@ nnoremap <script> <Plug>TexToggleLatexmk <SID>TexToggleLatexmk
 nnoremap <SID>TexToggleLatexmk :call <SID>TexToggleLatexmk()<CR>
 ```
 You could then use `<leader>tl` in normal mode to toggle between `pdflatex` and `latexmk` compilation.
-The `<Plug>` and `<SID>` syntax for script-local mapping is explained in detail in the final article in this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
+The `<Plug>` and `<SID>` syntax for script-local mapping is explained in detail in the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 ### Setting the `makeprg` option
 To actually set Vim's `makeprg` option to your custom compilation command, assuming you're using the `s:TexSetMakePrg` function defined above, add the following line to `compiler/tex.vim`
@@ -512,7 +512,7 @@ setlocal errorformat+=%Cl.%l\ %m
 " Catch-all to ignore unmatched lines
 setlocal errorformat+=%-G%.%#
 ```
-**Important:** this errorformat will only work if `pdflatex` or `latexmk` are used with the `-file-line-error` option, as suggested earlier in this article in the section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk)
+**Important:** this `errorformat` will only work if `pdflatex` or `latexmk` are used with the `-file-line-error` option, as suggested earlier in this article in the section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk)
 
 ## Asynchronous compilation with `vim-dispatch`
 This is the final step, and thankfully the implementation is quite simple.
@@ -614,7 +614,7 @@ nnoremap <script> <Plug>TexToggleShellEscape <SID>TexToggleShellEscape
 nnoremap <SID>TexToggleShellEscape :call <SID>TexToggleShellEscape()<CR>
 ```
 You could then use `<leader>te` in normal mode to toggle `-shell-escape` compilation on and off.
-See the final article in this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), for an explanation of the `<Plug>` and `<SID>` syntax.
+See the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), for an explanation of the `<Plug>` and `<SID>` syntax.
 
 **A simple way to automatically detect `minted`**
 
