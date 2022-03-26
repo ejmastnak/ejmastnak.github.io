@@ -100,7 +100,7 @@
   position: absolute;
   display: block;
   cursor: pointer;
-  border-width: 5px 5px 0 0;
+  border-width: 4px 4px 0 0;
   border-style: solid;
   border-color: #3b4252;
   opacity: 0.35;
@@ -204,6 +204,22 @@
   background-position: center;
 }
 {% endfor %}
+
+
+@media (max-width: 767px) {
+
+  .carousel__control {
+    height: 15px;
+    width: 15px;
+    border-width: 3px 3px 0 0;
+  }
+
+  .carousel__indicator {
+    height: 10px;
+    width: 10px;
+    margin: 0 2.0px 0 2.0px;
+  }
+}
 </style>
 <!-- End style -->
 
