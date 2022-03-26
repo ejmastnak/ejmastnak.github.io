@@ -66,6 +66,8 @@ defaults:
     values:
       layout: "default"
 
+sass:
+    sass_dir: _sass
 
 markdown: kramdown
 highlighter: rouge
