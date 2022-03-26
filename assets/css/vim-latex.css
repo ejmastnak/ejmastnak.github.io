@@ -7,8 +7,10 @@
 
 .vim-latex-navbar ul {
   display: flex;
-  /* justify-content:space-evenly; */
-  justify-content:space-between;
+  justify-content:space-evenly;
+  padding-right: 5%;
+  padding-left: 5%;
+  /* justify-content:space-between; */
   list-style-type: none;
   align-items: flex-end;
 }
