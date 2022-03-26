@@ -11,7 +11,7 @@ next-display-name: "7. Vimscript »"
 {% include vim-latex-navbar.html %}
 
 # 6. Setting Up a PDF Reader for Writing LaTeX with Vim
-This is part six in a [seven part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim text editor to efficiently write LaTeX documents.
+This is part six in a [seven part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article explains, for both Linux and macOS, how to set up a PDF reader for displaying the PDF file associated with the LaTeX source file being edited in Vim.
 
 ## Contents of this article
@@ -47,6 +47,10 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
 * [Footnotes](#footnotes)
 
 <!-- vim-markdown-toc -->
+
+**Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
+To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
+In case you are just dropping in now, these topics are covered earlier in the series in the article [3. Vim's `ftplugin` system]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
 
 ## Choosing a PDF Reader
 You want a PDF reader that:
@@ -199,7 +203,7 @@ But that is beyond the scope of this tutorial, and would probably be more work t
 
 ### Ensure Vim starts a server (only for terminal Vim on Linux)
 Neovim, gVim, and MacVim start a server on startup automatically; if you use any of these programs, lucky you---feel free to skip to the next section.
-If you use a [`+clientserver`-enabled terminal Vim](#ensuring-you-have-a-clientserver-enabled-vim) on Linux, place the following code snippet in your `vimrc` or `ftplugin/tex.vim`:
+If you use a [`+clientserver`-enabled terminal Vim](#ensuring-you-have-a-clientserver-enabled-vim) on Linux, place the following code snippet in your `vimrc`, `ftplugin/tex.vim`, or similar:
 
 ```vim
 " This will only work if `vim --version` includes `+clientserver`!
@@ -527,7 +531,7 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
    Notes:
    - You might be prompted by Homebrew to install the Apple Command Line Tools before you can complete `brew install girara --HEAD`.
      If so, just follow Homebrew's suggestion (which will probably be something along the lines of `xcode-select --install`), then retry  `brew install girara --HEAD`.
-   - Ensure you use `brew install zathura --HEAD --with-synctex` to get a Zathura with Synctex support;
+   - Ensure you use `brew install zathura --HEAD --with-synctex` to get a Zathura with SyncTeX support;
    the `hombrew-zathura` GitHub page only suggests `brew install zathura --HEAD`.
    
 1. Reboot and enjoy Zathura.
