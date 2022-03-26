@@ -97,7 +97,8 @@ Here's what to do:
    As a concrete example, you might design your `ftplugin` directory like this:
 
    ```sh
-   # Two ways to have LaTeX-specific configuration; note the dedicated `tex` folder in the second example
+   # Two ways to have LaTeX-specific configuration;
+   # note the dedicated `tex` folder in the second example
    ftplugin/                  ftplugin/
    ├── tex.vim                ├── markdown.vim
    ├── markdown.vim           ├── python.vim
@@ -136,7 +137,7 @@ Here's what to do for manual filetype detection:
 1. Create the file `~/.vim/ftdetect/lilypond.vim` (the file name, in this case `lilypond.vim`, can technically be anything ending in `.vim`, but by convention should match the value of `filetype`).
    Inside the file add the single line
 
-   ```
+   ```vim
    autocommand BufNewFile,BufRead *.ly set filetype=lilypond
    ```
    Of course replace `.ly` with your target extension and `lilypond` with the value of `filetype` you chose in step 2.

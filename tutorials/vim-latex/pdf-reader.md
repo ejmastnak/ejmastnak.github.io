@@ -239,10 +239,11 @@ Here is what to do:
 - You will need the VimTeX plugin installed. 
   Double-check that VimTeX's PDF viewer interface is enabled by entering `:echo g:vimtex_view_enabled` in Vim.
 
-  ```vim
-  :echo g:vimtex_view_enabled  " Enter this in Vim's command mode
-  > 1  " VimTeX's PDF viewer interface is enabled!
-  > 0  " VimTeX's PDF viewer interface is disabled---you'll have to enable it.
+  ```sh
+  # Enter this in Vim's command mode
+  :echo g:vimtex_view_enabled  
+  > 1  # VimTeX's PDF viewer interface is enabled!
+  > 0  # VimTeX's PDF viewer interface is disabled---you'll have to enable it.
   ```
   Note that VimTeX's PDF viewer interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and remove it before proceeding.
   
@@ -421,10 +422,11 @@ Some of the steps are the same as for Zathura on Linux, so excuse the repetition
 - You will need the VimTeX plugin installed. 
   Double-check that VimTeX's PDF viewer interface is enabled by entering `:echo g:vimtex_view_enabled` in Vim.
 
-  ```vim
-  :echo g:vimtex_view_enabled  " Enter this in Vim's command mode
-  > 1  " VimTeX's PDF viewer interface is enabled!
-  > 0  " VimTeX's PDF viewer interface is disabled---you'll have to enable it.
+  ```sh
+  # Enter this in Vim's command mode
+  :echo g:vimtex_view_enabled  
+  > 1  # VimTeX's PDF viewer interface is enabled!
+  > 0  # VimTeX's PDF viewer interface is disabled---you'll have to enable it.
   ```
   Note that VimTeX's PDF viewer interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and remove it before proceeding.
 

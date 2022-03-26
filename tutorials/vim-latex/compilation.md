@@ -100,18 +100,18 @@ Here is a short summary:
   You can get a summary of your compiler status using the command `VimtexInfo`;
   a default set-up will produce something like this:
 
-  ```vim
-  " Example output of VimtexInfo, showing compilation information
-  compiler: latexmk      " the VimTeX compiler backend in use
-    engine: -pdf         " the LaTeX engine uesd by `latexmk`
-    options:             " command-line options used by `latexmk`
+  ```sh
+  # Example output of VimtexInfo, showing compilation information
+  compiler: latexmk      # the VimTeX compiler backend in use
+    engine: -pdf         # the LaTeX engine uesd by `latexmk`
+    options:             # command-line options used by `latexmk`
       -verbose
       -file-line-error
       -synctex=1
       -interaction=nonstopmode
-    callback: 1          " whether to run VimTeX's callbacks after compilation completes 
-    continuous: 1        " whether `latexmk` should run in continuous mode
-    executable: latexmk  " the name of the `latexmk` executable
+    callback: 1          # whether to run VimTeX's callbacks after compilation completes 
+    continuous: 1        # whether `latexmk` should run in continuous mode
+    executable: latexmk  # the name of the `latexmk` executable
   ```
   If interested, you can scroll down to the optional section [How to use `pdflatex` and `latexmk`](#how-to-use-pdflatex-and-latexmk) for more information about what the above `latexmk` options do.
 
@@ -151,7 +151,7 @@ Here are two VimTeX-related QuickFix settings you might be interested in tweakin
   LaTeX's warning messages are often unhelpful, so some users will want to open the QuickFix menu only if compilation fails with error messages.
   To do this, place the following code in your `ftplugin/tex.vim` file:
 
-  ```
+  ```vim
   " Don't open QuickFix for warning messages if no errors are present
   let g:vimtex_quickfix_open_on_warning = 0  
   ```
@@ -203,7 +203,7 @@ You just don't see this directly because the `pdflatex` calls are hidden behind 
 ### Possible options for pdflatex
 The full `pdflatex` command I use to compile `tex` files, with all options shown, is
 
-  ```
+  ```sh
   pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -output-dir={output-directory} -synctex=1 {sourcefile.tex}
   ```
   where
@@ -215,7 +215,7 @@ You can find full documentation of `pdflatex` options by running `man pdflatex` 
 - `-file-line-error` prints error  messages in the form `file:line:error`.
   As a concrete example, here is what the command `pdflatex -file-line-error ~/test/myfile.tex` reports if I incorrectly leave out the `\item` command in an `itemize` environment on line 15 of the file `test.tex`:
 
-  ```
+  ```text
   /home/user/test/test.tex:15: LaTeX Error: Something's wrong--perhaps a missing item
   ```
   Notice how the log message matches the `file:line:error` format: the file is `/home/user/test/test.tex`, the line number is `15`, and the error is `LaTeX Error: Something's wrong--perhaps a missing item`.
@@ -247,7 +247,7 @@ You can find full documentation of `pdflatex` options by running `man pdflatex` 
 ### Possible options for latexmk
 When compiling `tex` files with `latexmk` instead of with `pdflatex`, I use the command
 
-```
+```sh
 latexmk -pdf -output-directory={output-directory} {sourcefile.tex}
 ```
 *together with the following* `latexmkrc` *file*:
@@ -534,10 +534,10 @@ You can install Dispatch, just like any other Vim plugin, with the installation 
 Dispatch provides a `:Make` command that serves as an asynchronous equivalents of `:make`.
 Here is a concrete example:
 
-```vim
-:!pdflatex %                     " compile the current file synchronously with vanilla pdflatex
-:make                            " compile *synchronously* using current `makeprg` settings
-:Make                            " compile *asynchronously* using `makeprg` and Dispatch
+```sh
+:!pdflatex %                     # compile the current file synchronously with vanilla pdflatex
+:make                            # compile *synchronously* using current `makeprg` settings
+:Make                            # compile *asynchronously* using `makeprg` and Dispatch
 ```
 ### Setting up Dispatch to use your compiler settings
 Thankfully this is very simple---like with most Tim Pope plugins, Dispatch does the heavy lifting under the hood, and the plugin should "just work".
@@ -585,7 +585,7 @@ function! s:TexToggleShellEscape() abort
   else  " turn on shell escape
     let b:tex_use_shell_escape = 1
   endif
-  call s:TexSetMakePrg()  " update Vim's `makeprg` option
+  call s:TexSetMakePrg()     " update Vim's `makeprg` option
 endfunction
 ```
 The `TexSetMakePrg` function would then need to be generalized to
@@ -620,7 +620,7 @@ See the final article in this series, [A Vimscript Primer for Filetype-Specific 
 
 Finally, here is a (naive but functional) way to detect `minted` using the Unix utilities `sed` and `grep`:
 
-```
+```vim
 " Create a variable to store shell-escape state
 " Possible values: 0 for shell-escape off; 1 for shell-escape on
 let b:tex_use_shell_escape = 0
@@ -635,7 +635,7 @@ endif
 ```
 On the command line, without all the extra Vimscript jargon, the `sed` and `grep` call would read
 
-```
+```sh
 sed "/\\begin{document}/q" myfile.tex | grep "minted" > /dev/null
 ```
 The `sed` call reads the file's preamble (and quits at `\begin{document}`), and the output is piped into a `grep` search for the string `"minted"`.
@@ -683,7 +683,7 @@ endif
 " ------------------------------------------- "
 " Toggles between latexmk and pdflatex
 function! s:TexToggleLatexmk() abort
-  if b:tex_use_latexmk  " turn off latexmk
+  if b:tex_use_latexmk    " turn off latexmk
     let b:tex_use_latexmk = 0
   else  " turn on latexmk
     let b:tex_use_latexmk = 1
@@ -698,7 +698,7 @@ function! s:TexToggleShellEscape() abort
   else  " turn on shell escape
     let b:tex_use_shell_escape = 1
   endif
-  call s:TexSetMakePrg()  " update Vim's `makeprg` option
+  call s:TexSetMakePrg()     " update Vim's `makeprg` option
 endfunction
 
 " Sets correct value of `makeprg` based on current values of

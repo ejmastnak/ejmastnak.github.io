@@ -120,8 +120,8 @@ UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets
 Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
 
 ```vim
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " on Vim
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " on Neovim
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " using Vim
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " using Neovim
 ```
 This behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
 (The `.` joining `$HOME` and `'/.vim/UltiSnips'` is the Vimscript string concatenation operator.)
@@ -164,7 +164,7 @@ I strongly suggest your watch them---you will find many of the features describe
 ### Anatomy of an UltiSnips snippet
 The general form of an UltiSnips snippet is:
 
-```
+```text
 snippet {trigger} ["description" [options]]
 {snippet body}
 endsnippet
@@ -231,7 +231,7 @@ As far as I'm aware, this is a similar tabstop syntax to that used in the popula
 For orientation, here are two examples: one maps `tt` to the `\texttt` command and the other maps `ff` to the `\frac` command.
 Note that (at least for me) the snippet expands correctly without escaping the `\`, `{`, and `}` characters as suggested in `:help UltiSnips-character-escaping` (see the second bullet in [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)).
 
-```sh
+```py
 snippet tt "The \texttt{} command for typewriter-style font"
 \texttt{$1}$0
 endsnippet
@@ -249,7 +249,7 @@ The syntax for defining placeholder text is `${1:placeholder}`.
 Placeholders are documented at `:help UltiSnips-placeholders`.
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
 
-```sh
+```py
 snippet hr "The hyperref package's \href{}{} command (for url links)"
 \href{${1:url}}{${2:display name}}$0
 endsnippet
@@ -268,7 +268,7 @@ Here is an example:
 The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
 For example, following is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
 
-```sh
+```py
 snippet env "New LaTeX environment" b
 \begin{$1}
     $2
@@ -287,7 +287,7 @@ This usually is (but does not have to be) integrated into tabstops.
 
 As an example, here is a snippet to the LaTeX `\textit` command, using a visual placeholder to make it easer to surround text in italics:
 
-```sh
+```py
 snippet tii "The \textit{} command for italic font"
 \textit{${1:${VISUAL:}}}$0
 endsnippet
@@ -322,7 +322,7 @@ This function isn't explicitly mentioned in the VimTeX documentation, but you ca
 
 You can integrate VimTeX's math zone detection with UltiSnips's `context` feature as follows:
 
-```sh
+```py
 # include this code block at the top of a *.snippets file...
 # ----------------------------- #
 global !p
@@ -348,7 +348,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
 
 1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
 
-   ```
+   ```py
    snippet "([^a-zA-Z])trigger" "Expands if 'trigger' is typed after characters other than a-z or A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
@@ -365,7 +365,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    This is by far my most-used class of regex triggers.
    Here are some example use cases:
    - Make `mm` expand to `$ $` (inline math), including on new lines, but not in words like "communication", "command", etc...
-   ```
+   ```py
    snippet "(^|[^a-zA-Z])mm" "Inline LaTeX math" rA
    `!p snip.rv = match.group(1)`\$ ${1:${VISUAL:}} \$$0
    endsnippet
@@ -373,14 +373,14 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    Note that the dollar signs used for the inline math must be escaped (i.e. written `\$` instead of just `$`) to avoid conflict with UltiSnips tabstops, as described in `:help UltiSnips-character-escaping`.
 
    - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, `(`, `{`, and other delimiters, but not in words like "see", "feel", etc...
-   ```
+   ```py
    snippet "([^a-zA-Z])ee" "e^{} supercript" rA
    `!p snip.rv = match.group(1)`e^{${1:${VISUAL:}}}$0
    endsnippet
    ```
 
    - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
-   ```
+   ```py
    snippet "(^|[^a-zA-Z])ff" "\frac{}{}" rA
    `!p snip.rv = match.group(1)`\frac{${1:${VISUAL:}}}{$2}$0
    endsnippet
@@ -390,7 +390,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
 
 1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
 
-   ```sh
+   ```py
    snippet "([\w])trigger" "Expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
    `!p snip.rv = match.group(1)`snippet body
    endsnippet
@@ -408,7 +408,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    I don't use this one often, but here is one example I really like.
    It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
 
-   ```sh
+   ```py
    snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
    `!p snip.rv = match.group(1)`_{0}
    endsnippet
@@ -463,7 +463,7 @@ In no particular order, here are some tips based on my personal experience:
   Here are two examples I use all the time:
   1. I first define the LaTeX command `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
 
-     ```
+     ```py
      snippet "([^a-zA-Z0-9])df" "\diff (A personal command I universally use for differentials)" rA
      `!p snip.rv = match.group(1)`\diff 
      endsnippet
@@ -475,7 +475,8 @@ In no particular order, here are some tips based on my personal experience:
 
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
 
-     ```
+     ```py
+     # Test
      snippet "([\w]|[\}\)\]\|])sd" "Subscript with upright text" rA
      `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
      endsnippet
@@ -497,7 +498,7 @@ In no particular order, here are some tips based on my personal experience:
 The following snippet makes it easier to write more snippets.
 To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
 
-```sh
+```py
 snippet snip "A snippet for writing Ultisnips snippets" b
 `!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:options}
 $4
@@ -513,7 +514,7 @@ Here's what this looks like in practice:
 The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
 The naive implementation would be to write
 
-```sh
+```py
 # THIS SNIPPET WON'T WORK---IT'S JUST FOR EXPLANATION!
 snippet snip "A snippet for writing Ultisnips snippets" b
 snippet ${1:trigger} "${2:Description}" ${3:options}

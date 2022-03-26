@@ -496,20 +496,20 @@ In Vimscript, defining key mappings that call script-local functions is a multi-
 Following is a concrete example of this multi-step process: we will define a script-local plugin called `s:TexCompile()` in the file `ftplugin/tex.vim`, and use the short key sequence `,c` in normal mode to call this function in all Vim buffers with the `tex` filetype.
 Here is the code that would achieve this:
 
-  ```vim
-  " In the file ftplugin/tex.vim (for instance)...
+```vim
+" In the file ftplugin/tex.vim (for instance)...
 
-  function! s:TexCompile()
-    " implement compilation functionality here
-  endfunction
+function! s:TexCompile()
+  " implement compilation functionality here
+endfunction
 
-  " Define key map here
-  nmap ,c <Plug>TexCompile
-  nnoremap <script> <Plug>TexCompile <SID>TexCompile
-  nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
-  ```
-  You could then use `,c` in normal mode to call the `s:TexCompile` function from *any* file with the `tex` filetype.
-  (You could off course replace `,c` with whatever shortcut you wanted.)
+" Define key map here
+nmap ,c <Plug>TexCompile
+nnoremap <script> <Plug>TexCompile <SID>TexCompile
+nnoremap <SID>TexCompile :call <SID>TexCompile()<CR>
+```
+You could then use `,c` in normal mode to call the `s:TexCompile` function from *any* file with the `tex` filetype.
+(You could off course replace `,c` with whatever shortcut you wanted.)
 
 Here's an explanation of what the above Vimscript does:
 - `nmap ,c <Plug>TexCompile` maps the shortcut `,c` to the string `<Plug>TexCompile` (in normal mode because of `nmap`) using a `<Plug>` mapping, which was described earlier in this article in the section [Plug mappings](#plug-mappings).
@@ -568,7 +568,7 @@ Here is the basic workflow for using autoload functions:
 
 - Inside `autoload/my_function_script.vim`, define a function with the syntax
 
-  ```
+  ```vim
   function my_function_script#function_name()
     " function body
   endfunction

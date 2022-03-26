@@ -348,7 +348,7 @@ You can...
   using `csc` (change surrounding command)
   or the `<Plug>` mapping `<Plug>(vimtex-cmd-change)`.
   As an example, you could change italic text to boldface text as follows:
-  ```
+  ```tex
                             csc textit
   \textbf{Make me italic!}     -->      \textit{Make me italic!}
   ```
@@ -388,7 +388,7 @@ You can...
 
 - Toggle between inline and `\frac{}{}` versions of fractions using `tsf` `<Plug>(vimtex-cmd-toggle-frac)`.
   Here is an example:
-  ```
+  ```tex
                 tsf         tsf 
   \frac{a}{b}   -->   a/b   -->   \frac{a}{b}
   ```
