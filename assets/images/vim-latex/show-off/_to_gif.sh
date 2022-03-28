@@ -1,5 +1,5 @@
 #!/bin/sh
-input="fourier"
+input="derivative"
 W="1700"
 H="500"
 
