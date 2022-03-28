@@ -1,16 +1,34 @@
 .vim-latex-navbar {
   width: 100%;
   padding-top: 20px;
-  padding-right: 5%;
   margin: 0 auto;
+  padding-right: 5%;
 }
 
 .vim-latex-navbar ul {
   display: flex;
-  justify-content:space-evenly;
+  overflow: auto;
+  justify-content:space-between;
+  padding: 0;
   padding-right: 5%;
   padding-left: 5%;
-  /* justify-content:space-between; */
+  
   list-style-type: none;
-  align-items: flex-end;
+  align-items: baseline;
+}
+
+.vim-latex-navbar li {
+  display: block;
+  text-align: center;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .vim-latex-navbar ul {
+    padding: 0;
+    }
+  .vim-latex-navbar li a {
+    padding: 0;
+    }
 }
