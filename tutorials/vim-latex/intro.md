@@ -60,7 +60,7 @@ References to official documentation are provided for any material deemed beyond
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
 For convenience, this series begins with a dedicated [prerequisites article]({% link tutorials/vim-latex/prerequisites.md %}), which lists suggested prerequisites and includes external references or brief explanations to get you up to speed with anything you might be missing.
-You should be comfortable with the material in this article to get the most out of this series.
+You should be comfortable with the material in the prerequisites article to get the most out of this series.
 
 #### The original Vim-LaTeX article
 The seminal work on the subject of Vim and LaTeX, and my inspiration for attempting and ultimately succeeding in writing real-time LaTeX using Vim, is Gilles Castel's [*How I'm able to take notes in mathematics lectures using LaTeX and Vim*](https://castel.dev/post/lecture-notes-1/).
@@ -80,12 +80,21 @@ Since someone will probably be curious, here is an overview of the setup used in
 
 #### Feedback, suggestions, appreciation, criticisms, etc.
 - If this series helped you, it will make my day to hear.
-- If you have good ideas for improving the series, I will very likely implement them, appreciate your input, and give you credit for your contributions.
-- If you implemented the setup in this series and show me, I will be very happy to see.
+- If you suggest constructive ideas for improving the series, I will quite likely implement them, appreciate your input, and give you credit for your contributions.
+- If you implement the setup in this series and show me the results, I will be very happy to see.
 
 Feedback is welcome and appreciated.
 
 You can reach me by email, in English, Spanish, or Slovene, at [`ejmastnak@gmail.com`](mailto:ejmastnak@gmail.com) (or open an issue or pull request at [`github.com/ejmastnak/ejmastnak.github.io`](https://github.com/ejmastnak/ejmastnak.github.io)).
+
+#### Have ideas for future projects?
+If there is collective interest from the community, I would consider creating follow-up content expanding on this series.
+Here are two possible projects:
+- A GitHub repo implementing a minimum working example of the setup in this series (I'm thinking a minimal `vimrc`, a few example UltiSnips snippets to get you started writing your own, basic VimTeX configuration etc.).
+  This might be less overwhelming for new users than my browsing my above-linked dotfiles.
+- A write-up of how the GIFs in this series were made (using shell scripts for repeatable results and dimensions, setting colorscheme and fonts, reaching an acceptable resolution, etc.).
+
+If these or other ideas interest you, let me know---if there is enough interest from the community, I'd enjoy putting together more content like this.
 
 <div style="margin-top: 1.5em">
 <p style="text-align: center"><a href="/tutorials/vim-latex/prerequisites.html"><strong><em>Begin the series!</em></strong></a></p>
