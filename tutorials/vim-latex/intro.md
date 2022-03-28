@@ -59,7 +59,8 @@ References to official documentation are provided for any material deemed beyond
 
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
-To get the most out of this series, you should be comfortable with the material in the [prerequisites article]({% link tutorials/vim-latex/prerequisites.md %}), which offers external references or brief explanations to get you up to speed with all suggested prerequisites.
+For convenience, this series begins with a dedicated [prerequisites article]({% link tutorials/vim-latex/prerequisites.md %}), which lists suggested prerequisites and includes external references or brief explanations to get you up to speed with anything you might be missing.
+You should be comfortable with the material in this article to get the most out of this series.
 
 #### The original Vim-LaTeX article
 The seminal work on the subject of Vim and LaTeX, and my inspiration for attempting and ultimately succeeding in writing real-time LaTeX using Vim, is Gilles Castel's [*How I'm able to take notes in mathematics lectures using LaTeX and Vim*](https://castel.dev/post/lecture-notes-1/).
