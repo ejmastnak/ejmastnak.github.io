@@ -39,22 +39,18 @@ It is intended for anyone who...
 
 1. [**A Vimscript primer**]({% link tutorials/vim-latex/vimscript.md %}) explaining the key mappings and Vimscript functions used in this tutorial.
 
-#### Evidence this system works
-As evidence that the techniques and setup in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during university lecture in real time (although grammar and style were improved after).
+#### Shut up and show me results
+Here are some GIFs---they have not been sped up.
+<image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
+The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
+If you like, you can see [more examples on YouTube](https://www.youtube.com/embed/a7gpx0h-BuU).
+
+**Credit where it is due**: the above GIFs are inspired by Gilles Castel's video [Fast LaTeX editing with Vim and UltiSnips](https://www.youtube.com/embed/a7gpx0h-BuU)---it is beautifully done and I encourage you watch it.
+
+As concrete evidence that the techniques in this tutorial work in practice, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during university lecture in real time (although grammar and style were improved after).
 Here are some examples of what these notes look like:
 
 {% include carousel.html height="108.1" unit="%" duration="600" number="1" %}
-
-And here are some showing off:
-
-<image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
-
-<div>
-  <div style="position:relative;padding-top:56.25%;">
-  <iframe src="https://www.youtube.com/embed/a7gpx0h-BuU" title="Fast LaTeX" frameborder="0" allowfullscreen
-  style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-  </div>
-</div>
 
 #### Written with beginners in mind
 The series is written with the voice, format, notation, and explanation style I would have liked to have read if I were once again an inexperienced undergraduate learning the material for the first time myself.
