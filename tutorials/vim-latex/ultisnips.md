@@ -173,6 +173,22 @@ The `trigger` and `snippet body` are mandatory, while `"description"` (which sho
 The keywords `snippet` and `endsnippet` define the beginning and end of the snippet.
 See `:help UltiSnips-authoring-snippets` for the relevant documentation.
 
+<details>
+  <summary>
+  <strong>An apology about syntax highlighting</strong>
+  </summary>
+  <p>Please excuse the sup-optimal syntax highlighting of snippet code blocks throughout this article.
+  This website is written with Jekyll and GitHub Pages, which use the <a href="https://github.com/rouge-ruby/rouge"><code class="language-plaintext highlighter-rouge">rogue</code></a> Ruby Gem for syntax highlighting.
+  At the time of writing, <code class="language-plaintext highlighter-rouge">rogue</code> does not support the UltiSnips snippet language 
+  (see here for the <a href="https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/lexers">current list of <code class="language-plaintext highlighter-rouge">rogue</code> lexers</a>),
+  and so the snippet code looks meh.
+  For lack of a better option, I shuffle between plain text and generic shell-script highlighting
+  (which at least highlights comments),
+  neither of which are particularly satisfactory.
+  I might or might not get around to fixing this by just writing and contributing an UltiSnips lexer for <code class="language-plaintext highlighter-rouge">rouge</code>;
+  for the time being, we’ll have to put up less-than-perfect snippet highlighting.</p>
+</details>
+
 ### Options
 You'll need to use a few options to get the full UltiSnips experience.
 All options are clearly documented at `:help UltiSnips-snippet-options`, and I'll summarize here only what is necessary for understanding the snippets that appear later in this document.
