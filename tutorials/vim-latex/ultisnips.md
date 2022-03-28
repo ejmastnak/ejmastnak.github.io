@@ -177,7 +177,7 @@ See `:help UltiSnips-authoring-snippets` for the relevant documentation.
   <summary>
   <strong>An apology about syntax highlighting</strong>
   </summary>
-  <p>Please excuse the sup-optimal syntax highlighting of snippet code blocks throughout this article.
+  <p>Please excuse the sub-optimal syntax highlighting of UltiSnips snippet code blocks throughout this article.
   This website is written with Jekyll and GitHub Pages, which use the <a href="https://github.com/rouge-ruby/rouge"><code class="language-plaintext highlighter-rouge">rogue</code></a> Ruby Gem for syntax highlighting.
   At the time of writing, <code class="language-plaintext highlighter-rouge">rogue</code> does not support the UltiSnips snippet language 
   (see here for the <a href="https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/lexers">current list of <code class="language-plaintext highlighter-rouge">rogue</code> lexers</a>),

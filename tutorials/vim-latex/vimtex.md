@@ -412,7 +412,7 @@ nmap dsm <Plug>(vimtex-env-delete-math)
 ```
 That's it!
 You could then use `dsm` in normal mode to delete surrounding math.
-(For a background of what's going on here, you can consult the final article this series, [A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).)
+(For a background of what's going on here, you can consult the final article this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).)
 
 The key when redefining default mappings is to use your own, personally-intuitive LHS mapping (e.g. `dsm`) with VimTeX's default `<Plug>` mapping (e.g. `<Plug>(vimtex-env-delete-math)`).
 VimTeX won't apply the default `LHS` shortcut to any `<Plug>` mapping you map to manually (this behavior is explained in `:help vimtex-default-mappings`).

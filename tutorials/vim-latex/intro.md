@@ -43,11 +43,11 @@ It is intended for anyone who...
 Here are some GIFs showing reasonably fast LaTeX:
 <image src="/assets/images/vim-latex/show-off/demo.gif" alt="Writing LaTeX quickly" />
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
-If you like, you can see [more examples on YouTube](https://www.youtube.com/embed/a7gpx0h-BuU).
+If you like, you can see [**more examples on YouTube**](https://www.youtube.com/watch?v=P7iMX1lqGnU).
 
-**Credit where it is due**: the above GIFs are inspired by Gilles Castel's video [Fast LaTeX editing with Vim and UltiSnips](https://www.youtube.com/embed/a7gpx0h-BuU)---it is beautifully done and I encourage you watch it.
+**Credit where it is due**: the above GIFs are inspired by Gilles Castel's video [Fast LaTeX editing with Vim and UltiSnips](https://www.youtube.com/watch?v=a7gpx0h-BuU)---it is beautifully done and I encourage you to watch it.
 
-As concrete evidence that the techniques in this tutorial work in practice, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during university lecture in real time (although grammar and style were improved after).
+To complement the flashy GIFs, here is some concrete evidence that the techniques in this tutorial work in practice: [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during university lecture in real time (although grammar and style were improved after).
 Here are some examples of what these notes look like:
 
 {% include carousel.html height="108.1" unit="%" duration="600" number="1" %}
