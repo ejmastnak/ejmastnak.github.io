@@ -3,11 +3,12 @@ title: Real-time LaTeX Using Vim and Neovim
 
 carousels:
   - images: 
-    - image: /assets/images/vim-latex/screenshots/ss.png
     - image: /assets/images/vim-latex/screenshots/cm.png
+    - image: /assets/images/vim-latex/screenshots/ss.png
     - image: /assets/images/vim-latex/screenshots/optics.png
     - image: /assets/images/vim-latex/screenshots/fizmer.png
     - image: /assets/images/vim-latex/screenshots/qm.png
+
 ---
 # Real-time LaTeX Using Vim and Neovim
 
@@ -49,6 +50,17 @@ Here are some examples of what these notes look like:
 
 {% include carousel.html height="108.1" unit="%" duration="600" number="1" %}
 
+And here are some showing off:
+
+<image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
+
+<div>
+  <div style="position:relative;padding-top:56.25%;">
+  <iframe src="https://www.youtube.com/embed/a7gpx0h-BuU" title="Fast LaTeX" frameborder="0" allowfullscreen
+  style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+  </div>
+</div>
+
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
 To get the most out of this series, you should be comfortable with the material in the [prerequisites article]({% link tutorials/vim-latex/prerequisites.md %}), which offers external references or brief explanations to get you up to speed with all suggested prerequisites.
@@ -63,10 +75,21 @@ Since someone will probably be curious, here is an overview of the setup used in
 - Editor: [Neovim](https://neovim.io/)
 - Terminal: [Alacritty](https://alacritty.org/)
 - Colorscheme: [Nord](https://www.nordtheme.com/)
-- Font: [Source Code Pro](https://github.com/adobe-fonts/source-code-pro) in screenshots and GIFs and [Computer Modern](https://www.tug.org/FontCatalogue/computermodern/) on this website; at the time of writing, the fonts used on this website are available on [this demo page](https://www.checkmyworking.com/cm-web-fonts/).
+- Font: [Source Code Pro](https://github.com/adobe-fonts/source-code-pro) in the terminal and [Computer Modern](https://www.tug.org/FontCatalogue/computermodern/) on this website; at the time of writing, the fonts used on this website are available on [this demo page](https://www.checkmyworking.com/cm-web-fonts/).
 - OS: [Arch Linux](https://archlinux.org/) as a daily driver; [macOS](https://www.apple.com/macos/) for testing cross-platform functionality
 - Window manager: [i3](https://i3wm.org/) on Linux; [Amethyst](https://ianyh.com/amethyst/) on macOS
 - GIF recording and screen capture: [Menyoki](https://github.com/orhun/menyoki)
-- Dotfiles: [github.com/ejmastnak/dotfiles](https://github.com/ejmastnak/dotfiles), where you can find both my main [Neovim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) and a smaller [Vim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) for testing Vim-specific inverse search features for this series.
+- Dotfiles: [`github.com/ejmastnak/dotfiles`](https://github.com/ejmastnak/dotfiles), where you can find both my main [Neovim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) and a smaller [Vim config](https://github.com/ejmastnak/dotfiles/tree/main/config/nvim) for testing Vim-specific inverse search features for this series.
 
-<p style="text-align: center"><a href="/tutorials/vim-latex/prerequisites.html"><strong><em>Click to get started!</em></strong></a></p>
+#### Feedback, suggestions, appreciation, criticisms, etc.
+- If this series helped you, it will make my day to hear.
+- If you have good ideas for improving the series, I will very likely implement them, appreciate your input, and give you credit for your contributions.
+- If you implemented the setup in this series and show me, I will be very happy to see.
+
+Feedback is welcome and appreciated.
+
+You can reach me by email, in English, Spanish, or Slovene, at [`ejmastnak@gmail.com`](mailto:ejmastnak@gmail.com) (or open an issue or pull request at [`github.com/ejmastnak/ejmastnak.github.io`](https://github.com/ejmastnak/ejmastnak.github.io)).
+
+<div style="margin-top: 1.5em">
+<p style="text-align: center"><a href="/tutorials/vim-latex/prerequisites.html"><strong><em>Begin the series!</em></strong></a></p>
+</div>
