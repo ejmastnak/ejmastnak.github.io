@@ -4,8 +4,8 @@
 
 gif1="gauss.gif"
 gif2="riemann-zeta.gif"
-gif3="expz.gif"
-gif4="maxwell.gif"
+gif3="sinc.gif"
+gif4="expz.gif"
 
 gifsicle --colors 256 ${gif1} \
   ${gif2} \
