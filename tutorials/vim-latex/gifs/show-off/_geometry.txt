@@ -1,0 +1,4 @@
+1700x500+108+220
+Recording geometry above (read with head)
+Screenkey geometry below (read with tail)
+1700x587+108+20
