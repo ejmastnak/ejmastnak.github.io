@@ -1,24 +1,28 @@
 ---
 ---
+@import "colors";
 
-// see https://www.w3schools.com/css/css_navbar_horizontal.asp
-
-$nord0: #2e3440;
-$nord1: #3b4252;
-$light0: #fbfbfc;
-$light1: #f8f9fb;
+// A combination of https://www.w3schools.com/css/css_navbar_horizontal.asp
+// and the navbar used in the Vim-LaTeX series
 
 $text-color: $nord1;
 $background-color: $light0;
-$link-color: #0366d6;
+
+.topnav {
+  width: 100%;
+  margin: 0 auto;
+}
 
 .topnav ul {
-  list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: scroll;
   background-color: $light0;
-  
+
+  display: flex;
+  justify-content:start;
+  list-style-type: none;
+  align-items: flex-end;
 }
 
 .topnav li {
@@ -33,9 +37,14 @@ $link-color: #0366d6;
   text-decoration: none;
 }
 
-/* Change the link color to #111 (black) on hover */
 .topnav li a:hover {
-  background-color: #eee;
+  background-color: $nord6;
+}
+
+@media (max-width: 767px) {
+  .topnav li a {
+    padding: 10px 12px;
+    }
 }
 
 .topnav hr {
@@ -47,5 +56,5 @@ $link-color: #0366d6;
   overflow: hidden;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #4c566a;
+  border-bottom: 1px solid $nord3;
 }
