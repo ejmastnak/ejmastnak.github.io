@@ -4,7 +4,8 @@ title: FMF
 # Lecture notes and solved exercises
 You have reached the collection of typeset notes I have compiled while studying in the physics program at the [Faculty of Mathematics and Physics](https://www.fmf.uni-lj.si/en/) (FMF) at the University of Ljubljana in Slovenia.
 The notes are probably of interest primarily to FMF students taking the same courses.
-For orientation, you might be interested in [reading a condensed summary of the FMF curriculum]({% link fmf-pdfs/meta/fmf-courses.pdf %}).
+
+For orientation, here is a [condensed summary of the FMF undergraduate curriculum]({% link fmf-pdfs/meta/fmf-courses.pdf %}).
 
 ## Year 3
 - [Electromagnetism]({% link fmf-course-pages/year3/emp.md %})
