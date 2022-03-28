@@ -47,7 +47,7 @@ Below is a list of some directories on Vim's default `runtimepath`, taken from `
 | Directory or File | Description |
 | ----------------- | ----------- |
 | `filetype.vim` |	Used to set a file's Vim filetype |
-| `autoload` |	Scripts loaded dynamically using Vim's `autoload` feature |
+| `autoload/` |	Scripts loaded dynamically using Vim's `autoload` feature |
 | `colors/` | Vim colorscheme files conventionally go here | 
 | `compiler/` | Contains files related to compilation and `make` functionality | 
 | `doc/` | Contains documentation and help files | 
