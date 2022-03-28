@@ -39,11 +39,6 @@ It is intended for anyone who...
 
 1. [**A Vimscript primer**]({% link tutorials/vim-latex/vimscript.md %}) explaining the key mappings and Vimscript functions used in this tutorial.
 
-#### Written with beginners in mind
-The series is written with the voice, format, notation, and explanation style I would have liked to have read if I were once again an inexperienced undergraduate learning the material for the first time myself.
-All of the small discoveries I inefficiently scraped together from official documentation, online tutorials, YouTube, Stack Overflow, Reddit, and other online forums are compiled here and (hopefully) synthesized into an easily-followed, self-contained work.
-References to official documentation are provided for any material deemed beyond the scope of the series.
-
 #### Evidence this system works
 As evidence that the techniques and setup in this tutorial work, here are [1500+ pages of typeset physics notes](https://ejmastnak.github.io/fmf.html) from my undergraduate studies, most of them written during university lecture in real time (although grammar and style were improved after).
 Here are some examples of what these notes look like:
@@ -60,6 +55,11 @@ And here are some showing off:
   style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
   </div>
 </div>
+
+#### Written with beginners in mind
+The series is written with the voice, format, notation, and explanation style I would have liked to have read if I were once again an inexperienced undergraduate learning the material for the first time myself.
+All of the small discoveries I inefficiently scraped together from official documentation, online tutorials, YouTube, Stack Overflow, Reddit, and other online forums are compiled here and (hopefully) synthesized into an easily-followed, self-contained work.
+References to official documentation are provided for any material deemed beyond the scope of the series.
 
 #### (Suggested) prerequisites
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
