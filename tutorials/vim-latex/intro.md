@@ -40,8 +40,8 @@ It is intended for anyone who...
 1. [**A Vimscript primer**]({% link tutorials/vim-latex/vimscript.md %}) explaining the key mappings and Vimscript functions used in this tutorial.
 
 #### Shut up and show me results
-Here are some GIFs---they have not been sped up.
-<image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
+Here are some GIFs showing reasonably fast LaTeX:
+<image src="/assets/images/vim-latex/show-off/demo.gif" alt="Writing LaTeX quickly" />
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 If you like, you can see [more examples on YouTube](https://www.youtube.com/embed/a7gpx0h-BuU).
 
