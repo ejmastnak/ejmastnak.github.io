@@ -50,9 +50,9 @@ This article covers compilation and should explain what you need to get started 
 
 **Background knowledge:**
 - This article will make occasional references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
-In case you are just dropping in now, this topic is covered earlier in the series in the article [3. Vim's `ftplugin` system]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
+  In case you are just dropping in now and Vim's `ftplugin` system sounds unfamiliar, consider first reading through the article [3. Vim's `ftplugin` system]({% link tutorials/vim-latex/ftplugin.md %}), which covers what you need to know.
 
-- We will also define some Vim key mappings in this article---if Vim keywords like `:map`, `<leader>`, `<localleader>`, and `<Plug>` are unfamiliar to you, consider taking a detour and reading through the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), which covers everything you need to know about Vim key mappings to understand this series.
+- We will also define some Vim key mappings in this article---if Vim keywords like `:map`, `<leader>`, `<localleader>`, and `<Plug>` are unfamiliar to you, consider taking a detour and reading through the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), which explains everything you need to know about Vim key mappings to understand this series.
 
 ## What to read in this article
 First things first: the VimTeX plugin offers a ready-to-go compilation interface, which you can read about with `:help vimtex-compiler`.

@@ -42,6 +42,10 @@ This article describes the excellent [VimTeX plugin](https://github.com/lervag/v
 
 <!-- vim-markdown-toc -->
 
+**Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
+To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
+In case you are just dropping in now and these topics sound unfamiliar, consider first reading through the [previous article in this series]({% link tutorials/vim-latex/ftplugin.md %}), which covers what you need to know.
+
 ## The point of this article
 This article gives an overview of the features VimTeX provides, offers some ideas of how to use these features from the practical perspective of a real-life user, and shows where to look in the documentation for details.
 
@@ -50,10 +54,6 @@ My reasoning is that many new users---I am often guilty of this too---quickly be
 
 My goal is certainly not to replace the VimTeX documentation, which remains essential reading for any serious user.
 Instead, I hope to quickly bring new users up to a level of comfort at which the documentation becomes useful rather than overwhelming, and to offer pointers as to where in the VimTeX documentation to look when interested in a given feature.
-
-**Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
-To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
-In case you are just dropping in now, these topics were covered in the [previous article in this series]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
 
 #### Getting started with VimTeX
 Install VimTeX like any other Vim plugin using your plugin installation method of choice ([reminder of series prerequisites]({% link tutorials/vim-latex/prerequisites.md %})).
