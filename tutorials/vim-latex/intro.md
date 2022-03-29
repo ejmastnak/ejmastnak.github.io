@@ -5,6 +5,7 @@ carousels:
   - images: 
     - image: /assets/images/vim-latex/screenshots/cm.png
     - image: /assets/images/vim-latex/screenshots/ss.png
+    - image: /assets/images/vim-latex/screenshots/emp.png
     - image: /assets/images/vim-latex/screenshots/optics.png
     - image: /assets/images/vim-latex/screenshots/fizmer.png
     - image: /assets/images/vim-latex/screenshots/qm.png

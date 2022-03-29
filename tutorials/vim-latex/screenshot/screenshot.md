@@ -16,7 +16,8 @@ Documents
 - Optics equation sheet 13
 - Solid State exercises 108
 - ContMech equation sheet 2
-- FizMer exercises page 69 or 73
+- FizMer exercises page 73
+- EMP exercises page
 
 
 Modifications to `zathurarc`
