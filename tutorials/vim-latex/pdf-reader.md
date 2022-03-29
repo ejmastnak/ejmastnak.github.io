@@ -48,9 +48,11 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
 
 <!-- vim-markdown-toc -->
 
-**Background knowledge:** this article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
-To get the most out of this article, you should understand the purpose of the `ftplugin/tex.vim` file and have a basic understanding of Vim's filetype plugin system.
-In case you are just dropping in now, these topics are covered earlier in the series in the article [3. Vim's `ftplugin` system]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
+**Background knowledge:** 
+- This article will make regular references to the file `ftplugin/tex.vim`, which we will use to implement LaTeX-specific Vim configuration through Vim's filetype plugin system.
+In case you are just dropping in now, this topic is covered earlier in the series in the article [3. Vim's `ftplugin` system]({% link tutorials/vim-latex/ftplugin.md %}), which you should read now if you haven't already.
+
+- We will also define some Vim key mappings in this article---if Vim keywords like `:map`, `<leader>`, `<localleader>`, and `<Plug>` are unfamiliar to you, consider taking a detour and reading through the final article in this series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), which covers everything you need to know about Vim key mappings to understand this series.
 
 ## Choosing a PDF Reader
 You want a PDF reader that:
