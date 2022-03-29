@@ -67,8 +67,8 @@ UltiSnips is a snippet engine only and intentionally ships without snippets---yo
 The canonical source of existing snippets is GitHub user `honza`'s [`vim-snippets`](https://github.com/honza/vim-snippets) repository.
 Whether you download someone else's snippets, write your own, or use a mixture of both, you should know:
 
-1. where the text files holding your snippets are located on your file system, and
-1. how to write and edit snippets to suit your particular needs.
+1. where the text files holding your snippets are stored on your local file system, and
+1. how to write, edit, and otherwise tweak snippets to suit your particular needs, so you are not stuck using someone else's without the possibility of customization.
 
 Both questions are answered in this article.
 
