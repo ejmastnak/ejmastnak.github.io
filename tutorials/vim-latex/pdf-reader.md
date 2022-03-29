@@ -27,6 +27,8 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
     * [Zathura on macOS (macOS 12.1; Zathura 0.4.9 from `homebrew-zathura`)](#zathura-on-macos-macos-121-zathura-049-from-homebrew-zathura)
 * [Cross-platform concepts](#cross-platform-concepts)
   * [Forward search and inverse search](#forward-search-and-inverse-search)
+    * [Forward search](#forward-search)
+    * [Inverse search](#inverse-search)
   * [Compiling with SyncTeX](#compiling-with-synctex)
   * [Inter-process communication requires a server](#inter-process-communication-requires-a-server)
   * [Ensuring you have a clientserver-enabled Vim](#ensuring-you-have-a-clientserver-enabled-vim)
@@ -130,21 +132,37 @@ and leave OS-specific implementation details for later in the article.
 
 ### Forward search and inverse search
 You will hear two bits of jargon throughout this article:
-- *Forward search* is the process jumping from Vim to the position in the PDF document corresponding the current cursor position in the LaTeX source file in Vim.
-  In everyday language, forward search is a text editor telling a PDF reader: "hey, PDF reader, display the position in the PDF file corresponding to my current position in the LaTeX file".
 
-  Here is a demonstration of forward search:
-  <image src="/assets/images/vim-latex/pdf-reader/forward-search.gif" alt="Demonstration of forward search"  /> 
+#### Forward search
+*Forward search* is the process of jumping from the current cursor position in the LaTeX source file to the corresponding position in the PDF reader displaying the compiled document.
+In everyday language, forward search is a text editor telling a PDF reader: "hey, PDF reader, display the position in the PDF file corresponding to my current position in the LaTeX file".
 
-- *Inverse search* (also called *backward search*) is the process of switching focus from a line in the PDF document to the corresponding line in the LaTeX source file. 
-  Informally, inverse search is like the user asking, "hey, PDF viewer, please take me to the position in the LaTeX source file corresponding to my current position in the PDF file".
+The following GIF demonstrates forward search:
 
-  Here is a demonstration of inverse search:
-  <image src="/assets/images/vim-latex/pdf-reader/inverse-search.gif" alt="Demonstration of inverse search"  /> 
+- I first move in the LaTeX source code (left) from "Section I don't want to see" to the section "Hello, forward search!".
+- I then use `:VimtexView` to move the PDF reader (right) to the "Hello, forward search!" section, without ever leaving Vim.
 
-Positions in the PDF file are linked to positions in the LaTeX source file using a utility called SyncTeX, which is implemented in a binary program called `synctex` that should ship by default with a standard TeX installation.
+<image src="/assets/images/vim-latex/pdf-reader/forward-search.gif" alt="Demonstration of forward search"  /> 
+
+#### Inverse search
+*Inverse search* (also called *backward search*) is the process of switching focus from a line in the PDF document to the corresponding line in the LaTeX source file. 
+Informally, inverse search is like the user asking, "hey, PDF viewer, please take me to the position in the LaTeX source file corresponding to my current position in the PDF file".
+
+The following GIF demonstrates inverse search:
+
+- Both Vim (left) and the PDF reader (right) begin at "Section I don't want to see".
+
+- I scroll in the PDF viewer from "Section I don't want to see" to the colored box showing "Hello, inverse search!". 
+  The bottom-left screenkey bar shows mouse actions.
+
+- I then trigger inverse search with `<Ctrl>-<Click>` (a Zathura-specific binding---YMMV on a different reader), to move to the LaTeX source code generating the "Hello, inverse search!" box.
+  Notice how focus automatically switches from the PDF reader to Vim.
+
+<image src="/assets/images/vim-latex/pdf-reader/inverse-search.gif" alt="Demonstration of inverse search"  /> 
 
 ### Compiling with SyncTeX
+Positions in the PDF file are linked to positions in the LaTeX source file thanks to a utility called SyncTeX, which is implemented in a binary program called `synctex` that should ship by default with a standard TeX installation.
+
 For forward and backward search to work properly, your LaTeX documents must be compiled with `synctex` enabled.
 This is as simple as passing the `-synctex=1` option to the `pdflatex` or `latexmk` programs when compiling your LaTeX files.
 VimTeX's compiler backends do this by default, and doing so manually was covered in the [previous article in this series]({% link tutorials/vim-latex/compilation.md %}).
