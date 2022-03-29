@@ -3,7 +3,7 @@
 # goal is to create one demo GIF for the home page
 
 gif1="gauss.gif"
-gif2="riemann-zeta.gif"
+gif2="fourier.gif"
 gif3="sinc.gif"
 gif4="expz.gif"
 
