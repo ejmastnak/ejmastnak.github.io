@@ -83,7 +83,9 @@ As you get started with the VimTeX plugin, here are a few things to keep in mind
 - The VimTeX documentation, accessed in Vim with `:help vimtex`, is your friend.
   (If for some reason `:help vimtex` comes up empty after a manual installation, you probably haven't generated helptags. Run the Vim command `:helptags ALL` after installing VimTeX to generate the VimTeX documentation; see `:help helptags` for background.)
 
-- All VimTeX features are enabled by default, and disabling features is up to the user---disabling and configuring features is described later in this article in the section on [VimTeX's options](#options).
+- Most VimTeX features are enabled by default, and in these cases disabling features is up to the user.
+  Inversely, VimTeX's folding and text formatting features come disabled by default, and it is up to the user to enable them (see `:help g:vimtex_fold_enabled` and `:help g:vimtex_format_enabled`).
+  Disabling and configuring features is described later in this article in the section on [VimTeX's options](#options).
 
 - As described in `:help vimtex-tex-flavor`, VimTeX overrides Vim's internal `ftplugin`, i.e. the one in `$VIMRUNTIME/ftplugin`,
   but respects any user-defined LaTeX configuration in `ftplugin/tex.vim`.
@@ -483,7 +485,7 @@ In case that sounds abstract, here is an example to get you started:
 " defining your own. This code could go in ftplugin/tex.vim.
 
 " Disable VimTeX's default mappings
-g:vimtex_mappings_enabled = 0
+let g:vimtex_mappings_enabled = 0
 
 " Manually redefine only the mappings you wish to use
 " --------------------------------------------- "

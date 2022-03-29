@@ -124,15 +124,23 @@ For example, to use `<localleader>c` to trigger compilation, place the following
 
 ```vim
 " Use `<localleader>c` to trigger continuous compilation...
-noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompile<CR>
+nmap <localleader>c <Plug>(vimtex-compile)
 
 " ...or single-shot compilation, if you prefer.
+nmap <localleader>c <Plug>(vimtex-compile-ss)
+```
+You could then use the shortcut `<localleader>c` in normal mode to call either `:VimtexCompile` or `:VimtexCompileSS`, depending on your choice of continuous or single-shot compilation.
+In case you are just dropping in now, modifying VimTeX's default behavior was described in more detail in the previous article in this series, [4. Getting started with the VimTeX plugin]({% link tutorials/vim-latex/vimtex.md %}).
+
+You can also use Vim's built-in `:update` command to make Vim automatically save your document before single-shot compilation (to ensure you compile the most recent version of your source code):
+```vim
+" `update` ensures document is saved before single-shot compilation
 noremap <localleader>c <Cmd>update<CR><Cmd>VimtexCompileSS<CR>
 ```
-You could then use the shortcut `<localleader>c` in normal or visual mode to call either `:VimtexCompile` or `:VimtexCompileSS`, depending on your choice of continuous or single-shot compilation.
-The `update` command saves your document, if needed, before performing compilation (see `:help update` for reference).
+Using `update` is redundant and therefore omitted for continuous compilation, which requires you to save the document in the first place before compilation runs.
+Note that, because the above is not a `<Plug>` mapping to `<Plug>(vimtex-compile)` (which is tricky to combine with the `:update` command), this mapping will *not* override VimTeX's default `<localleader>ll` shortcut for triggering compilation.
 
-Note that the above mappings use the `<Cmd>` keyword (see `:help map-cmd` for documentation), which lets you call commands directly without switching Vim modes.
+Aside: The above mapping uses the `<Cmd>` keyword (see `:help map-cmd` for documentation), which lets you call commands directly without switching Vim modes.
 The final article in the series, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}), explains key mappings in more detail.
 
 ### A QuickFix menu crash course
