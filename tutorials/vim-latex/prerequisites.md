@@ -289,3 +289,5 @@ they look weird the first time you see them, but you quickly get used to and com
 </details>
 
 {% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}

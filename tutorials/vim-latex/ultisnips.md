@@ -543,3 +543,5 @@ but this would make the UltiSnips parser think that the line `snippet ${1:trigge
 In any case, this problem is specific to using the string `snippet` inside a snippet, and most snippets are much easier to write than this.
 
 {% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}

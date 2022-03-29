@@ -753,3 +753,5 @@ setlocal errorformat+=%-G%.%#
 ```
 
 {% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}

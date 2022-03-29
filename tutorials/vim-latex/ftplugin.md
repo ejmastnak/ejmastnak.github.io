@@ -169,3 +169,5 @@ Think of the `ftplugin` files as a `vimrc` for one file type only,
 and keep your actual `vimrc` for global settings you want to apply to *all* file types.
 
 {% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}

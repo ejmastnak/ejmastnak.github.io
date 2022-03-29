@@ -3,8 +3,8 @@ title: Vimscript Primer for Filetype-Specific Workflows  \| Vim and LaTeX Series
 
 prev-filename: "pdf-reader"
 prev-display-name: "« 6. PDF Reader"
-next-filename: "Introduction"
-next-display-name: "intro"
+next-filename: "intro"
+next-display-name: "Introduction"
 
 ---
 
@@ -590,3 +590,5 @@ You can find official documentation of autoload functions at `:help autoload-fun
 <!-- The period is the Vimscript string concatenation operator; see `:help expr5` for the official documentation. -->
 
 {% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}

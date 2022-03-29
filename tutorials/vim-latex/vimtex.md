@@ -655,3 +655,4 @@ If you want to use both VimTeX and your own `tex` filetype plugin and currently 
 
 {% include vim-latex-navbar.html %}
 
+{% include vim-latex-license.html %}

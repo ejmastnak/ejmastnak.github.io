@@ -100,3 +100,6 @@ If these or other ideas interest you, let me know---if there is enough interest 
 <div style="margin-top: 1.5em">
 <p style="text-align: center"><a href="/tutorials/vim-latex/prerequisites.html"><strong><em>Begin the series!</em></strong></a></p>
 </div>
+
+
+{% include vim-latex-license.html %}

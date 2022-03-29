@@ -675,6 +675,8 @@ let g:vimtex_view_automatic = 0
 
 {% include vim-latex-navbar.html %}
 
+{% include vim-latex-license.html %}
+
 ## Footnotes
 
 
