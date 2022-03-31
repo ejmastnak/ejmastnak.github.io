@@ -13,8 +13,12 @@ carousels:
 ---
 # Real-time LaTeX Using (Neo)Vim
 
-This tutorial series aims to make it easier for new users to set up the Vim or Neovim text editors for efficiently writing LaTeX documents.
-It is intended for anyone who...
+This tutorial series will help you set up the Vim or Neovim text editor for efficiently writing LaTeX documents.
+Here is an example of what I have in mind:
+
+<image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
+
+The series is intended for anyone who...
 
 - is interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
 - just wants a more pleasant and efficient LaTeX experience, whether this is at real-time university lecture speed or not,
@@ -41,9 +45,12 @@ It is intended for anyone who...
 1. [**A Vimscript primer**]({% link tutorials/vim-latex/vimscript.md %}) explaining the key mappings and Vimscript functions used in this tutorial.
 
 #### Shut up and show me results
-Here are some GIFs showing reasonably fast LaTeX:
+Here are some more GIFs showing that LaTeX can be written at handwriting speed:
+
 <image src="/assets/images/vim-latex/show-off/demo.gif" alt="Writing LaTeX quickly" />
+
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
+This is actually a little faster than I can write by hand---try taking out a pencil and paper and see if you can keep up!
 If you like, you can see [**more examples on YouTube**](https://www.youtube.com/watch?v=P7iMX1lqGnU).
 
 **Credit where it is due**: the above GIFs are inspired by Gilles Castel's video [Fast LaTeX editing with Vim and UltiSnips](https://www.youtube.com/watch?v=a7gpx0h-BuU)---it is beautifully done and I encourage you to watch it.
