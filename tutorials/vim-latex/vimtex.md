@@ -192,7 +192,7 @@ You can...
                         dsc
   \textit{Hello, dsc!}  -->  Hello, dsc!
   ```
-  The `dsc` also recognizes and correctly deletes parameters inside square brackets, for example:
+  The `dsc` mapping also recognizes and correctly deletes parameters inside square brackets, for example:
 
   ```tex
                dsc
