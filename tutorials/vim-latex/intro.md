@@ -50,7 +50,7 @@ Here are some more GIFs showing that LaTeX can be written at handwriting speed:
 <image src="/assets/images/vim-latex/show-off/demo.gif" alt="Writing LaTeX quickly" />
 
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
-This is actually a little faster than I can write by hand---try taking out a pencil and paper and see if you can keep up!
+This is actually a little *faster* than I can write by hand---try taking out a pencil and paper and see if you can keep up!
 If you like, you can see [**more examples on YouTube**](https://www.youtube.com/watch?v=P7iMX1lqGnU).
 
 **Credit where it is due**: the above GIFs are inspired by Gilles Castel's video [Fast LaTeX editing with Vim and UltiSnips](https://www.youtube.com/watch?v=a7gpx0h-BuU)---it is beautifully done and I encourage you to watch it.
