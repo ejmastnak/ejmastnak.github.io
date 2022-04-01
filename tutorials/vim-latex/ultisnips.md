@@ -228,7 +228,7 @@ Based on my (subjective) experience, with a focus on LaTeX files, here are some 
 Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`.
 Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content.
 You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
-Since that might sound vague, here is an example of jumping through the tabstops in a LaTeX `figure` environment:
+Since that might sound vague, here is an example of jumping through the tabstops for figure path, caption, and label in a LaTeX `figure` environment:
 
 <image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Showing how snippet tabstops work"  /> 
 
@@ -292,7 +292,7 @@ snippet env "New LaTeX environment" b
 $0
 endsnippet
 ```
-The `b` options ensures the snippet only expands at the start of line; see the [Options](#options) section.
+The `b` options ensures the snippet only expands at the start of line; see the [Options](#options) section for review of common UltiSnips options.
 Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
 
 #### Useful: the visual placeholder
@@ -318,10 +318,12 @@ The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and
 ### Dynamically-evaluated code inside snippets
 It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "code interpolation").
 Shell script, Vimscript, and Python are all supported.
-Interpolation is covered in `:help UltiSnips-interpolation` and in UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
-I will only cover two examples I subjectively find to be most useful:
-1. making certain snippets expand only the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
-1. accessing characters captured by regular expression trigger's capture groups.
+Interpolation is covered in `:help UltiSnips-interpolation` and in the UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
+I will only cover two examples I subjectively find to be most useful for LaTeX:
+
+1. making certain snippets expand only when the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
+
+1. accessing characters captured by a regular expression trigger's capture group.
 
 #### Custom context expansion and VimTeX's syntax detection
 UltiSnips's custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
@@ -330,9 +332,10 @@ As an example of why this might be useful:
 - Problem: good snippet triggers tend to interfere with words typed in regular text.
   For example, `ff` is a great choice for a `\frac{}{}` snippet, but you wouldn't want `ff` to expand to `\frac{}{}` in the middle of the word "offer", for example.
 - Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
-  (Note that the `frac` expansion problem can also be solved with a regex snippet, which is covered in the next section.)
+  (Note that the `frac` expansion problem can also be solved with a regex snippet trigger, which is covered in the next section.)
 
 You will need GitHub user `lervag`'s [VimTeX plugin](https://github.com/lervag/vimtex) for math-context expansion.
+(I cover VimTeX in much more detail in the [fourth article in this series]({% link tutorials/vim-latex/vimtex.md %}).)
 The VimTeX plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
 This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
 
@@ -402,7 +405,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    endsnippet
    ```
    The line `` `!p snip.rv = match.group(1)` `` inserts the regex group captured by the trigger parentheses back into the original text.
-   If sounds vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the trigger disappears.
+   Since that might sound vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the snippet trigger disappears after the snippet expands.
 
 1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
 
@@ -436,7 +439,7 @@ Regex tutorials abound on the internet; if you need a place to start, I recommen
    
 Combined with math-context expansion, these two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
 Note that you can do much fancier stuff than this.
-See the UltiSnips documentation, check out  or look through the snippets in `vim-snippets` for inspiration.
+See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
 
 ### Tip: Refreshing snippets
 The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory.
@@ -446,7 +449,7 @@ Here's an example use case:
 
 - Solution: call `UltiSnips#RefreshSnippets` using `:call UltiSnips#RefreshSnippets()`.
 
-This workflow comes up regularly if you use snippets often, and I suggest writing a key binding in your `vimrc` to call the `UltiSnips#RefreshSnippets()` function, for example
+This workflow comes up regularly if you use snippets often, and I suggest writing a key mapping in your `vimrc` to call the `UltiSnips#RefreshSnippets()` function, for example
 
 ```vim
 " Use <leader>u in normal mode to refresh UltiSnips snippets
@@ -456,11 +459,11 @@ In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a st
 
 ## (Subjective) practical tips for fast editing
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
-In no particular order, here are some tips based on my personal experience:
+In no particular order, here are some useful tips based on my personal experience:
 
 - Use automatic completion whenever possible.
   This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware.
-  For example, I regularly use 100+ auto-trigger snippets on a 2.5 GHz dual-core i5 processor and 8 gigabytes of RAM without any problems.
+  For example, I regularly use 100+ auto-trigger snippets on a 2.5 GHz dual-core i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
 
 - Use *short* snippet triggers.
   Like one-, two-, or and *maybe* three-character triggers.
@@ -487,7 +490,11 @@ In no particular order, here are some tips based on my personal experience:
      This `df` snippet makes typing differentials a breeze, with correct spacing, upright font, and all that.
      Happily, in this case using `df` for a differential also makes semantic sense.
 
-     As a side note, using a `\diff` command also makes redefinition of the differential symbols very easy---for example to adapt an article for submission to a journal that uses italic instead of upright differentials, one could just replace `\operatorname{d}\!` with `\,d` in the command definition instead of rummaging through LaTeX source code changing individual differentials.
+     You can see the `\diff` snippet playing a minor supporting role as the differential in this variation of the fundamental theorem of calculus:
+
+     <image src="/assets/images/vim-latex/show-off/calc.gif" alt="Example use of a differential in the fundamental theorem of calculus" />
+
+     As a side note, using a `\diff` command also makes redefinition of the differential symbol very easy---for example to adapt an article for submission to a journal that uses italic instead of upright differentials, one could just replace `\operatorname{d}\!` with `\,d` in the command definition instead of rummaging through LaTeX source code changing individual differentials.
 
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
 
