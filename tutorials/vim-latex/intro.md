@@ -18,12 +18,15 @@ Here is an example of what I have in mind:
 
 <image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
 
-The series is intended for anyone who...
+The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
+More on how this works below.
 
-- is interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
-- just wants a more pleasant and efficient LaTeX experience, whether this is at real-time university lecture speed or not,
-- hopes to switch to Vim from a different LaTeX editor, but is unsure how to proceed, or
-- just wants to browse someone else's workflow and configuration out of curiosity.
+**Read this series if you...**
+
+- are interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
+- want a LaTeX experience decidely more pleasant and efficient than whatever you were probably first taught, whether your motivation is real-time university lecture speed or not,
+- hope to switch to Vim from a different LaTeX editor, but are unsure how to proceed, or
+- just want to browse someone else's workflow and configuration out of curiosity.
 
 ### This series walks you through...
 1. Suggested [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of the series, along with references that should get you up to speed if needed.
@@ -45,11 +48,11 @@ The series is intended for anyone who...
 1. [**A Vimscript primer**]({% link tutorials/vim-latex/vimscript.md %}) explaining the key mappings and Vimscript functions used in this tutorial.
 
 #### Shut up and show me results
-Here are some more GIFs showing that LaTeX can be written at handwriting speed:
+
+Here are more GIFs showing that LaTeX can be written at handwriting speed:
 
 <image src="/assets/images/vim-latex/show-off/demo.gif" alt="Writing LaTeX quickly" />
 
-The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 This is actually a little *faster* than I can write by hand---try taking out a pencil and paper and see if you can keep up!
 If you like, you can see [**more examples on YouTube**](https://www.youtube.com/watch?v=P7iMX1lqGnU).
 
