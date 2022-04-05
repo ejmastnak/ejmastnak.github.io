@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title:          Elijan Mastnak
+title:          ejmastnak
 email:          ejmastnak@gmail.com
 description:    Elijan Mastnak's personal website.
 domain:         "ejmastnak.github.io"
@@ -26,7 +26,7 @@ baseurl:        ""
 url:            "https://ejmastnak.github.io"
 
 # Build settings
-theme: minima
+# theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
