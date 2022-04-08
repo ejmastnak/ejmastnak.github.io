@@ -534,7 +534,7 @@ First, here is the big picture:
 
 ### The big picture
 - Problem: Vim's built-in `:make` and command-line functionality run *synchronously*---this means Vim freezes until the make command finishes executing.
-For execution times over a few tens of milliseconds (and compiling large projects can take tens of *seconds*), this delay is unacceptable.
+For execution times over a few hundreds of milliseconds (and compiling large projects can take tens of *seconds*), this delay is unacceptable.
 Try running `:!pdflatex %` on a large LaTeX file (or use this article's custom `:make` if you have everything up and running) and see for yourself---you won't be able to type, move the cursor, or otherwise interact with Vim until compilation finishes.
 Put simply, that sucks.
 
