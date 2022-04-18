@@ -92,6 +92,7 @@ Since someone will probably be curious, here is an overview of the setup used in
 #### Feedback, suggestions, appreciation, criticisms, etc.
 - If this series helped you, it will make my day to hear.
 - If you suggest constructive ideas for improving the series, I will quite likely implement them, appreciate your input, and give you credit for your contributions.
+  (Thank you to [@subnut](https://github.com/subnut) for catching mistakes in this document.)
 - If you implement the setup in this series and show me the results, I will be very happy to see.
 
 Feedback is welcome and appreciated.
