@@ -20,3 +20,7 @@ A professionally-written guide to turbocharged mathematical typesetting
 [**Undergraduate "mini-thesis"**]({% link seminar/seminar.md %}) 
 <br>
 End-to-end particle physics classification with convolutional neural networks
+
+[**Hilbert transformer**]({% link projects/hilbert/hilbert.md %}) 
+<br>
+A (near) real-time FIR Hilbert transformer and bandpass filter using Python's Numpy and PyAudio
