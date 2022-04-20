@@ -17,7 +17,7 @@ A professionally-written guide to turbocharged mathematical typesetting
 
 ### Projects
 
-[**Undergraduate "mini-thesis"**]({% link seminar/seminar.md %}) 
+[**Undergraduate "mini-thesis"**]({% link projects/seminar/seminar.md %}) 
 <br>
 End-to-end particle physics classification with convolutional neural networks
 

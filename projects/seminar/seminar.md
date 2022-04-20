@@ -8,7 +8,7 @@ See [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below fo
 
 You might be interested in...
 
-- [**reading the PDF paper**]({% link seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link seminar/presentation.pdf %}) or [Slovene]({% link seminar/presentation-slo.pdf %}))
+- [**reading the PDF paper**]({% link projects/seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link projects/seminar/presentation.pdf %}) or [Slovene]({% link projects/seminar/presentation-slo.pdf %}))
 - [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
 
 ## About the project
@@ -21,7 +21,7 @@ This project is distinguished by its focus on performing classification using as
 And what about convolutional neural networks? Convolutional neural networks (CNNs) are a class of machine learning systems well-suited to processing image-like data. Raw detector data---the type used in end-to-end classification---takes the form of energy and position information distributed on a two- or three-dimensional spatial grid across the detector's volume. This data is essentially a series of image-like snapshots of the energy and position left behind by particles as they fly through the particle detector. Since CNNs are well-suited to image-like data, they find an application in end-to-end particle classification.
 
 #### Summary
-The [paper]({% link seminar/paper.pdf %}) and presentations address the following questions in the progression given below:
+The [paper]({% link projects/seminar/paper.pdf %}) and presentations address the following questions in the progression given below:
 - What is meant by particle classification?
 - What are the physical quantities comprising low-level collision data, and what are the physical principles behind a modern particle detector's measurement instruments? (We use the Compact Muon Solenoid at the LHC as a concrete example).
 - What are fully-connected neural networks and how do they work? (As a foundation for understanding CNNs.)
