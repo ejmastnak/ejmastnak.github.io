@@ -3,7 +3,7 @@
 # master version of the CV from the local source
 # directory on my computer to this site
 
-CV_SOURCE_PATH="${HOME}/Documents/cv/cv/src/cv.pdf"
+CV_SOURCE_PATH="${HOME}/Documents/about/cv/cv/src/cv.pdf"
 CV_TARGET_PATH="cv.pdf"
 
 cp "${CV_SOURCE_PATH}" "${CV_TARGET_PATH}" && echo "SUCCESS: copied ${CV_SOURCE_PATH} to ${CV_TARGET_PATH}"
