@@ -3,16 +3,19 @@ title: Seminar
 ---
 # Convolutional Neural Networks and Particle Physics
 This project explores the use of convolutional neural networks for classifying the products of high-energy collisions produced in particle physics experiments like the Large Hadron Collider at CERN and was written in the scope of *Seminar* course requirements at the Faculty of Math and Physics at the University of Ljubljana.
-The Seminar course plays a similar role to an undergraduate thesis, except that the seminar paper must be reduced to a length more befitting of a journal article than a traditional thesis.
-See [About the Seminar course at FMF](#about-the-seminar-course-at-fmf) below for context. 
 
 You might be interested in...
 
-- [**reading the PDF paper**]({% link projects/seminar/paper.pdf %}) (there is also an associated slide show presentation in [English]({% link projects/seminar/presentation.pdf %}) or [Slovene]({% link projects/seminar/presentation-slo.pdf %}))
+- [**reading the PDF paper**]({% link projects/seminar/paper.pdf %})
+- the accompanying [**slide show presentation**]({% link projects/seminar/presentation.pdf %}) (also available in [Slovene]({% link projects/seminar/presentation-slo.pdf %}))
 - [**browsing the GitHub repo**](https://github.com/ejmastnak/fmf-seminar)  containing the project's source files
 
 ## About the project
 Particle classification means identifying the results of a collision, often as simply as with a binary yes/no answer, e.g. "this collision produced a Higgs boson" or "this collision did not produce a Higgs boson". Performing classification with a high degree of certainty is vital if, say, you are a research group interested in announcing the discovery of a new elementary particle.
+
+<div style="display: flex; justify-content: center; width: 100%;">
+  <image src="/assets/images/seminar/classification.png" alt="Particle classification" width="70%" />
+</div>
 
 This project is distinguished by its focus on performing classification using as raw, low-level data as possible (i.e. the data produced directly by a particle detector's trackers and calorimeters, without further processing). Classification techniques that produce results directly from low-level data are called "end-to-end" classifiers. End-to-end classifiers are interesting because:
 - they eliminate complicated intermediate processing and particle flow reconstruction, and
