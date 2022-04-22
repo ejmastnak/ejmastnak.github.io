@@ -3,7 +3,7 @@ title: Classical physics textbook
 ---
 # Classical physics
 
-### [**Here is the PDF**]({% link klf/klf.pdf %})
+### [**Here is a sample PDF**]({% link klf/klf-sample.pdf %})
 
 <!-- Readers are very much welcome! The book is in its early stages and will inevitably contain typos and mistakes---if you find errors and tell me, I will be grateful and happy to hear from you, even for the most trivial errors. -->
 
