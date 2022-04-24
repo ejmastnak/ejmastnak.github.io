@@ -60,7 +60,7 @@ If you use regular Vim, you should be fine in any case.
 Install UltiSnips like any other Vim plugin using your plugin installation method of choice.
 Because the UltiSnips plugin uses Python...
 - you need a working installation of Python 3 on your system (see `:help UltiSnips-requirements`)
-- your Vim must be compiled with the `python3` feature enabled---you can test this with `:echo has("python3)`, which will return `1` if `python3` is enabled and `0` otherwise.
+- your Vim must be compiled with the `python3` feature enabled---you can test this with `:echo has("python3")`, which will return `1` if `python3` is enabled and `0` otherwise.
   Note that Neovim comes with `python3` enabled by default.
 
 UltiSnips is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
