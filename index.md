@@ -5,9 +5,15 @@ title: Home
 You have reached Elijan J. Mastnak's website.
 For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or read through the following:
 
-### Physics notes
+### Notes
 
 [**1500+ pages of undergraduate physics notes typeset with LaTeX**]({% link fmf.md %})
+<br>
+From the final two years of undergrad at the Faculty of Math and Physics in Ljubljana.
+
+[**Find your footing after installing Arch Linux**]({% link notes/arch/about.md %})
+<br>
+Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch.
 
 ### Tutorials
 
