@@ -72,8 +72,11 @@
     .gt  { color: $nord13; }   /* Generic.Traceback */
     .gl  { color: $nord2; }    /* Generic.Lineno */
 
-    .c   { color: $nord3_bright; }    /* Comment */
+    .c  { color: $nord3_bright; }    /* Comment */
     .w  { background-color: $nord11; }          /* Text.Whitespace */
     .gs { color: $nord4; font-weight: bold; }   /* Generic.Strong */
     .ge { color: $nord4; font-style: italic; }  /* Generic.Emph */
+
+    // My custom: "Generic Attention"
+    .ga { color: $nord5; background-color: $nord9; }  /* Generic.Attention */
 }
