@@ -304,6 +304,18 @@ You can...
 
   <image src="/assets/images/vim-latex/vimtex/tsc-tse.gif" alt="Demonstrating the tsc and tse actions"  /> 
 
+- **Toggle between inline and display math `ts$`**, which works in normal mode and is mapped to `<Plug>(vimtex-env-toggle-math)`.
+  The following example uses `ts$` to switch between inline math, display math, and an `equation` environment
+
+  ```tex
+                ts$  \[              ts$   \begin{equation}
+  $1 + 1 = 2$   -->     1 + 1 = 2    -->       x + y = z
+                     \]                    \end{equation}
+  ```
+  Here is the above example in a GIF:
+
+  <image src="/assets/images/vim-latex/vimtex/tsm.gif" alt="Demonstrating the tsm action"  /> 
+
 - **Toggle surrounding delimiters using `tsd`:** Change between plain and `\left`/`\right` versions of delimiters 
   using the default shortcut `tsd` (works in normal and visual modes, mapped to `<Plug>(vimtex-delim-toggle-modifier)`).
 
