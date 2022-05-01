@@ -27,8 +27,8 @@ fi
 # H="595"  # for seven lines (medium)
 
 W="1670"
-X="175"
-Y="135"
+X="30"
+Y="100"
 
 geometry="${W}x${H}+${X}+${Y}"
 
