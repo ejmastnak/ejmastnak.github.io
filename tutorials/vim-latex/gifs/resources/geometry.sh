@@ -15,7 +15,7 @@ elif [ ${1} -le 6 ]
 then
   H="515"
 else
-  H="595"
+  H="625"
 fi
 
 # H="220"  # for two lines of text (large)
