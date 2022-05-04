@@ -19,9 +19,13 @@ Your pinky will thank you.
 <br>
 Connect to the Internet via WiFi or Ethernet using NetworkManager.
 
-<!-- [**USB**](#) -->
-<!-- <br> -->
-<!-- Read and write data from external USB drives. -->
+[**Window system**]({% link notes/arch/basics/startx.md %})
+<br>
+A minimal graphical environment using the Xorg display server and the i3 window manager.
+
+[**USB**]({% link notes/arch/basics/usb.md %})
+<br>
+Read and write data from external USB drives.
 
 [**Battery alert**]({% link notes/arch/basics/battery-alert.md %})
 <br>
@@ -39,17 +43,9 @@ Play, pause, and skip music/videos system-wide with a single press of your keybo
 <br>
 Change your typematic rate and typematic delay---basically make pressed-down keys repeat faster---in X and in the console.
 
-[**Keyboard shortcuts in X**]({% link notes/arch/basics/xbindkeys.md %})
-<br>
-Make an arbitrary keyboard key execute an arbitrary command.
-
 ## Graphics
 
 *Coming soon (e.g. 2 weeks).*
-
-[**Window manager**](#)
-<br>
-Set up a display server and a window manager.
 
 [**External monitor I: First steps**](#)
 <br>
