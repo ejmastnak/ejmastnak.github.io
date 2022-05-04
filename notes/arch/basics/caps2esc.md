@@ -4,7 +4,7 @@ title: Remap Caps Lock to Escape and Control
 
 # Remap Caps Lock to Escape and Control
 
-**Goal:** make the Caps Lock key act like the Escape key when pressed along and act like the Control key when pressed in combination with other keys.
+**Goal:** make the Caps Lock key act like the Escape key when pressed alone and act like the Control key when pressed in combination with other keys.
 
 **Motivation:** pleasant and ergonomic access system-wide to the very useful escape and control keys and a better Vim or Emacs experience.
 
