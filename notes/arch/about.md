@@ -5,7 +5,7 @@ title: Arch Linux Post-Installation Configuration
 # Find Your Footing After Installing Arch Linux
 
 Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch Linux
-(read: things requiring manual setup on Arch that I had previously taken for granted coming from macOS).
+(read: solutions to all my stumbling points when migrating to Arch from macOS).
 The material should be applicable, with adjustments to package installation, to most `systemd`-based Linux distros.
 
 ## Useful basics
