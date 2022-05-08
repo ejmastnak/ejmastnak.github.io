@@ -1,0 +1,355 @@
+
+---
+title: Adjust laptop backlight on Arch Linux
+---
+
+# Laptop backlight
+
+**Goal:** understand how to programmatically adjust your laptop's backlight brightness from the command line, then create convenient key bindings to do this for you.
+
+**Intended audience:** Presumably, your laptop already has two functions keys for increasing and decreasing backlight brightness. 
+If these keys have no effect after standard install of Arch, and you find yourself unable to adjust your backlight brightness, this guide is for you.
+
+If your backlight keys *are* working properly (perhaps your desktop environment set them up for you), congratulations.
+You're welcome to read this anyway, and perhaps you'll learn something useful about `udev` rules or `acpid` events, but this guide is probably not directly relevant to you.
+
+**References:**
+- [ArchWiki: Backlight](https://wiki.archlinux.org/title/backlight)
+- [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid)
+
+
+## Contents
+<!-- vim-markdown-toc GFM -->
+
+* [Adjust backlight brightness from a shell](#adjust-backlight-brightness-from-a-shell)
+  * [Identify your backlight interface directory](#identify-your-backlight-interface-directory)
+  * [Control brightness using a shell](#control-brightness-using-a-shell)
+  * [Allow users to modify backlight brightness](#allow-users-to-modify-backlight-brightness)
+    * [Add users to the `video` group](#add-users-to-the-video-group)
+    * [Create a `udev` rule](#create-a-udev-rule)
+* [Convenient key mappings for backlight control](#convenient-key-mappings-for-backlight-control)
+  * [Installation](#installation)
+  * [What's involved](#whats-involved)
+  * [Finding event labels](#finding-event-labels)
+  * [Key bindings and event handler for backlight control](#key-bindings-and-event-handler-for-backlight-control)
+* [Troubleshooting: fix failed loading of `acpi_video0` with dual graphics](#troubleshooting-fix-failed-loading-of-acpi_video0-with-dual-graphics)
+
+<!-- vim-markdown-toc -->
+
+Use `xbacklight` in practice.
+
+## Adjust backlight brightness from a shell
+
+You can interact with your backlight through the Linux `sysfs` file system, using the contents of the directory `/sys/class/backlight`.
+
+(`sysfs` is pseudo file system located in the `/sys` directory, and provides an interface for interacting with harware devices, drivers, kernel modules, and all sorts of other goodies using virtual files.
+I suggest taking 10 minutes and browsing through [Wikipedia: Sysfs](https://en.wikipedia.org/wiki/Sysfs) and `man 5 sysfs` if you haven't heard of `sysfs` yet---it's a really neat feature of the Linux kernel.)
+
+<!-- Linux being Linux and graphics cards being finicky, you might need to do some troubleshooting before a directory appears inside `/sys/class/backlight`. -->
+<!-- Check the ArchWiki -->
+
+### Identify your backlight interface directory
+
+Every computer should have a backlight directory inside of `/sys/class/backlight`, but the name depends on the graphics card's manufacturer and model.
+Standard names I've seen in the wild are:
+
+- Intel graphics: `/sys/class/backlight/intel_backlight`
+- ATI/AMD/Nvidia graphics: `/sys/class/backlight/acpi_video0`
+
+I'll assume `/sys/class/backlight/intel_backlight` in this guide.
+The directory you have inside `/sys/class/backlight` might be different (and you might have two directoriy if you have dual graphics).
+Whenever, I write `intel_backlight` in this guide, change it to your case (e.g. `acpi_video0`) as needed.
+
+The backlight directory contains the files used to control your backlight.
+Here's a look inside mine:
+
+```sh
+$ ls /sys/class/backlight/intel_backlight
+device/
+power/
+subsystem/
+actual_brightness
+bl_power
+brightness          # useful!
+max_brightness      # useful!
+scale
+type
+uevent
+```
+
+We're interested in the files `brightness` and `max_brightness`.
+
+### Control brightness using a shell
+
+The `max_brightness` and `brightness` files each contain a single integer number.
+The number in `brightness` represents you current backlight brightness, on a scale from `0` (backlight turned off) to the value in `max_brightness` (maximum brightness (duh!)).
+*If you change the value in the* `brightness` *file, your physical backlight brightness will change accordingly.*
+
+The value of `max_brightness` varies from manufacturer to manufacturer.
+I think (but cannot confirm) that the values are arbitrary, i.e. they do not correspond to any physical quantity.
+
+Do two things:
+
+- Identify the value in `max_brightness` on your computer (e.g. `cat max_brightness`)
+- Experiment with changing the value of `brightness`, and observe how your backlight brightness changes accordingly.
+
+For example, from my computer:
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd</span> /sys/class/brightness/intel_backlight
+<span class="nv">$ </span><span class="nb">cat </span>max_brightness
+852  <span class="c"># (on my computer; might be different on yours)</span>
+
+<span class="c"># You must elevate to root privileges to change brightness</span>
+su
+
+<span class="c"># Playing around with brightness as a root user</span>
+<span># </span><span class="nb">echo </span>400 <span class="o">&gt;</span> brightness   <span class="c"># half of maximum brightness</span>
+<span># </span><span class="nb">echo </span>50 <span class="o">&gt;</span> brightness    <span class="c"># low brightness</span>
+<span># </span><span class="nb">echo </span>852 <span class="o">&gt;</span> brightness   <span class="c"># max brightness</span>
+</code></pre></div></div>
+
+Note: you *must* fully elevate to a root shell using e.g. `su` or `sudo -s`.
+A command like `sudo echo 42 > brightness` will fail,
+because the `sudo` privilege applies to the `echo` command only, and the subsequent output redirection using `>` runs in a regular (unprivileged) shell.
+See [this Stack Overflow answer](https://stackoverflow.com/a/82278) for more information.
+
+Instead of using `su` to elevate to a root shell, you could also combine `tee` with plain `sudo` as a temporary solution, e.g.
+
+```sh
+$ echo 42 | sudo tee /sys/class/backlight/intel_backlight/brightness 
+```
+
+**Check-in point:** At this point you should be able to adjust your backlight brightness, albeit tediously, by writing to `/sys/class/backlight/*/brightness` from a root shell.
+  
+### Allow users to modify backlight brightness
+
+Problem: by default, only root users can write to the backlight's `brightness` file,
+and it's supremely inconvenient to elevate to root privileges for a task as simple and frequent as adjusting your backlight brightness.
+
+Solution: as suggested in [ArchWiki: Backlight/ACPI](https://wiki.archlinux.org/title/backlight#ACPI), you can first add backlight-privileged users to the `video` user group,
+then create a `udev` rule that allows unprivileged users in the `video` group to adjust backlight brightness.
+
+(The `video` group should exist on your system by default, and is described briefly in [ArchWiki: Users and groups/Pre-systemd groups](https://wiki.archlinux.org/title/users_and_groups#Pre-systemd_groups).
+If words like "permissions", "file ownership", "user group", and `chgrp` sound unfamiliar, take 15 minutes and read through [ArchWiki: Users and groups](https://wiki.archlinux.org/title/users_and_groups).)
+
+To give regular users backlight permissions...
+
+#### Add users to the `video` group
+
+First add any users who should get backlight-adjusting privileges to the `video` group:
+
+```sh
+# Replace <username> with the target username(s)
+sudo usermod -aG video <username>
+# Example: add user foobar to the video group
+sudo usermod -aG video foobar
+```
+
+#### Create a `udev` rule
+
+Now create a `udev` rule to give the `video` group permissions to write to the backlight `sysfs` interface.
+This step depends on your backlight manufacturer.
+Both options below come from suggestions in [ArchWiki: Backlight/ACPI](https://wiki.archlinux.org/title/backlight#ACPI);
+I have tested both and can confirm they both worked, at least on the hardware I tested (ThinkPad T460 with integrated Intel graphics; MacBookPro 11.5 with discrete AMD graphics).
+Here's what to do.
+
+First create the file `/etc/udev/rules.d/backlight.rules`.
+Then, depending on your backlight directory, paste in the following line(s):
+
+- For `intel_backlight`:
+
+  ```sh
+  # This code would go inside `/etc/udev/rules.d/backlight.rules`
+
+  # Set `video` as the owning group for the `/sys/class/backlight/intel_backlight/brightness` file
+  RUN+="/bin/chgrp video /sys/class/backlight/intel_backlight/brightness"
+
+  # Give group write permisssions to `/sys/class/backlight/intel_backlight/brightness`
+  RUN+="/bin/chmod g+w /sys/class/backlight/intel_backlight/brightness"
+  ```
+
+- For `acpi_video0`:
+
+  ```sh
+  # This code would go inside `/etc/udev/rules.d/backlight.rules`
+
+  # Set `video` as the owning group for the device with kernel name
+  # `acpi_video0` and subsystem `backlight` (i.e. your backlight);
+  # give the device's owning user and group read and write permissions
+  # and give only read permissions to other users (i.e. 0664).
+  ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="acpi_video0", GROUP="video", MODE="0664"
+  ```
+
+Reboot.
+You should then be able to write to `sys/class/backlight/*/brightness` as an otherwise unprivileged member of the `video` user group.
+
+## Convenient key mappings for backlight control
+
+We'll set up backlight key bindings using the [`acpid` daemon](https://wiki.archlinux.org/title/Acpid).
+If you're a new user, I've just introduced two potentially unfamiliar bits of jargon.
+For our purposes, here is what they mean:
+
+- ACPI (which stands for Advanced Configuration and Power Interface) is a standard interface that gives your operating system a way to interact with your hardware (e.g. your backlight and function keys).
+  Reference: [Wikipedia: ACPI](https://en.wikipedia.org/wiki/Advanced_Configuration_and_Power_Interface).
+
+- A daemon (at the risk of stating the obvious) is a computer program that runs as a background process, and typically listens for and responds to events, e.g. network requests or hardware activity.
+  In our context, we'll use the `acpid` daemon to detect and respond to ACPI events resulting from brightness key presses.
+  References: [Wikipedia: Daemon (computing)](https://en.wikipedia.org/wiki/Daemon_(computing)) in general; [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid) and `man 8 acpid` in our context.
+
+### Installation
+
+First install the `acpid` package and enable `acpid.service`:
+
+```sh
+# Install the acpid package
+sudo pacman -S acpid
+
+# Enable and start the acpid daemon
+systemctl enable --now acpid.service
+```
+
+The `acpid` service will then listen for ACPI events.
+
+### What's involved
+
+Following is a rough description of the relevant workflow.
+
+ACPI events are managed using text files in the directory `/etc/acpi/events/`.
+Each event file must define an ACPI event and an action to take in response to the event.
+These event files use a key value syntax of the form
+
+```sh
+# Comments are allowed on new lines
+event=<ACPI-event-regex>
+action=<shell-command>
+```
+The `event` key's value should be a regular expression matching the name(s) of ACPI event(s),
+and the `action` key's value should be a valid shell command, which will be invoked by `/bin/sh` whenever an ACPI event matching the `event` key's value occurs.
+
+By default, the directory `/etc/acpi/events/` contains a single file, called `anything`, with the following contents:
+
+```sh
+# Pass all events to our one handler script
+event=.*
+action=/etc/acpi/handler.sh %e
+```
+Explanation: This generic `anything` file catches all ACPI events using the wildcard `event=.*`.
+The event's name, accessed using the `%e` macro, is then passed as an argument to the default event handler script `/etc/acpi/handler.sh`.
+
+### Finding event labels
+
+ACPI events are identified by their names and labels;
+you'll need to find the name and label of the ACPI events triggered by pressing your brightness keys.
+It's easy:
+
+1. Open a terminal and run `acpi_listen` (an ACPI listener that comes with the `acpid` package).
+
+2. Press your brightness up and brightness down keys.
+   Here's the response on my computer:
+
+   ```sh
+   video/brightnessup BRTUP 00000086 00000000
+   video/brightnessdown BRTDN 00000087 00000000
+   ```
+   For example, the name for the brightness up event is `video/brightnessup`, and the corresponding label is `BRTUP`.
+   The last two columns are numerical IDs whose meaning I do not know.
+   Record the response on your computer---it will probably be the same as on mine.
+
+3. Exit `acpi_listen` with `<Ctrl>c`.
+
+The name in the output's first column (e.g. `video/brightnessup`) is matched against the `event` keys in the event files in `/etc/acpi/events`, and any matches will trigger the event file's `action` command.
+
+<!-- The four columns in the output of `acpi_listen` are sent to `/etc/acpi/handler.sh` as the arguments `$1`, `$2`, `$3`, and `$4`, and any other event files in `/etc/acpi/events` -->
+  
+Note that not all keys trigger ACPI events, for example (on my laptop; YMMV) the `F9` and `F10` media keys do not produce a response with `apci_listen`.
+
+### Key bindings and event handler for backlight control
+
+Here's the basic recipe:
+
+- Identify the name and label of a targeted ACPI event (e.g. pressing your brightness keys)
+- Create a shell script in `/etc/acpi/handlers` to perform an action in response to the ACPI event (e.g. adjust your backlight brightness)
+- Create a text file in `/etc/acpi/events` to register the ACPI event and run the handling shell script in response.
+
+Reference: [ArchWiki: Acpid > Enabling backlight control](https://wiki.archlinux.org/title/Acpid#Enabling_backlight_control).
+
+Find the output of `acpi_listen` in response to brightness key presses.
+In my case:
+
+```
+video/brightnessup BRTUP 00000086 00000000
+video/brightnessdown BRTDN 00000087 00000000
+```
+Record the event names (`video/brightnessup` and `video/brightnessdown`) and corresponding labels (`BRTUP` and `BRTDN`).
+
+Then create the following shell script to handle `brightnessup` and `brightnessdown` events.
+I've named it `backlight.sh` and placed it in the conventional location `/etc/acpi/handlers`, but you could name it anything you like and probably place it in any readable location on your file system.
+
+```sh
+#!/bin/sh
+# Location: /etc/acpi/handlers/backlight.sh
+# A script to control backlight brightness with ACPI events
+# Argument $1: either '-' for brightness up or '+' for brightness down
+
+# Path to the sysfs file controlling backlight brightness
+brightness_file="/sys/class/backlight/intel_backlight/brightness"
+
+# Step size for increasing/decreasing brightness.
+# Adjust this to a reasonable value based on the value of the file
+# `/sys/class/backlight/intel_backlight/max_brightness` on your computer.
+step=10
+
+case $1 in
+  # Increase current brightness by `step` when `+` is passed to the script
+  +) echo $(($(< "${brightness_file}") + ${step})) > "${brightness_file}";;
+
+  # Decrease current brightness by `step` when `-` is passed to the script
+  -) echo $(($(< "${brightness_file}") - ${step})) > "${brightness_file}";;
+esac
+```
+Make the handler script executable:
+
+```sh
+sudo chmod +x /etc/acpi/handlers/backlight.sh
+```
+
+Create the event files `/etc/acpi/events/BRTUP` and `/etc/acpi/events/BRTDN` (using the event labels is not necessary; you can use whatever alphanumeric characters you want that obey the naming conventions in the second paragraph of `man acpid`).
+Inside the files place
+
+```sh
+# Inside /etc/acpi/events/BRTUP
+event=video/brightnessup
+action=/etc/acpi/handlers/backlight.sh +
+
+# Inside /etc/acpi/events/BRTDN
+event=video/brightnessdown
+action=/etc/acpi/handlers/backlight.sh -
+```
+
+Reboot. The backlight keys should then change backlight brightness.
+
+
+## Troubleshooting: fix failed loading of `acpi_video0` with dual graphics
+
+(Probably irrelevant to most users, but I thought I'd include it after going through the problem myself.)
+
+Problem: after installing Arch on a MacBookPro with dual graphics (integrated Intel graphics, discrete AMD GPU), the `acpi_video0/` directory initially failed to appear in `/sys/class/backlight`.
+Also relevant: my start-up log when booting into Arch included the message:
+
+```sh
+[FAILED] Failed to start `Load/Save Screen Backlight Brightness of backlight:acpi_video0.`
+See `systemctl status systemd-backlight@backlight:acpi_video0.service` for details.
+```
+
+Solution: I got the `acpi_video0` directory to appear in `/sys/class/backlight` (and also eliminated the boot-up error message), by adding the kernel parameter `acpi_backlight=video` (as suggested in [ArchWiki: Backlight/Kernel command-line options](https://wiki.archlinux.org/title/backlight#Kernel_command-line_options)) to my boot configuration.
+
+To add pass the `acpi_backlight=video` parameter to the Linux kernel, *assuming you are using* `systemd-boot` *as your boot loader*, edit the file `/boot/loader/arch.conf`, and make the following change:
+
+```sh
+options root=/dev/sdaXYZ rw                       # before (for example)
+options root=/dev/sdaXYZ rw acpi_backlight=video  # after
+```
+
+(Or, for a one-time test, type `e` in the `systemd-boot` boot screen when logging in, and add `acpi_backlight=video` to the kernel parameters.) 
+
+For adding kernel parameters with other boot loaders, consult [ArchWiki: Kernel parameters](https://wiki.archlinux.org/title/Kernel_parameters).

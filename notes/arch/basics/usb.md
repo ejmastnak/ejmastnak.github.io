@@ -1,10 +1,16 @@
-## External storage
+---
+title: USB drives on Arch Linux
+---
 
-Goal: be able to read from and write to external hard drives, including those with the NTFS file system.
+# USB drives on Arch Linux
 
-References
+**Goal:** Read from and write to external USB drives, including those with the NTFS file system.
+
+**References:**
 - [Wiki: USB storage devices](https://wiki.archlinux.org/title/USB_storage_devices)
 - [Wiki: NTFS-3G](https://wiki.archlinux.org/title/NTFS-3G)
+- [https://wiki.archlinux.org/title/Udisks](https://wiki.archlinux.org/title/Udisks)
+- The `man` pages for `lsblk`, `mount`, `umount`, `udisksctl`, and `udisks`
 
 Requirements (depending on the file systems you want to interact with):
 - `dosfstools`
@@ -13,40 +19,60 @@ Requirements (depending on the file systems you want to interact with):
 
 These packages allow read/write interaction with the file systems commonly used on USB media.
 
-### Basic usage
-- Connect drive to computer via USB
-- Identify drive and data partition with `fsdisk -l` or `lsblk`.
+## Manual everything
 
-  Should be something like `/dev/sdb2` (for example)
+Well there's a decent amount going on here.
+You should roughly grok what a block device is, and what partitions are.
+You should know what a file system is.
+You have to mount the USB drive's filesystem to your computer, so the USB drive's files are accessible on your system.
 
-  Note that the Seagate drive itself was `/dev/sdb`, but the data partition was `/dev/sdb2`, which was obvious based on the `b2` partition's 5 TB size.
+- For future reference, run `lsblk` and remember the output without a USDB connected 
 
-- Create a mount directory as root
+- Physically connect USB drive to computer via a USB port
+
+- Run `lsblk` and identify the drive's block device and data partition:
   ```sh
-  mkdir /mnt/seagate
+  $ lsblk
   ```
-- Mount the drive's data partition (again as root)
+  It takes a little experience to interpret the output. 
+  The USB drive's block device might be `sdb`.
+  Identify the data partition based on the known disk size---the data partition should take up the majority of the full disk size.
+
+- Create a mount directory inside `/mnt` to hold the drive's files.
+  You can name it whatever you want; perhaps use the manufacturer of the drive:
   ```sh
-  mount /dev/sdb2 /mount/seagate
-  lsblk  # for orientation, to ensure the drive is mounted
+  sudo mkdir /mnt/seagate
   ```
-  From [https://wiki.archlinux.org/title/NTFS-3G](https://wiki.archlinux.org/title/NTFS-3G), the `mount` command should know to use the `ntfs` file system after an installation of `ntfs-3g`
+  You only need to do this step once.
 
-- Interact with the files from the `/mnt/seagate` directory
+- Mount the drive's data partition to the mount directory
+  ```sh
+  sudo mount /dev/sdb2 /mount/seagate
+  ```
+  Optionally use `lsblk` to check that the USB drive is mounted to the just-created mount directory.
 
-- "Eject" the drive with (as root)
+- Interact with the files on the USB drive from the `/mnt/seagate` directory, reading and writing as needed.
+  You'll need root privileges to write.
+
+- To eject the drive
   ```sh
   umount /mnt/seagate  # by specifying mount point (preferred)
   umount /dev/sdb2     # by specifying device
+
+  # Power off
+  echo 1 > /sys/block/DISK_NAME/device/delete
   ```
   From `man umount`, specifying the mount directory is preferred, in case the physical device is mounted to multiple directories.
 
+  For the power off line see [https://unix.stackexchange.com/a/43450](https://unix.stackexchange.com/a/43450)
+  and [ArchWiki: USB storage/Device not shutting down after unmounting all partitions](https://wiki.archlinux.org/title/USB_storage_devices#Device_not_shutting_down_after_unmounting_all_partitions)
 
-### Safely ejecting with `udisks2`
+## Using `udisksctl`
+
+### Ejecting with `udisks2`
 This package allows you to disconnect power from an e.g. USB drive, which makes for safer ejecting.
 
 Reference:
-- [https://wiki.archlinux.org/title/Udisks](https://wiki.archlinux.org/title/Udisks)
 - `man udisksctl` and `man udisks`
 
 - Install the `udisks2` package
@@ -66,3 +92,11 @@ Reference:
   udisksctl power-off -b /dev/sdb
   ```
   Again, note that `udisksctl unmount` uses the device's data partition (e.g. `/dev/sdb2`) while `udisksctl power-off` uses the device itself (e.g. `/dev/sdb`).
+
+
+### File systems
+
+
+The `mount` command should detect the USB drive's file system and use the appropriate library if needed.
+See e.g. [https://wiki.archlinux.org/title/NTFS-3G](https://wiki.archlinux.org/title/NTFS-3G): the `mount` command should know to use the `ntfs` file system after an installation of `ntfs-3g`.
+
