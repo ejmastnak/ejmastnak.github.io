@@ -4,9 +4,11 @@ title: Arch Linux Post-Installation Configuration
 
 # Find Your Footing After Installing Arch Linux
 
-Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch Linux
+**What you're reading:** Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch Linux
 (read: solutions to all my stumbling points when migrating to Arch from macOS).
 The material should be applicable, with adjustments to package installation, to most `systemd`-based Linux distros.
+
+**Purpose:** lower the barrier to entry and improve the transition experience for new users.
 
 ## Useful basics
 
@@ -47,17 +49,17 @@ Change your typematic rate and typematic delay---basically make pressed-down key
 
 *Coming soon (e.g. 2 weeks).*
 
-[**External monitor I: First steps**](#)
+[**Control laptop backlight brightness**]({% link notes/arch/graphics/backlight.md %})
 <br>
-Make your display show up on an external monitor.
+Change your laptop's backlight brightness with your keyboard function keys.
+
+[**External monitor I: First steps**]({% link notes/arch/graphics/displays.md %})
+<br>
+Make your display appear on an external monitor.
 
 [**External monitor II: Hotplugging**](#)
 <br>
 Automatically switch display to an external monitor after plugging in an HDMI or DisplayPort cable.
-
-[**Control backlight brightness**](#)
-<br>
-Change your backlight brightness with your keyboard function keys.
 
 [**Control volume**](#)
 <br>
