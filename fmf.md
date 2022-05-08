@@ -7,7 +7,7 @@ title: FMF
 
 - What you're reading: the collection of typeset notes I compiled while studying in the physics program at the [Faculty of Mathematics and Physics](https://www.fmf.uni-lj.si/en/) (FMF) at the University of Ljubljana in Slovenia.
   The notes come mostly from the final three semesters.
-- Wait you typeset 1500 pages of lecture notes in three semsters?
+- Wait you wrote 1500 pages of LaTeX lecture notes in three semsters?
   Yeah I guess it turned out that way, here's a guide to how I did it: [Real-time LaTeX with (Neo)Vim]({% link tutorials/vim-latex/intro.md %}).
 - Intended audience: primarily FMF students taking the same courses, but everyone is welcome!
 - Bonus: [summary of the FMF undergraduate curriculum]({% link fmf-pdfs/meta/fmf-courses.pdf %})
