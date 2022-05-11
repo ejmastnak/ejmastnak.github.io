@@ -36,8 +36,6 @@ You're welcome to read this anyway, and perhaps you'll learn something useful ab
 
 <!-- vim-markdown-toc -->
 
-Use `xbacklight` in practice.
-
 ## Adjust backlight brightness from a shell
 
 Plan: first show how to adjust laptop brightness from a command-line shell, then set up key bindings to do this automatically.
@@ -300,7 +298,7 @@ sudo chmod +x /etc/acpi/handlers/backlight.sh
 
 #### Create event-matching files
 
-Create the event files `/etc/acpi/events/BRTUP` and `/etc/acpi/events/BRTDN` (using the event labels is not necessary; you can use whatever alphanumeric characters you want that obey the naming conventions in the second paragraph of `man acpid`).
+Create the event files `/etc/acpi/events/BRTUP` and `/etc/acpi/events/BRTDN` (using the event labels `BRTUP` and `BRTDN` is not necessary; you can use whatever alphanumeric characters you want that obey the naming conventions in the second paragraph of `man acpid`).
 Inside the files place:
 
 ```sh
