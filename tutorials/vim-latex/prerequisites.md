@@ -12,8 +12,9 @@ next-display-name: "2. Snippets »"
 
 # 1. Suggested Prerequisites for Writing LaTeX in Vim
 This is part one in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
-This article covers the prerequisites you should probably meet to get the most out of this series.
-These prerequisites are listed below; each includes a suggestion or mini-tutorial for getting up to speed.
+I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
+Each prerequisites is listed below and includes a suggestion or mini-tutorial for getting up to speed.
+You should be comfortable with the material below to get the most out of this series.
 
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
@@ -83,9 +84,9 @@ At the risk of belaboring the obvious, this means you must have either the `vim`
       for installation I suggest <a href="https://formulae.brew.sh/formula/vim">using Homebrew</a> on macOS or consulting your distribution’s package manager on Linux.</li>
     <li>
       <p>And here are the <a href="https://github.com/neovim/neovim/wiki/Installing-Neovim">official instructions for installing Neovim</a> (which are much friendlier to beginners than Vim’s instructions).
-      <em>If you are choosing between Vim and Neovim specifically for the purpose of this series, I encourage you to choose Neovim—</em>skipping ahead somewhat, connecting Neovim to your PDF reader will be easier because of Neovim’s implementation of the remote procedure call protocol.</p>
+      <em>If you are choosing between Vim and Neovim specifically for the purpose of this series, I encourage you to choose Neovim</em>: connecting Neovim to your PDF reader will be easier because of Neovim’s implementation of the remote procedure call protocol.</p>
     </li>
-    <li>To get started with Vim, try the interactive Vim tutorial (usually called the “Vim tutor”) that ships with Vim.
+    <li>To get started with Vim/Neovim, try the interactive Vim tutorial (usually called the “Vim tutor”) that ships with Vim.
   You access the Vim tutor differently depending on your choice of Vim and Neovim.
       <ul>
         <li>If you have Vim (or gVim or MacVim) installed: open a terminal emulator and enter <code class="language-plaintext highlighter-rouge">vimtutor</code>.</li>
