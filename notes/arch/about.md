@@ -21,7 +21,7 @@ Your pinky will thank you.
 <br>
 Connect to the Internet via WiFi or Ethernet using NetworkManager.
 
-[**Window system**]({% link notes/arch/basics/startx.md %})
+[**X Window System**]({% link notes/arch/basics/startx.md %})
 <br>
 A minimal graphical environment using the Xorg display server and the i3 window manager.
 
@@ -36,10 +36,6 @@ Get a desktop notification to *Charge your battery!* for low battery levels.
 [**Copy and paste**]({% link notes/arch/basics/copy-paste.md %})
 <br>
 A unified clipboard experience across your GUI applications, the Alacritty terminal, and Vim.
-
-[**Media player control**]({% link notes/arch/basics/playerctl.md %})
-<br>
-Play, pause, and skip music/videos system-wide with a single press of your keyboard.
 
 [**Type faster**]({% link notes/arch/basics/typematic-rate.md %})
 <br>
@@ -57,11 +53,16 @@ Change your laptop's backlight brightness with your keyboard function keys.
 <br>
 Make your display appear on an external monitor.
 
-[**External monitor II: Hotplugging**](#)
-<br>
+[**External monitor II: Hotplugging**]({% link notes/arch/graphics/monitor-hotplug.md %}) <br>
 Automatically switch display to an external monitor after plugging in an HDMI or DisplayPort cable.
 
-[**Control volume**](#)
+## Media
+
+[**Media player control**]({% link notes/arch/media/playerctl.md %})
+<br>
+Play, pause, and skip music/videos system-wide with a single press of your keyboard.
+
+[**Control volume**]({% link notes/arch/media/volume.md %})
 <br>
 Change audio volume with your keyboard function keys.
 
