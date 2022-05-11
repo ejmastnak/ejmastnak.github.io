@@ -1,30 +1,61 @@
 ---
-title: Connect laptop to an external monitor on Linux
+title: Connect laptop to an external monitor on Linux on X
 ---
 
-# Connect laptop to an external monitor
+# Connect laptop to an external monitor on X
 
-**Goal:** understand how to make a laptop's internal display appear on an external monitor, then write shell script and `udev` rule to do this for you.
+**Goal:** understand how to make an X Window System display appear on an external monitor using `xrandr`, then write a shell script that does this for you.
 
-**Context:** you've just installed Arch, connect your laptop to an external monitor, and... nothing happens.
-Blank monitor screen.
+**Read this if:** you've just installed Arch, start up an X session, connect your laptop to an external monitor, and... nothing happens---blank monitor screen.
+I only cover a single-monitor set-up here;
+see [ArchWiki: Multihead](https://wiki.archlinux.org/title/Multihead) for multi-monitor set-ups.
 
-**Reference:** [ArchWiki: xrandr](https://wiki.archlinux.org/title/xrandr).
+**References:**
+- [ArchWiki: xrandr](https://wiki.archlinux.org/title/xrandr): the de-facto tool for controlling displays on the X Window System.
+- [GitHub: autorandr](https://github.com/phillipberndt/autorandr): a well-received, automated alternative to `xrandr` (not covered here).
 
-(This is part 1. Read [part 2]({% link /notes/arch/graphics/monitor-hotplug.md %}) for hot-plugging.)
+(This is part 1. Read [part 2]({% link notes/arch/graphics/monitor-hotplug.md %}) for hot-plugging.)
 
 ## Procedure
 
-Use the [xrandr utility](https://wiki.archlinux.org/title/xrandr).
+<!-- vim-markdown-toc GFM -->
 
-First identify the names of all video outputs available on your computer.
+* [Explanation of what's involved](#explanation-of-whats-involved)
+* [Identifying video output names](#identifying-video-output-names)
+* [Toggling displays](#toggling-displays)
+* [Example single-monitor workflow](#example-single-monitor-workflow)
+* [Example script for toggling displays](#example-script-for-toggling-displays)
+
+<!-- vim-markdown-toc -->
+
+First make sure you have the [`xorg-xrandr` package](https://archlinux.org/packages/extra/x86_64/xorg-xrandr/) installed (note that `xorg-xrandr` ships with the commonly-installed `xorg` group, so you might already have it on your system).
+We'll need this package to access the `xrandr` utility.
+
+### Explanation of what's involved
+
+The X Window System manages the graphical display (the rectangular grid of pixels representing windows, menus, status bars, etc.) that you probably see on your laptop screen.
+
+The `xrandr` utility can send the X display to a physical screen (your laptop's built-in screen, an external monitor, a TV, etc.) via what `xrandr` calls a *video output*,
+which is a software abstraction of either a physical video port (e.g. HDMI, DisplayPort, etc.) or the ribbon cables and other hardware connecting your laptop's monitor to its built-in LED/LCD screen.
+
+Very loosely, here is what happens under the hood when you properly connect a monitor:
+1. The `xrandr` utility sends the X display to one of your computer's video ports.
+1. The X display travels from the video port into the monitor as an electrical carried by a physical cable (e.g. HDMI).
+1. The circuitry inside the monitor converts the signal into the visible pixel display you see when you use the monitor.
+
+This guide covers step 1, i.e. making `xrandr` send the X display to a physical video output port.
+Your computer's graphics card and the monitor itself should take care of the rest.
+
+### Identifying video output names
+
+The `xrandr` utility identifies video outputs with a short name;
+simply run `xrandr` in a command-line shell to show information about all available video outputs.
+Here's an example on my laptop:
 
 ```sh
-xrandr
+$ xrandr
 
-Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 16384 x 16384
-
-# The laptop's internal display (always connected)
+# The laptop's screen (always connected)
 eDP-1 connected primary (normal left inverted right x axis y axis)
   1920x1080     60.01 +  60.01    59.97    59.96    59.93
   1680x1050     59.95    59.88
@@ -33,92 +64,159 @@ eDP-1 connected primary (normal left inverted right x axis y axis)
 # The laptop's DisplayPort output (currently disconnected)
 DP-1 disconnected (normal left inverted right x axis y axis)
 
-# The laptop's HDMI output (currently connected)
+# The laptop's HDMI output (currently discconnected)
+HDMI-1 disconnected (normal left inverted right x axis y axis)
+```
+The video output names here are `eDP-1`, `DP-1`, and `HDMI-1`.
+The output names should match a physical video port (HDMI, DisplayPort, etc.) on your laptop, 
+and you might have multiple versions, for example `HDMI-1`, `HDMI-2` if you have multiple HDMI ports.
+
+You'll need to identify the `xrandr` output name for the video port you'll use to connect your monitor.
+Here's a straightforward way to do so:
+
+1. Run `xrandr` with no cables connected, and remember which video outputs are `disconnected`.
+1. Pick the physical video port you plan on using for connecting your monitor, and plug in a connection cable (HDMI, DisplayPort, etc.)
+1. Run `xrandr` again, with the video cable connected, and record which output changed from `disconnected` to `connected`.
+
+Here's an example from my laptop after connecting an HDMI cable:
+
+```sh
 HDMI-1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 527mm x 296mm
-  1920x1080     60.00*   50.00    59.94
-  1920x1080i    60.00    50.00    59.94
-  # and a long list of more available resolutions...
-```
-The output names here are `eDP-1`, `DP-1`, and `HDMI-1`.
-You might have multiple versions of outputs, e.g. `HDMI-1`, `HDMI-2`, etc.
-
-Each of these entry should match a physical I/O port on your laptop.
-
-You'll need to identify `xrandr` outputs to video ports.
-
-TLDR: run `xrandr` with no cables connected, connect a cable, and run `xrandr` again.
-Record which output changed from `disconnected` to `connected`.
-Repeat as necessary.
-In practice you only need the name of the physical I/O port you plan on using for connecting a monitor.
-
-First run `xrandr` without any display cables connected to your laptop.
-Only the internal display (`eDP-1` on my computer, YMMV) should be `connected`.
-
-Now plug in an HDMI/DisplayPort/USB-C/whatever-else-you'll-use cable into whatever port you'll plan on using in practice.
-
-Run `xrandr` again.
-A new output should now be `connected`.
-
-First step is to find the names of available output displays.
-
-I used the `xrandr` command and got the following output names:
-- `eDP-1` (internal display)
-- `DP-1` (DisplayPort)
-- `HDMI-1` (HDMI)
-
-These all appear in `xrandr`'s output regardless of monitor status, and indeed show `connected` or `disconnected` as would be expected when I connect or disconnect ports.
-
-My monitor's resolution is 1920x1080 by the way (based on manufacturer information). Some info about laptop's internal screen from `xrandr`:
-```sh
-Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 16384 x 16384
-eDP-1 connected primary (normal left inverted right x axis y axis)
-
-[omitted: various other resolutions]
+   1920x1080     60.00*   50.00    59.94
+   1920x1080i    60.00    50.00    59.94
+   # and many other available resolutions
 ```
 
-#### Toggling displays
+Note that graphics devices (e.g. the `eDP-1` outputed by `xrandr`) should also be listed in the `sysfs` file system directory `/sys/class/drm/`.
 
-For my purposes, relevant commands are
-```sh
-xrandr --output {name} --auto  # set resolution automatically
-xrandr --output {name} --mode 1920x1080  # set resolution manually
-xrandr --output {name} --off
-```
-Some examples:
-```sh
-xrandr --output DisplayPort-1 --auto
-xrandr --output DisplayPort-1 --mode 1920x1080
-xrandr --output eDP --off          # turn off laptop display
-xrandr --output eDP --auto         # turn on laptop display
-```
-Workflow:
-- Laptop may be powered on (hotplugging seems okay)
-- Turn monitor off to be safe (but may not be necessary; hotplugging seems okay)
-- Plug monitor input to laptop's DisplayPort output (in my case using an HDMI-DisplayPort adapter, which is irrelevant here)
-- Turn monitor on
-- Call the following commands
+**Check-in point:** you should know the `xrandr` name (e.g. `HDMI-1`, `DP-1`, etc.) of the video output you plan on using to connect your monitor.
+
+### Toggling displays
+
+You can send the X display to a video output using `xrandr`'s `--output` option.
+
+- **Turn on:** to send the X display to a video output using the output's preferred resolution:
+
   ```sh
-  xrandr --output DisplayPort-1 --auto
-  xrandr --output eDP --off
+  # Send display to `{output-name}` and set resolution/DPI automatically
+  xrandr --output {output-name} --auto
+
+  # Send output to first HDMI port and set resolution/DPI automatically
+  xrandr --output HDMI-1 --auto
   ```
-  The first sends video output to `DisplayPort-1` and the second turns laptop screen off (to save energy).
-- When ready to turn laptop back on:
+
+  You should generally use the above `--auto` option, but can also specify a specific resolution:
+
   ```sh
-  xrandr --output eDP --auto
-  xrandr --output DisplayPort-1 --off
+  # Send display to `{output-name}` and set resolution to 1920x1080 px
+  xrandr --output {name} --mode 1920x1080
   ```
-Note that graphics devices (e.g. the `eDP-1` outputed by `xrandr`) are listed in `/sys/class/drm/`.
+  
+- **Turn off:** to stop sending X display to a video output:
 
-#### Example script for toggling displays, 
-Adapted from [ArchWiki: Toggle external monitor](https://wiki.archlinux.org/title/xrandr#Toggle_external_monitor)
+  ```sh
+    # Turn off display to `{output-name}`
+    xrandr --output {name} --off
+
+    # Turn off laptop's built-in LED/LCD display
+    xrandr --output eDP-1 --off
+
+    # Cut off display sent to HDMI port
+    xrandr --output HDMI-1 --off
+  ```
+
+Multiple commands can be combined into one line:
+
 ```sh
-#!/bin/bash
-internal=eDP
-external=DisplayPort-1
+# Send display to `HDMI-1` and cut off internal display `eDP-1`
+xrandr --output HDMI-1 --auto --output eDP-1 --off
+```
 
-if xrandr | grep "${external} disconnected"; then
-    xrandr --output "${external}" --off --output "${internal}" --auto
+### Example single-monitor workflow
+
+At this point you have all the tools you need---use `xrandr` to identify output names, `xrandr --ouput {name} --auto` to send the X display to an output, and `xrandr --ouput {name} --off` to turn off outputs.
+
+Here is an example workflow, but feel free to create your own:
+
+- Connect laptop to monitor via e.g. HDMI cable 
+  (hot-plugging is fine---both the laptop and monitor may be powered on).
+
+- Run `xrandr --output HDMI-1 --auto` to send your laptop's display to the monitor via the laptop's HDMI port.
+  
+- Optionally run `xrandr --output eDP-1 --off` to turn the laptop's display off (to save battery).
+  Caution: this turns off the laptop's screen completely, and you'll have to run `xrandr --output eDP-1 --auto` (e.g. using the monitor display for visual feedback) before you can use the laptop's screen again.
+  (At worst, you can always reboot by pressing the power button, and the laptop's screen will turn back on.)
+  
+- When ready to disconnect the laptop from the monitor:
+
+  ```sh
+  # Send display back to laptop's built-in screen (if needed)
+  xrandr --output eDP-1 --auto
+
+  # Stop sending display to monitor
+  xrandr --output HDMI-1 --off
+  ```
+  You can then turn the monitor off.
+
+### Example script for toggling displays
+
+You'll probably want to wrap the above `xrandr` commands in an executable shell script for convenience.
+Following are some examples; assuming a little bit of shell script literacy, you can adjust them as you like.
+
+Adapted from [ArchWiki: Toggle external monitor](https://wiki.archlinux.org/title/xrandr#Toggle_external_monitor):
+
+```sh
+#!/bin/sh
+
+# Useful for a laptop: checks if the output to external monitor is
+# connected/disconnected, and toggles internal/external display accordingly.
+
+# Names of `xrandr` outputs for internal and external displays; change as needed
+internal=eDP-1
+external=HDMI-1
+
+# Send display to external monitor when it is physically connected
+if xrandr | grep "${external} connected"; then
+    xrandr --output "${external}" --auto
+    # Optionally turn off laptop screen to save battery while connected to monitor
+    # xrandr --output "${internal}" --off  
+
+# Turn off display to external monitor when it is physically disconnected
 else
-    xrandr --output "${internal}" --off --output "${external}" --auto
+    xrandr --output "${external}" --off
+    # Turn laptop screen back on (if needed)
+    xrandr--output "${internal}" --auto
 fi
+```
+
+You can also just write two scripts: one for connecting the laptop to a monitor and one for disconnecting.
+
+```sh
+#!/bin/sh
+# Very simple script to turn external display on and internal display off
+# Use case: when connecting laptop to external monitor
+
+internal=eDP-1
+external=HDMI-1
+
+# Turn external display on
+xrandr --output ${external} --auto
+
+# Turn internal display off
+xrandr --output ${internal} --off
+```
+
+```sh
+#!/bin/sh
+# Very simple script to turn external display off and internal display on
+# Use case: just before disconnecting laptop from monitor
+
+internal=eDP-1
+external=HDMI-1
+
+# Turn internal display on
+xrandr --output ${internal} --auto
+
+# Turn external display off
+xrandr --output ${external} --off
 ```
