@@ -25,9 +25,9 @@ Connect to the Internet via WiFi or Ethernet using NetworkManager.
 <br>
 A minimal graphical environment using the Xorg display server and the i3 window manager.
 
-[**USB**]({% link notes/arch/basics/usb.md %})
-<br>
-Read and write data from external USB drives.
+<!-- [**USB**]({% link notes/arch/basics/usb.md %}) -->
+<!-- <br> -->
+<!-- Read and write data from external USB drives. -->
 
 [**Battery alert**]({% link notes/arch/basics/battery-alert.md %})
 <br>
@@ -42,8 +42,6 @@ A unified clipboard experience across your GUI applications, the Alacritty termi
 Change your typematic rate and typematic delay---basically make pressed-down keys repeat faster---in X and in the console.
 
 ## Graphics
-
-*Coming soon (e.g. 2 weeks).*
 
 [**Control laptop backlight brightness**]({% link notes/arch/graphics/backlight.md %})
 <br>
@@ -62,13 +60,13 @@ Automatically switch display to an external monitor after plugging in an HDMI or
 <br>
 Play, pause, and skip music/videos system-wide with a single press of your keyboard.
 
-[**Control volume**]({% link notes/arch/media/volume.md %})
-<br>
-Change audio volume with your keyboard function keys.
+<!-- [**Control volume**]({% link notes/arch/media/volume.md %}) -->
+<!-- <br> -->
+<!-- Change audio volume with your keyboard function keys. -->
 
 ## Eye candy
 
-*Coming soon (e.g. 3 weeks).*
+*Coming soon (e.g. 2 weeks).*
 
 [**Wallpaper I: First steps**](#)
 <br>
