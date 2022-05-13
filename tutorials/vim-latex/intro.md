@@ -21,7 +21,7 @@ Here is an example of what I have in mind:
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 More on how this works below.
 
-**Goal of this guide:** teach you a system based on snippets, Vim's text objects, and the VimTeX project's editing features that makes writing LaTeX as easy as writing by hand.
+**Goal of this guide:** make writing LaTeX as easy (fast, efficient, enjoyable...) as writing math by hand using a system based on the Vim text editor, snippets, and the VimTeX project's editing features.
 The series should help if you...
 
 - are interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
@@ -32,6 +32,7 @@ The series should help if you...
 **What it costs you:** everything in the guide is free, but it will cost you time and effort.
 You can skim through the guide in about 15 minutes; a closer read-through might take 45-60 minutes;
 and you'll realistically need a few weekends (or perhaps a few weeks if you're new to Vim) of focus and effort to become fully functional.
+From that point reaching the speed in this page's GIFs would probably take a few months of practice.
 
 ### Plan
 
