@@ -21,7 +21,8 @@ Here is an example of what I have in mind:
 The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 More on how this works below.
 
-**Goal of this guide:** make writing LaTeX as easy (fast, efficient, enjoyable...) as writing math by hand using a system based on the Vim text editor, snippets, and the VimTeX project's editing features.
+**Goal of this guide:** make writing LaTeX as easy (fast, efficient, enjoyable...) as writing math by hand.
+Tech stack: the Vim text editor using the UltiSnips snippet plugin and the VimTeX plugin's LaTeX editing features.
 The series should help if you...
 
 - are interested in taking real-time lecture notes using LaTeX, à la [Gilles Castel](https://castel.dev/),
@@ -78,7 +79,7 @@ I'll show you practical tips and tricks I use in everyday, real-life writing.
 You'll find plenty of examples and GIFs.
 I might even crack a joke or two.
 Basically, I'll try to teach how I would like to be taught.
-Hope you enjoy!
+Hope it's helpful!
 
 #### The original Vim-LaTeX article
 By the way: the seminal work on the subject of Vim and LaTeX, and my inspiration for attempting and ultimately succeeding in writing real-time LaTeX using Vim, is Gilles Castel's [*How I'm able to take notes in mathematics lectures using LaTeX and Vim*](https://castel.dev/post/lecture-notes-1/).
