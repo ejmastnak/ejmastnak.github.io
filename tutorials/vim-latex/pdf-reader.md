@@ -508,7 +508,7 @@ Building Zathura is described in the VimTeX documentation at `:help vimtex-faq-z
 ### Building Zathura on macOS
 Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how to build Zathura on macOS:
 1. Check if you already have Zathura installed using e.g. `which zathura`.
-   If you have a Zathura installed, I recommend uninstalling it and repeating from scratch to ensure all dependencies are correctly sorted out.
+   If you have Zathura installed, I recommend uninstalling it and repeating from scratch to ensure all dependencies are correctly sorted out.
 
 1. If needed, uninstall your existing Zathura and related libraries with the following code:
 
@@ -526,17 +526,47 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
     ```
 
 1. Zathura needs `dbus` to work properly;
-   install it with `brew install dbus`, or, if it is already installed, reinstall it (this seems necessary for some unknown reason): `brew reinstall dbus`.
+   install it with `brew install dbus`. 
+   If you already have `dbus` installed, [rumor has it](https://github.com/lervag/vimtex/issues/1737#issuecomment-759953886) that you should reinstall it with `brew reinstall dbus`, although I have not checked if this is necessary myself.
 
-1. Set you `dbus` session address by placing the following in your shell's configuration file (e.g. `.bashrc`, `.zshrc`, etc.)
+1. Set a bus address for `dbus` sessions with the following environment variable:
+   
+   ```sh
+   DBUS_SESSION_BUS_ADDRESS="unix:path=$DBUS_LAUNCHD_SESSION_BUS_SOCKET" 
+   ```
+
+   You should then make this change permanent by placing the following code in one of your shell's start-up files:
 
    ```sh
    export DBUS_SESSION_BUS_ADDRESS="unix:path=$DBUS_LAUNCHD_SESSION_BUS_SOCKET" 
    ```
-1. Change the value of `<auth><\auth>` in
-  `/usr/local/opt/dbus/share/dbus-1/session.conf` from `EXTERNAL` to `DBUS_COOKIE_SHA1`.
 
-1. Run `brew services start dbus`.
+   You could place this in your `~/.bash_profile` (Bash), `~/.zprofile` (ZSH), or perhaps an `rc` file, depending on your shell and personal shell start-up configuration.
+
+   If you are new to setting environment variables and the shell environment, you might want to read through the discussion [VimTeX issue #2391](https://github.com/lervag/vimtex/issues/2391#issuecomment-1127129402), which solves a Zathura issue by properly setting `DBUS_SESSION_BUS_ADDRESS`---thanks to [@liamd101](https://github.com/liamd101) on this one!
+   (This issue involves a Bash shell, but would work for ZSH by replacing `~/.bash_profile` with `~/.zprofile`.)
+   
+1. Change the value of `<auth><\auth>` in
+  `/usr/local/opt/dbus/share/dbus-1/session.conf` from `EXTERNAL` to `DBUS_COOKIE_SHA1`:
+
+   ```sh
+   # Before
+   <auth>EXTERNAL<\auth>
+
+   # After
+   <auth>DBUS_COOKIE_SHA1<\auth>
+   ```
+  
+1. Run `brew services start dbus` to start `dbus`.
+   You can double-check `dbus` is running with `brew services info dbus`, which should output something like this (potentially after a reboot):
+
+   ```sh
+   $ brew services info dbus
+   dbus (org.freedesktop.dbus-session)
+   Running: ✔
+   Loaded: ✔
+   ```
+   
 
 1. Install the most recent version of Zathura (i.e. HEAD):
 
@@ -556,7 +586,7 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
    
 1. Reboot and enjoy Zathura.
 
-For the original GitHub discussion that produced the instructions in `:help vimtex-faq-zathura-macos`, see the GitHub issue [Viewer cannot find Zathura window ID on macOS #1737](https://github.com/lervag/vimtex/issues/1737#issuecomment-759953886).
+For the original GitHub discussion that produced the instructions in `:help vimtex-faq-zathura-macos`, see the VimTeX issue [Viewer cannot find Zathura window ID on macOS #1737](https://github.com/lervag/vimtex/issues/1737).
 
 ### Setting up Zathura on macOS
 Here is how to set up Zathura on macOS (many steps are similar to those for [setting up Zathura on Linux](#zathura-read-this-on-linux); please excuse any repetition):
