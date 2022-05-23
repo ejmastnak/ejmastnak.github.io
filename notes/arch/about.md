@@ -60,9 +60,9 @@ Automatically switch display to an external monitor after plugging in an HDMI or
 <br>
 Play, pause, and skip music/videos system-wide with a single press of your keyboard.
 
-<!-- [**Control volume**]({% link notes/arch/media/volume.md %}) -->
-<!-- <br> -->
-<!-- Change audio volume with your keyboard function keys. -->
+[**Control volume**]({% link notes/arch/media/volume.md %})
+<br>
+Change audio volume with your keyboard function keys.
 
 ## Eye candy
 

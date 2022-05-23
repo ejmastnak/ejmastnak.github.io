@@ -4,275 +4,318 @@ title: Adjust volume on Arch Linux
 
 # Volume adjustment on Arch Linux
 
-**Goal:** understand how to programmatically adjust audio playback volume from the command line, then create convenient key bindings to do this for you.
+**Goal:** understand how to programmatically adjust audio playback volume from the command line either through ALSA or PulseAudio, then create convenient key bindings to do this for you.
 
-**Read this if:** your laptop has two keyboard functions keys for increasing and decreasing audio volume, but these keys have no effect on your volume after a standard install of Arch.
+**Read this if:** your laptop has keyboard functions keys for increasing and decreasing audio volume, but these keys have no effect on your volume after a standard install of Arch.
+If your volume keys already work (perhaps your window manager or desktop environment configured them for you), you probably don't need this guide.
 
 **References:**
-- [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid)
 - [ArchWiki: ALSA](https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture)
+- [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid)
+- [Wikipedia: Sound server](https://en.wikipedia.org/wiki/Sound_server)
 
-(Note: this page closely parallels my guide to [controlling a laptop's backlight brightness]({% link notes/arch/graphics/backlight.md %}), since both rely `acpid` to set key bindings.)
+<!-- (Note: this page closely parallels my guide to [controlling a laptop's backlight brightness]({% link notes/arch/graphics/backlight.md %}), since both rely `acpid` to set key bindings.) -->
+
+## Procedure
+
+There are two independent tasks in this article: (1) learning the shell commands to control volume and (2) binding these commands to keyboard keys using `xbindkeys`.
+
+<!-- vim-markdown-toc GFM -->
+
+* [Adjust volume from a shell](#adjust-volume-from-a-shell)
+  * [Kernel-level drivers and sound servers](#kernel-level-drivers-and-sound-servers)
+  * [Your choices](#your-choices)
+  * [Control volume with ALSA and `amixer`](#control-volume-with-alsa-and-amixer)
+  * [Control volume with PulseAudio and `pactl`](#control-volume-with-pulseaudio-and-pactl)
+  * [Shell script for volume control](#shell-script-for-volume-control)
+* [Convenient key mappings for volume control](#convenient-key-mappings-for-volume-control)
+    * [Detect key symbols](#detect-key-symbols)
+    * [Define key bindings in `.xbindkeysrc`](#define-key-bindings-in-xbindkeysrc)
+    * [Activate key bindings](#activate-key-bindings)
+* [Bonus: Cap PulseAudio volume at 100%](#bonus-cap-pulseaudio-volume-at-100)
+
+<!-- vim-markdown-toc -->
 
 ## Adjust volume from a shell
 
-The Arch Linux sound system has multiple levels.
-See [ArchWiki: Sound System/General information](https://wiki.archlinux.org/title/sound_system#General_information).
-There are low-level drivers and APIs (ALSA)
-and optionally sound server. 
-Common sound servers are PulseAudio (`pulseaudio` package), PipeWire (`pipewire` package), and JACK (`jack2` package).
-PulseAudio is probably the most common.
+### Kernel-level drivers and sound servers
 
-You can control volume either through ALSA or through a sound server.
-Controlling volume through ALSA (more low level) can work badly if you also have a sound server installed.
+You're blessed (cursed?) with multiple choices.
+Here's the problem: The Arch Linux sound system has multiple levels (see e.g. [ArchWiki: Sound System/General information](https://wiki.archlinux.org/title/sound_system#General_information)).
+These include:
 
-From Wikipedia:
+- Low-level drivers and APIs (*required* for sound to work).
+  <br>
+  Examples: [ALSA](https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture) (ships with Arch by default, already installed, and by far the most common); [OSS](https://wiki.archlinux.org/title/Open_Sound_System) (an ALSA alternative you'd have to install manually from the AUR).
+  
+- A sound server (*optional*, but most users end up installing one).
+  <br>
+  Examples: PulseAudio (`pulseaudio` package), PipeWire (`pipewire` package), and JACK (`jack2` package).
+A sound server, among other things, makes it possible for different applications play audio at different volumes, and is a typical component of a modern desktop computing setup.
 
-> A sound server is software that manages the use of and access to audio devices (usually a sound card). It commonly runs as a background process. 
+You can read more about a typical sound system stack at [Wikipedia: Sound server/Layers](https://en.wikipedia.org/wiki/Sound_server#Layers).
 
-The choice depends on whether you have
+**What this guide covers:** I'll only cover ALSA and the PulseAudio sound server in this guide.
+Reasoning: everyone has ALSA, and PulseAudio is (as far as I know) the most common sound server.
+You'll have to look elsewhere to adjust volume using a different sound server.
 
-- No PulseAudio: use `amixer`
-- PulseAudio: use `pactl` 
-- PulseAudio: install `pulseaudio-alsa` and use `amixer` (works for me; the Internet suggests results may vary)
+### Your choices
 
-Plan: first show how to adjust volume from a command-line shell, then set up key bindings to do this automatically.
+You have two common ways to control volume:
 
-We'll use ALSA (the Advanced Linux Sound Architecture) for the audio portion of this guide.
-ALSA provides sound card drivers that allow the Linux kernel (software) to communicate with your sound card (hardware);
-ALSA will be installed on any Arch system by default, so you shouldn't need to do any manual installation.
+- Through ALSA, using the `amixer` program provided by the [`alsa-utils` package](https://archlinux.org/packages/extra/x86_64/alsa-utils/) (which you'll have to explicitly install).
 
-You *should* install the [`alsa-utils`](https://archlinux.org/packages/extra/x86_64/alsa-utils/) package, which provides the `amixer` program.
+- Through PulseAudio, using the `pactl` program provided by the [`libpulse` package](https://archlinux.org/packages/extra/x86_64/libpulse/) (a dependency of `pulseaudio`, so you should have `pactl` if you have `pulseaudio`).
 
-What's involved: "controls" and "simple controls"---a software abstraction over hardware "controls".
+The best choice depends on whether or not you have PulseAudio installed (check `pacman -Q pulseaudio`) and running (check `systemctl --user status pulseaudio.service`).
+
+Here are my suggestions:
+
+- If you only have ALSA and aren't running PulseAudio: use `amixer`
+- If you're running PulseAudio: use PulseAudio's `pactl` (alternatively, if you *really* want to use `amixer`, you can install the `pulseaudio-alsa` package and use ALSA's `amixer`).
+
+Loosely, PulseAudio can get confused if you adjust volume through the low-level ALSA while the higher-level PulseAudio server is running (unmuting might not work, for example).
+This is why you'd need to install `pulseaudio-alsa` if you want to control volume with ALSA's `amixer` while simultaneously running PulseAudio.
+
+### Control volume with ALSA and `amixer`
+
+The `amixer` utility uses the concept of "controls" (which correspond to physical controls on your soundcard) and "simple controls"---a software abstraction of hardware controls.
+
+We will work exclusively with the main simple control, which is named `Master` (you can list all available simple controls with `amixer scontrols`).
+Controlling the `Master` playback volume with `amixer` is as simple as:
 
 ```sh
-$ amixer scontrols
-Simple mixer control 'Master',0
-Simple mixer control 'Headphone',0
-Simple mixer control 'Headphone',1
-Simple mixer control 'Speaker',0
+amixer set Master 50%     # set volume to 50% of max
+amixer set Master 5%+     # increase current volume by 5%
+amixer set Master 5%-     # decrease current volume by 5%
+
+amixer set Master mute    # mute audio
+amixer set Master unmute  # unmute audio
+amixer set Master toggle  # toggle between mute and unmute
 ```
 
-We'll be interested in the `Master` simple control.
+Try playing around with these commands yourself and listening for physical changes in audio.
+(And take a look through `man amixer`, which is clear and concise.)
 
-You can do like
-```sh
-amixer set Master 50%
-amixer set Master 10%+
-amixer set Master 10%-
+Worth noting: in theory, `amixer` can distinguish between percentages in raw hardware volume and human-perceived volume based on the use of the `-R` or `-M` flags---see the `OPTIONS` section of `man amixer` for details.
+In practice, I haven't noticed a difference between the two, at least when using `amixer` while simultaneously running PulseAudio.
 
-amixer set Master mute
-amixer set Master unmute
-amixer set Master toggle
-```
+**Check-in point:** At this point you should be able to change/mute/unmute the `MASTER` control's volume level by issuing `amixer set Master` commands from a shell, and you should be able to hear the corresponding change in physical volume.
 
-Worth noting: the `set` command measures percentage in "raw" volume by default.
-Pass the `-M` option to use human-perceived volume.
-See the `OPTIONS` section in `man amixer` for details.
+### Control volume with PulseAudio and `pactl`
 
-Try changing the volume of the `MASTER` control and listen for a physical changein audio.
+PulseAudio uses a concept of "sources" and "sinks"---PulseAudio receives audio from sources and sends audio to sinks.
+If you're familiar with engineering or physics, PulseAudio's naming of sources and sinks might make sense from a vector calculus perspective of sound energy flow into the computer.
+But for all practical purposes, you can ignore that and just think of microphones as sources and speakers as sinks.
 
-Seriously---take 5 minutes and look through `man amixer`, it's concise and helpful.
-And see [Stack Exchange: How to use command line to change volume?](https://unix.stackexchange.com/a/21090) for a summary of commands you might use in practice.
+<!-- You can list sinks with `pactl list sinks` -->
 
-
-**Check-in point:** At this point you should be able to change the `MASTER` control's volume level by issuing `amixer set Master` commands from a shell, and you should be able to hear the corresponding change in physical volume.
-
-## Convenient key mappings for volume control
-
-We'll set up volume key bindings using the [`acpid` daemon](https://wiki.archlinux.org/title/Acpid).
-
-If you're a new user, I've just introduced two potentially unfamiliar bits of jargon.
-For our purposes, here is what they mean:
-
-- ACPI (which stands for Advanced Configuration and Power Interface) is a standard interface that gives your operating system a way to interact with your hardware (e.g. your backlight and function keys in our context).
-  Reference: [Wikipedia: ACPI](https://en.wikipedia.org/wiki/Advanced_Configuration_and_Power_Interface).
-
-- A daemon (at the risk of stating the obvious) is a computer program that runs as a background process, and typically listens for and responds to events, e.g. network requests or hardware activity.
-  In our context, we'll use the `acpid` daemon to detect and respond to ACPI events resulting from brightness key presses.
-  References: [Wikipedia: Daemon (computing)](https://en.wikipedia.org/wiki/Daemon_(computing)) in general; [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid) and `man 8 acpid` in our context.
-
-### Installation
-
-You'll need the `acpid` package installed---check if it's already installed with `pacman -Q acpid` and install it if necessary.
-Then enable and start the `acpid` daemon if necessary.
+You can control master volume through the `@DEFAULT_SINK@`, which, as far as I can tell, seems to be the `pactl` equivalent of `amixer`'s `Master` control in this context.
 
 ```sh
-# Install the acpid package (if necessary)
-sudo pacman -S acpid
-
-# Check if the acpid daemon is enabled and active
-systemctl status acpid.service
-
-# Enable and start the acpid daemon (if necessary)
-systemctl enable --now acpid.service
-```
-
-The `acpid` daemon will then listen for ACPI events.
-
-### The ACPI event workflow
-
-ACPI events (e.g. function key presses, closing your laptop lid, plugging in a computer charger, etc.) are managed using text files in the directory `/etc/acpi/events/`.
-Each event file must define an ACPI event and an action to take in response to the event.
-These event files use a key value syntax of the form:
-
-```sh
-# Comments are allowed on new lines
-event=<ACPI-event-regex>
-action=<shell-command>
-```
-The `event` key's value should be a regular expression matching the name(s) of ACPI event(s),
-and the `action` key's value should be a valid shell command, which will be invoked by `/bin/sh` whenever an ACPI event matching the `event` key's value occurs.
-
-By default, the directory `/etc/acpi/events/` contains a single file, called `anything`, with the following contents:
-
-```sh
-# Pass all events to our one handler script
-event=.*
-action=/etc/acpi/handler.sh %e
-```
-This generic `anything` file catches all ACPI events using the `event=.*` (note the `.*` catch-all regex).
-The event's name, accessed using the `%e` macro, is then passed as an argument to the default event handler script `/etc/acpi/handler.sh`.
-
-### Key bindings and event handler for volume control
-
-Here's the recipe we'll use:
-
-- Identify the name and label of a targeted ACPI event (e.g. pressing your volume keys)
-- Create a shell script in `/etc/acpi/handlers` to perform an action in response to the ACPI event (e.g. adjust your volume)
-- Create a text file in `/etc/acpi/events` to register the ACPI event and run the handling shell script in response.
-
-Reference: [ArchWiki: Acpid > Enabling volume control](https://wiki.archlinux.org/title/Acpid#Enabling_volume_control).
-
-#### Identify event names
-
-First run the `acpi_listen` event listener from a command line and identify its output in response to brightness key presses.
-In my case:
-
-```sh
-$ acpi_listen
-# *presses brightness up and brightness down keys* (F5 and F6 on my laptop)
-video/brightnessup BRTUP 00000086 00000000
-video/brightnessdown BRTDN 00000087 00000000
-```
-Record the event names (`video/brightnessup` and `video/brightnessdown`) and corresponding labels (`BRTUP` and `BRTDN`).
-
-#### Create an event handler script
-
-Create the following shell script to handle `brightnessup` and `brightnessdown` events.
-I've named it `backlight.sh` and placed it in the conventional location `/etc/acpi/handlers`, but you could name it anything you like and probably place it in any readable location on your file system.
-
-```sh
-#!/bin/sh
-# Location: /etc/acpi/handlers/backlight.sh
-# A script to control backlight brightness with ACPI events
-# Argument $1: either '-' for brightness up or '+' for brightness down
-
-# Path to the sysfs file controlling backlight brightness
-brightness_file="/sys/class/backlight/intel_backlight/brightness"
-
-# Step size for increasing/decreasing brightness.
-# Adjust this to a reasonable value based on the value of the file
-# `/sys/class/backlight/intel_backlight/max_brightness` on your computer.
-step=20
-
-# Some scary-looking but straightforward Bash arithmetic and input/output redirection
-case $1 in
-  # Increase current brightness by `step` when `+` is passed to the script
-  +) echo $(($(< "${brightness_file}") + ${step})) > "${brightness_file}";;
-
-  # Decrease current brightness by `step` when `-` is passed to the script
-  -) echo $(($(< "${brightness_file}") - ${step})) > "${brightness_file}";;
-esac
-```
-This script (taken from [ArchWiki: Acpid > Enabling backlight control](https://wikiarchlinux.org/title/Acpid#Enabling_backlight_control)) takes one parameter, which should be either `+` or `-`, and either increases (if `+` is passed) or decreases (if `-` is passed) the current backlight brightness by the value of the `step` variable.
-
-Make the handler script executable:
-
-```sh
-sudo chmod +x /etc/acpi/handlers/backlight.sh
-```
-
-#### Create event-matching files
-
-Create the event files `/etc/acpi/events/BRTUP` and `/etc/acpi/events/BRTDN` (using the event labels is not necessary; you can use whatever alphanumeric characters you want that obey the naming conventions in the second paragraph of `man acpid`).
-Inside the files place:
-
-```sh
-# (Adjust path to the `backlight.sh` script as needed)
-
-# Inside /etc/acpi/events/BRTUP
-event=video/brightnessup
-action=/etc/acpi/handlers/backlight.sh +
-
-# Inside /etc/acpi/events/BRTDN
-event=video/brightnessdown
-action=/etc/acpi/handlers/backlight.sh -
-```
-
-Reboot. The backlight keys should then change backlight brightness.
-
-Speaking from personal experience: if the backlight keys aren't working after a reboot, double-check the handler script and event files for typos and ensure the handler script is executable (and make sure you've passed both "Check-in points" in the previous section).
-There's a lot of moving parts here and even a small typo can prevent things from working.
-
-## Troubleshooting: fix failed loading of `acpi_video0` with dual graphics
-
-(Probably irrelevant to most users, but I thought I'd include it after going through the problem myself.)
-
-Context: after installing Arch on a MacBookPro with dual graphics (integrated Intel graphics and discrete AMD GPU), the `acpi_video0/` directory initially failed to appear inside `/sys/class/backlight`.
-Also relevant: my start-up log when booting into Arch included the message:
-
-```sh
-[FAILED] Failed to start `Load/Save Screen Backlight Brightness of backlight:acpi_video0.`
-See `systemctl status systemd-backlight@backlight:acpi_video0.service` for details.
-```
-
-Solution: I got the `acpi_video0` directory to appear in `/sys/class/backlight` (and also eliminated the boot-up error message), by adding the kernel parameter `acpi_backlight=video` (as suggested in [ArchWiki: Backlight/Kernel command-line options](https://wiki.archlinux.org/title/backlight#Kernel_command-line_options)) to my boot configuration.
-
-To add pass the `acpi_backlight=video` parameter to the Linux kernel, *assuming you are using* [`systemd-boot`](https://wiki.archlinux.org/title/systemd-boot) *as your boot loader*, edit the file `/boot/loader/arch.conf`, and make the following change:
-
-```sh
-# To your current kernel parameters, for example...
-options root=/dev/sdaXYZ rw                          # before
-
-# ...append `acpi_backlight=video`
-options root=/dev/sdaXYZ rw acpi_backlight=video     # after
-```
-
-(Or, for a one-time test, type `e` in the `systemd-boot` boot screen when logging in, and add `acpi_backlight=video` to the kernel parameters.) 
-
-For adding kernel parameters with other boot loaders, consult [ArchWiki: Kernel parameters](https://wiki.archlinux.org/title/Kernel_parameters).
-
-
-### PulseAudio
-
-or through `pactl`, which requires the PulseAudio sound server.
-Install with the [`pulse-audio`](https://archlinux.org/packages/extra/x86_64/pulseaudio/) package.
-Note that `pactl` is owned by `libpulse`, which is required by `pulseaudio`.
-
-Helpful: `pactl list sinks`
-
-```sh
-# Get current volume
-pactl get-sink-volume @DEFAULT_SINK@
-
-# Set/increase/decrease volume
 pactl set-sink-volume @DEFAULT_SINK@ 50%  # set volume to 50% of maximum
 pactl set-sink-volume @DEFAULT_SINK@ +5%  # increase current volume by 5%
 pactl set-sink-volume @DEFAULT_SINK@ -5%  # decrease current volume by 5%
+pactl get-sink-volume @DEFAULT_SINK@      # get current volume
 
-# Audio mute
-pactl set-sink-mute @DEFAULT_SINK@ toggle
-
-# Mic mute
-pactl set-source-mute @DEFAULT_SOURCE@ toggle
+pactl set-sink-mute @DEFAULT_SINK@ 1       # mute speakers
+pactl set-sink-mute @DEFAULT_SINK@ 0       # unmute speakers
+pactl set-sink-mute @DEFAULT_SINK@ toggle  # toggle between mute and unmute
 ```
 
-Jargon:
-- sink is an audio output device (e.g. built-in speaker, headphones, etc.)
-- source is a source of audio (e.g. a microphone)
+**Check-in point:** At this point you should be able to change/mute/unmute the default audio sink's volume level by issuing `pactl` commands from a shell, and you should be able to hear the corresponding change in physical volume.
 
-From the [PulseAudio documentation](https://www.freedesktop.org/wiki/Software/PulseAudio/About/):
+### Shell script for volume control
 
-> PulseAudio clients can send audio to "sinks" and receive audio from "sources".
+In preparation for creating key bindings, we'll wrap the above commands in a shell script.
+In this guide I'll name the script `volume.sh` and place it at `~/scripts/volume.sh`, but in principle any readable location on your file system should work.
+
+You should choose *either* the `pactl` commands (if using PulseAudio) *or* the `amixer` commands (if using only ALSA).
+
+```sh
+#!/bin/sh
+# NAME
+#     volume.sh - Increase/decrease/mute volume
+# SYNOPSIS 
+#     volume.sh <raise|lower|mute>
+# Suggested location: ~/scripts/volume.sh
+
+step=5   # number of percentage points to increase/decrease volume
+
+# Select EITHER the `amixer` or the `pactl` command in each case
+if [ $1 == "raise" ]; then
+  # pactl set-sink-volume @DEFAULT_SINK@ "+${step}%"
+  # amixer set Master ${step}%+ > /dev/null
+elif [ $1 == "lower" ]; then
+  # pactl set-sink-volume @DEFAULT_SINK@ "-${step}%"
+  # amixer set Master ${step}%- > /dev/null
+elif [ $1 == "mute" ]; then
+  # pactl set-sink-mute @DEFAULT_SINK@ toggle
+  # amixer set Master toggle > /dev/null
+else
+  echo "Unrecognized parameter: ${1}"
+  echo "Usage should be: volume.sh <raise|lower|mute>"
+fi
+```
+
+(The `> /dev/null` lines redirects the `amixer` commands' noisy standard output to `/dev/null`, but this isn't strictly necessary.)
+
+Then make the script executable:
+
+```sh
+chmod +x ~/scripts/volume.sh
+```
+
+**Check-in point:** the script works when run manually with the `raise`, `lower`, and `mute` arguments, e.g. `~/scripts/volume.sh raise` increases audio volume by the value of `step`, running `~/scripts/volume.sh mute` toggles mute, etc.
+
+## Convenient key mappings for volume control
+
+We'll set up volume key bindings using `xbindkeys`, just like in the article on [**Media player control**]({% link notes/arch/media/playerctl.md %}).
+
+<details>
+  <summary> 
+  Why use <code class="language-plaintext highlighter-rouge">xbindkeys</code> and not <code class="language-plaintext highlighter-rouge">acpid</code>
+  </summary>
+  <p>To ensure we’re on the same page: there are <em>many</em> different ways to set key bindings on Linux, including through
+    <code class="language-plaintext highlighter-rouge">acpid</code> events (like in the <a href="/notes/arch/graphics/backlight.html">laptop backlight article</a>),
+    using <code class="language-plaintext highlighter-rouge">xbindkeys</code> (like in this article)
+    or through your window manager (for example i3 offers <code class="language-plaintext highlighter-rouge">bindsym XF86AudioRaiseVolume &lt;shell-command&gt;</code>).</p>
+
+  <p>Shell scripts triggered by <code class="language-plaintext highlighter-rouge">acpid</code> keys run as <code class="language-plaintext highlighter-rouge">root</code> and don’t work well when using PulseAudio, which runs as a user service.
+    See e.g. <a href="https://pulseaudio-discuss.freedesktop.narkive.com/2KTkaiRo/change-sound-via-acpid">[pulseaudio-discuss] Change sound via acpid </a> for context.
+  I choose to use <code class="language-plaintext highlighter-rouge">xbindkeys</code> in this guide as a compromise that will work for all X users, regardless of window manager and choice of <code class="language-plaintext highlighter-rouge">amixer</code> vs. <code class="language-plaintext highlighter-rouge">pactl</code>.</p>
+</details>
+
+Following the recipe from the [media player control article]({% link notes/arch/media/playerctl.md %}), you'll need two pieces of information to define a key binding with `xbindkeys`:
+
+1. The X11 key symbol (keysym) of the key you want to bind.
+   (`xbindkeys` identifies keyboard keys by their X11 keysym, which is, loosely, just a short code name for the key.)
+
+1. The program you want to run when the key is pressed (e.g. `volume.sh raise` to increase volume using the `volume.sh` script).
+   You can then use `xbindkeys` to bind the program to the keysym.
+
+#### Detect key symbols
+
+You can identify X11 keysyms with the `xev` (X events) utility:
+open a shell and run `xev`, type the key you wish to bind, and record the keysym.
+Below is an example `xev` output when pressing my mute, lower-volume, and raise-volume keys (`F1`, `F2`, and `F3` on my computer).
+I've highlighted the keysyms.
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># The keysym for the mute key is "XF86AudioMute"</span>
+KeyPress event, serial 34, synthetic NO, window 0x3e00001,
+    root 0x79b, subw 0x0, <span class="nb">time </span>54529285, <span class="o">(</span><span class="nt">-54</span>,515<span class="o">)</span>, root:<span class="o">(</span>913,527<span class="o">)</span>,
+    state 0x0, keycode 121 <span class="o">(</span>keysym 0x1008ff12, <span class="ga">XF86AudioMute</span><span class="o">)</span>, same_screen YES,
+    <span class="c"># (additional irrelevant output omitted)</span>
+
+<span class="c"># The keysym for the lower-volume key is "XF86AudioLowerVolume"</span>
+KeyPress event, serial 34, synthetic NO, window 0x3e00001,
+    root 0x79b, subw 0x0, <span class="nb">time </span>54526872, <span class="o">(</span><span class="nt">-54</span>,515<span class="o">)</span>, root:<span class="o">(</span>913,527<span class="o">)</span>,
+    state 0x0, keycode 122 <span class="o">(</span>keysym 0x1008ff11, <span class="ga">XF86AudioLowerVolume</span><span class="o">)</span>, same_screen YES,
+    <span class="c"># (additional irrelevant output omitted)</span>
+
+<span class="c"># The keysym for the raise-volume key is "XF86AudioRaiseVolume"</span>
+KeyPress event, serial 34, synthetic NO, window 0x3e00001,
+    root 0x79b, subw 0x0, <span class="nb">time </span>54524981, <span class="o">(</span><span class="nt">-54</span>,515<span class="o">)</span>, root:<span class="o">(</span>913,527<span class="o">)</span>,
+    state 0x0, keycode 123 <span class="o">(</span>keysym 0x1008ff13, <span class="ga">XF86AudioRaiseVolume</span><span class="o">)</span>, same_screen YES,
+    <span class="c"># (additional irrelevant output omitted)</span>
+</code></pre></div></div>
+
+The keysyms for the mute, lower-volume, and raise-volume keys are `XF86AudioMute`, `XF86AudioLowerVolume`, `XF86AudioRaiseVolume`---they'll very likely be the same on your system, too.
+You have to do a bit of digging through `xev`'s verbose output here; alternatively you could run `xev | grep keysym` to only print the keysym line.
+
+#### Define key bindings in `.xbindkeysrc`
+
+It's easy: first (if needed) create the `~/.xbindkeysrc` config file; you can do this manually or run:
+
+```sh
+# Generate a default xbindkeys config file with commented-out examples
+xbindkeys --defaults > ~/.xbindkeysrc
+
+# ...or just manually create an empty file with your favorite editor
+[nano | vim | nvim] ~/.xbindkeysrc
+```
+Then define key bindings in `xbindkeysrc` file with the general syntax:
+
+```sh
+# Place shell command in quotes and keysym on a new line
+"SHELL-COMMAND"
+  KEYSYM
+```
+Here are concrete examples relevant to this guide:
+
+```sh
+# Use XF86AudioMute to mute volume
+"${HOME}/scripts/volume-pulse.sh mute"
+   XF86AudioMute
+
+# Use XF86AudioRaiseVolume to raise volume
+"${HOME}/scripts/volume-pulse.sh raise"
+   XF86AudioRaiseVolume
+
+# Use XF86AudioLowerVolume to lower volume
+"${HOME}/scripts/volume-pulse.sh lower"
+   XF86AudioLowerVolume
+```
+
+These key bindings will run the shell script `volume.sh` (with arguments depending on the key) whenever the keys with X11 keysyms `XF86AudioMute`, `XF86AudioLowerVolume`, or `XF86AudioRaiseVolume` are pressed.
+
+For more information and examples using `xbindkeys` see [ArchWiki: Xbindkeys](https://wiki.archlinux.org/title/Xbindkeys).
+
+#### Activate key bindings
+
+1. Run `xbindkeys` in a shell to activate the just-defined key bindings.
+
+1. To make changes permanent, place the line `xbindkeys` above the line that starts your window manager or DE in your `~/.xinitrc` file, which will load key bindings each time you start X.
+   Here is an example:
+
+   ```sh
+   # Activate X key bindings
+   xbindkeys
+ 
+   # Start the i3 window manager (or whatever WM or DE you use)
+   exec i3
+   ```
+   See [ArchWiki: Xbindkeys/Making changes permanent](https://wiki.archlinux.org/title/Xbindkeys#Making_changes_permanent) for more information.
+
+That's it!
+The volume keys should now run the `volume.sh` script, which (if you've met the earlier check-in points) should adjust your audio volume.
+
+## Bonus: Cap PulseAudio volume at 100%
+
+Context: PulseAudio will happily increase volume above the nominal hardware maximum.
+I prefer to disable this behavior and cap volume at the hardware 100% level;
+I you'd prefer this too, here's a modified `volume.sh` script that caps volume at the level of the `max` variable:
+
+```sh
+#!/bin/sh
+# NAME
+#     volume.sh - Increase/decrease/mute volume using PulseAudio pactl
+# SYNOPSIS 
+#     volume.sh <raise|lower|mute>
+# Suggested location: ~/scripts/volume.sh
+
+step=5   # number of percentage points to increase/decrease volume
+max=100  # do not increase volume above this percentage
+
+# Prints current volume percentage, e.g. `60`, `95`, `20`, etc.
+function get_current_volume() {
+  pactl get-sink-volume @DEFAULT_SINK@ | awk -F '/' '{print $2}' | grep -o '[0-9]\+'
+}
+
+if [ $1 == "raise" ]; then
+
+  # Modification: only increase volume if current volume is less than `max`
+  if [ `get_current_volume` -lt ${max} ]; then
+    pactl set-sink-volume @DEFAULT_SINK@ "+${step}%"
+  fi
+
+# The rest of the script is identical to the original `volume.sh`
+elif [ $1 == "lower" ]; then
+  pactl set-sink-volume @DEFAULT_SINK@ "-${step}%"
+elif [ $1 == "mute" ]; then
+  pactl set-sink-mute @DEFAULT_SINK@ toggle
+else
+  echo "Unrecognized parameter: ${1}"
+  echo "Usage should be: volume.sh <raise|lower|mute>"
+fi
+```
