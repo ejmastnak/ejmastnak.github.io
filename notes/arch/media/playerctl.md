@@ -27,7 +27,6 @@ There are three main players in the game here:
 
 - `xbindkeys`, a utility for defining key bindings in X.
 
-
 ## Procedure
 
 There are two independent tasks in this article: (1) learning the commands to control `playerctl` and (2) binding these commands to keyboard keys using `xbindkeys`.
@@ -136,7 +135,7 @@ You have to do a bit of digging through `xev`'s verbose output here; alternative
 It's easy: first create the `~/.xbindkeysrc` configuration file; you can do this manually or run:
 
 ```sh
-# Generate a default xbindkeys config file
+# Generate a default xbindkeys config file with commented-out examples
 xbindkeys --defaults > ~/.xbindkeysrc
 ```
 Then define key bindings in `xbindkeysrc` file with the general syntax:

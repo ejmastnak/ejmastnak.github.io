@@ -4,37 +4,37 @@ title: Copy and Paste on Alacritty, tmux, and Vim
 
 # Clipboard on X11, Alacritty, and Vim
 
-**Goal:** Comfortably copy and paste between X11 GUI applications, the Alacritty terminal, and Vim/Neovim.
+**Goal:** Comfortably copy and paste between GUI applications in the X Window System, the Alacritty terminal, and Vim/Neovim.
 
-**Audience:** users of X11, Alacritty, and Vim/Neovim.
+**Audience:** users of the X Window System, Alacritty, and Vim/Neovim.
 The instructions here may not work for other terminals or text editors.
 
 **References:**
 - [ArchWiki: Clipboard](https://wiki.archlinux.org/title/Clipboard): lists tools for interacting with the clipboard
-- Answer to [StackExchange: How to toggle or turn off text selection being sent to the clipboard](https://unix.stackexchange.com/a/213843): how the `PRIMARY` and `CLIPBOARD` selections work in X11
+- Answer to [StackExchange: How to toggle or turn off text selection being sent to the clipboard](https://unix.stackexchange.com/a/213843): how the `PRIMARY` and `CLIPBOARD` selections work in X
 - [Official freedesktop.org clipboard specification](https://specifications.freedesktop.org/clipboards-spec/clipboards-latest.txt): quite informative once you get paste the boring plain-text formatting
 
 <!-- For Vim clipboard configuration, see [this StackExchange answer](https://vi.stackexchange.com/a/96). -->
 
-## An X11 clipboard crash course
+## An X clipboard crash course
 
 (To help new users coming from Windows and macOS; feel free to skip.)
 
-TLDR: X11 has two clipboards, called `CLIPBOARD` and `PRIMARY`. Use `CLIPBOARD` for Windows/macOS-style copy and paste and `PRIMARY` for text selected by the mouse.
+TLDR: X has two clipboards, called `CLIPBOARD` and `PRIMARY`. Use `CLIPBOARD` for Windows/macOS-style copy and paste and `PRIMARY` for text selected by the mouse.
 End TLDR.
 
 Windows and macOS have one system-wide clipboard.
-The X11 windows system commonly used on Linux has *two*[^1] standardized system-wide buffers that act as independent clipboards.
+The X Window System commonly used on Linux has *two*[^1] standardized system-wide buffers that act as independent clipboards.
 Loosely, in macOS/Windows terms, you basically have two clipboards.
 Their names are `CLIPBOARD` and `PRIMARY`, and here is what they do:
 
-[^1]: Technically there are three X11 clipboard-like buffers---`CLIPBOARD`, `PRIMARY`, and `SECONDARY`, but the `SECONDARY` buffer is rarely used.
+[^1]: Technically there are three X clipboard-like buffers---`CLIPBOARD`, `PRIMARY`, and `SECONDARY`, but the `SECONDARY` buffer is rarely used.
 
 - `CLIPBOARD`: essentially the equivalent of the macOS or Windows clipboard.
   Copy text into `CLIPBOARD` with GUI menu options or `<Ctrl>-C` (or in rare cases, e.g. Alacritty, a similar keyboard shortcut), and paste from `CLIPBOARD` with GUI menu option, `<Ctrl>-V`, or a similar shortcut.
 
 - `PRIMARY`: used specifically to manipulate text selected with the mouse.
-  Any text selected by the mouse in X11 applications (e.g. highlighted text in a web browser) is automatically stored in `PRIMARY`.
+  Any text selected by the mouse in X applications (e.g. highlighted text in a web browser) is automatically stored in `PRIMARY`.
   You paste the contents of `PRIMARY` with a middle mouse click.
 
 Copying text into `CLIPBOARD` requires an explicit action on the user's part (e.g. button press, keyboard shortcut), while mouse-selected text is automatically copied into `PRIMARY` without explicit action on the user's part.
@@ -44,7 +44,7 @@ The rest of this article shows how to get text into and out of `CLIPBOARD` in va
 
 ## GUI applications
 
-In most X11 GUI applications (e.g. a web browser):
+In most X GUI applications (e.g. a web browser):
 
 - Copy text into `CLIPBOARD` with `<Ctrl>-C` or a "Copy" option in a GUI menu.
 - Paste text stored in `CLIPBOARD` with `<Ctrl>-V` or "Paste" menu option.
@@ -53,7 +53,7 @@ In most X11 GUI applications (e.g. a web browser):
 
 For users with default key bindings...
 
-- Copy text into `CLIPBOARD` with `<Ctrl>-<Shift>-C` (and not `<Ctrl>-C` like most other X11 applications).
+- Copy text into `CLIPBOARD` with `<Ctrl>-<Shift>-C` (and not `<Ctrl>-C` like most other X applications).
   Alacritty intentionally avoids `<Ctrl>-C` for copying because `<Ctrl>-C` is nearly universally used to send the interrupt signal `SIGINT` to programs in the shell.
 
 - Paste text stored in `CLIPBOARD` with `<Ctrl>-<Shift>-V` (and not `<Ctrl>-V`)
@@ -100,7 +100,7 @@ Here's what a typical user needs to know:
     - OK: Clipboard tool found: xclip
   ```
 
-- **Vim users:** your version of Vim must be compiled with the `+X11` and `+clipboard` features to properly interact with the X11 `CLIPBOARD` and `PRIMARY` selections.
+- **Vim users:** your version of Vim must be compiled with the `+X11` and `+clipboard` features to properly interact with the X `CLIPBOARD` and `PRIMARY` selections.
   You can check this by running `vim --version` on a command line; the output should show `+X11` and `+clipboard`.
   If `vim --version` shows `-X11` or `-clipboard`, you need a new version of Vim.
   You could either compile from source with the desired features or use the following workaround:
@@ -115,7 +115,7 @@ Here's what a typical user needs to know:
 
 Suggested prerequisite knowledge:
 
-- The difference between X11's `CLIPBOARD` and `PRIMARY` selections (scroll up and read [An X11 clipboard crash course](#an-x11-clipboard-crash-course) for a refresher.)
+- The difference between X's `CLIPBOARD` and `PRIMARY` selections (scroll up and read [An X11 clipboard crash course](#an-x11-clipboard-crash-course) for a refresher.)
 - What Vim registers are and how to use them---a sentence like "use `"ayiw` to yank a word into the `a` register"  or "use `"bp` to paste the contents of the `b` register" should make sense to you.
   If needed, I suggest taking a 20-minute detour and learning about registers; a good place to start might be Brian Storti's [Vim registers: The basics and beyond](https://www.brianstorti.com/vim-registers/), then moving on to the official documentation in `:help registers`
 
@@ -134,7 +134,7 @@ You have three choices---in your `vimrc` or `init.vim`...
 
 1. Set `clipboard=unnamed,unnamedplus` to make Vim's yank, delete, and change operations copy into both `+` and `*`, and make the put operations paste from `+`.
 
-That should be it---Vim's native yank/delete/change/put operations should now interact with the X11 `CLIPBOARD` and `PRIMARY` selections.
+That should be it---Vim's native yank/delete/change/put operations should now interact with the X `CLIPBOARD` and `PRIMARY` selections.
 For documentation of `unnamed` and `unnamedplus` see `:help 'clipboard'` (make sure to include the single quotes!).
 For more Vim-related copy/paste documentation than a typical user would ever want to read, check out `:help 'clipboard'`, `:help registers`, `:help quoteplus`, and `:help quotestar`.
 
