@@ -162,7 +162,7 @@ Then, depending on your backlight directory, paste in the following line(s):
   # Set `video` as the owning group for the `/sys/class/backlight/intel_backlight/brightness` file
   RUN+="/bin/chgrp video /sys/class/backlight/intel_backlight/brightness"
 
-  # Give group write permisssions to `/sys/class/backlight/intel_backlight/brightness`
+  # Give write permisssions to the owning group of the `brightness` file
   RUN+="/bin/chmod g+w /sys/class/backlight/intel_backlight/brightness"
   ```
 

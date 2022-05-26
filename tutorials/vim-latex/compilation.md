@@ -65,7 +65,7 @@ Read *all* of this article if...
 - you want to write a custom compilation interface that offers you more flexibility than what ships with VimTeX.
 
 **My suggestion for new users**: begin with VimTeX's built-in compilation interface, which means you only need to read the section [Using VimTeX's compilation interface](#using-vimtexs-compilation-interface).
-VimTeX's compilation features are tested by thousands of users, thoroughly debugged, and require minimal work to set up on your part, and so are are good place to begin as a new user.
+VimTeX's compilation features are tested by thousands of users, thoroughly debugged, and require minimal work to set up on your part, and so are good place to begin as a new user.
 As you get more comfortable, you can write your own compilation plugin if you find VimTeX's features unsatisfactory---in that case you would need to read all of the article.
 
 As a personal anecdote, I did the exact opposite of what I recommend now: motivated by a naive desire to build everything from scratch, I spent many hours putting together my own compiler setup.

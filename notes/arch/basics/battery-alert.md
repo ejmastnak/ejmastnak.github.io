@@ -144,6 +144,7 @@ ExecStart=/home/YOURUSERNAME/scripts/alert-battery.sh
 [Install]
 WantedBy=graphical.target
 ```
+
 This service unit runs the `alert-battery.sh` script; setting the unit's `Type` to `oneshot` ensures the battery alert service completes before any other `systemd` units run; `Type=oneshot` is standard practice for units that start short-running shell scripts.
 The `~/.config/systemd/user` directory is the standard location for user units.
 
@@ -183,7 +184,7 @@ See the `OPTIONS` section in `man 5 systemd.timer` for more on timer options.
 
 #### Reload and start timer
 
-Use `deamon-reload` to tell `systemd` you've create new unit files, then start and enable the timer service:
+Use `deamon-reload` to tell `systemd` you've created new unit files, then start and enable the timer service:
 
 ```sh
 systemctl --user daemon-reload
