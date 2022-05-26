@@ -1,102 +1,146 @@
-Goal: Set wallpaper to a given image on your file system, and make the background of your terminal slightly transparent so you can see the wallpaper a bit.
+---
+title: Wallpaper
+---
 
-### Simple wallpaper
-First call
+# Set wallpaper with feh on Linux
+
+**Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
+
+**References:**
+
+- [ArchWiki: feh](https://wiki.archlinux.org/title/feh)
+- `man feh`
+
+## Set wallpaper to an arbitrary image file
+
+You can set your background wallpaper using the `feh` image viewer.
+First install the [`feh` package](https://archlinux.org/packages/extra/x86_64/feh/).
+You can then set the background to an arbitrary image file with the command:
+
 ```sh
-feh --bg-scale '/path/to/image.jpg' 
+feh --bg-fill 'path/to/image.jpg' 
 ```
-This creates a `~/.fehbg` file, which is used for persistent wallpaper after reboot.
 
-Add the following to `.xinitrc` (assuming you launch X with `startx`)
-```
+**Details**
+
+- Using `--bg-fill` fills the image into your background without repeating it or using borders, and preserves the image's aspect ratio.
+  You could also experiment with related `feh` commands like `--bg-center`, `--bg-scale`, and `--bg-tile`; see the `BACKGROUND SETTING` section of `man feh` for details.
+
+- Supported formats: `feh` supports the JPEG, PNG, and TIFF (among others), which should cover most use cases.
+  See the `SUPPORTED FORMATS` section in `man feh` for more on supported formats.
+
+## Make wallpaper persist after reboot
+
+Context: a wallpaper set with `feh` will disappear after exiting your X session (e.g. after rebooting).
+This section shows how to make your wallpaper persist between reboots.
+
+The `feh` background setting commands (e.g. `--bg-fill` above) save the exact `feh` command needed to reproduce the last-set wallpaper in the simple shell script file `~/.fehbg`.
+You can then run `~/.fehbg` when starting X to reproduce the last set background.
+
+You'll probably want to run `~/.fehbg` automatically from an X startup file.
+Simply place the line `~/.fehbg &` in your `~/.xinitrc` file (if you start X with the `startx` program) or your `~/.xprofile` file (if you start X with a display/login manager) before the line that starts your window manager or desktop environment, i.e.
+
+```sh
+# This code would go in your ~/.xinitrc or ~/.xprofile
+
 # Set wallpaper with feh
 ~/.fehbg &
 ```
 
-### Transparent Alacritty background with i3
+The appending `&` character ensures that `~/.fehbg` runs as a background process to avoid halting the X start-up.
 
-**Desired functionality:**
-Set Alacritty window to TBD value and disable all other compositor features, e.g. blurring, fading, rounded corners, etc...
+**Check-in point:** first, you should be able to set your wallpaper with some variant of `feh --bg-fill image.jpg`, and this command should create an executable `.fehbg` script in your home directory.
+Second, placing the line in your X startup file should make the last-set wallpaper persist after restarting X.
 
-Reference: [ArchWiki: picom](https://wiki.archlinux.org/title/Picom)
+## Create a random slideshow from a set of image files
 
-Install `picom` and copy default config from `/etc` to `~/.config`
+Goal: create a "wallpaper slideshow" that changes the background wallpaper every few minutes, which the background image chosen at random from a directory of image files.
+
+(Of course, using a slideshow only makes sense when you can see your desktop background, e.g. if using transparent windows, gaps, or floating windows.)
+
+### Shell command
+
+First create a dedicated wallpaper directory and fill it with images you would like to use as wallpapers.
+I'll use the location `~/Pictures/wallpapers` in this guide, but any readable location on your file system should work fine.
+
+The relevant wallpaper-setting command here is:
+
 ```sh
-pacman -S picom
-cp /etc/xdg/picom.conf 
+DISPLAY=:0 feh --no-fehbg --bg-fill --randomize ~/Pictures/wallpapers/*.jpg
 ```
 
-Relevant part of `picom.conf`:
-```conf
-active-opacity            = 1;
-inactive-opacity          = 1;
-frame-opacity             = 1;
-inactive-opacity-override = false;
+This command sets the background to an image chosen randomly from all files with the `jpg` extension inside the `wallpapers` directory.
+Some comments:
 
-opacity-rule = [
-    "95:class_g = 'Alacritty' && focused",
-    "80:class_g = 'Alacritty' && !focused"
-];
+- You can of course update the glob matching pattern as needed, e.g. `*.png` to match PNG files, `*.{png,jpg}` for both PNG and JPEG files, `*` to match all files, etc.
+- `--randomize` is a randomization flag documented in the `OPTIONS` section of `man feh`.
+- `DISPLAY=:0` ensures the `feh` command applies to the primary X display on the local computer.
+  You could adjust the value of `DISPLAY` to also set the wallpaper on multi-monitor setups.
 
-blur-background = false;
-shadow          = false
-fading          = false
-corner-radius   = 0
-```
+Try repeatedly running the script manually and checking that your background updates accordingly.
+You then just need to wrap the above command in a `systemd` timer and you have a working slideshow.
 
-Find window class by running `xprop` and clicking on target window; then search for `WM_CLASS(STRING)`
+### systemd timer
 
-If you wanted blurring you could use
-```
-backend = "glx";
-glx-no-stencil = true;
-blur-background = true;
-blur-method = "dual_kawase";
-blur-strength = 1;
-```
+Goal: create a `systemd` service/timer pair to periodically run the above wallpaper-setting command over a time interval of your choice.
+Note that the rest of this guide closely parallels this series's [battery alert guide]({% link notes/arch/basics/battery-alert.md %}), since both use a `systemd` timer to run a `Type=oneshot` user service.
 
-Autostart on i3 with the following in i3 config
-```
-exec_always --no-startup-id picom -b
-```
+First create the shell script `~/scripts/change-wallpaper.sh` (or use any other readable location on your file system), make the script executable, and inside place the wallpaper-setting command:
 
-### Randomize wallpaper
-The basic command is
-```
-DISPLAY=:0 feh --bg-scale --randomize ~/Pictures/wallpapers/*.jpg
-```
-You then just need to wrap this in a `systemd` timer.
-
-Create e.g. `~/scripts/change-wallpaper.sh`, make it executable, and inside place
-```
+```sh
 #!/bin/sh
-DISPLAY=:0 feh --bg-scale --randomize ~/Pictures/wallpapers/*.jpg
+# This file lives at `~/scripts/change-wallpaper.sh`
+# Sets background wallpaper of X display :0 to a random JPG file chosen from
+# the directory `~/Pictures/wallpapers`
+DISPLAY=:0 feh --no-fehbg --bg-fill --randomize ~/Pictures/wallpapers/*.jpg
 ```
 
-Create e.g. `~/.config/systemd/change-wallpaper.service`
-```
+Then create the `systemd` user service `~/.config/systemd/change-wallpaper.service`, and inside it place the following:
+
+```systemd
 [Unit]
-Description=Changes the wallpaper on X display :0
+Description=Change the wallpaper on X display :0
 Wants=change-wallpaper.timer
 
 [Service]
 Type=oneshot
+# Adjust path to script as needed
 ExecStart=/bin/sh ~/scripts/change-wallpaper.sh
 
 [Install]
 WantedBy=graphical.target
 ```
-And the corresponding timer `~/.config/systemd/change-wallpaper.timer`
-```
+
+This service unit runs the `change-wallpaper.sh` script; setting the unit's `Type` to `oneshot` ensures the battery alert service completes before any other `systemd` units run; `Type=oneshot` is standard practice for units that start short-running shell scripts.
+The `~/.config/systemd/user` directory is the standard location for user units.
+
+Next create the corresponding `systemd` user timer `~/.config/systemd/change-wallpaper.timer`, and inside it place the following:
+
+```systemd
 [Unit]
-Description=Changes the wallpaper on X display :0 every few minutes
+Description=Change the wallpaper on X display :0 every few minutes
 Requires=change-wallpaper.service
 
 [Timer]
-OnActiveSec=1m
-OnUnitActiveSec=1m
+# Changes wallpaper every 5 minutes; adjusts as needed
+OnActiveSec=5m
+OnUnitActiveSec=5m
 
 [Install]
 WantedBy=timers.target
 ```
-Then just `enable` and `start` the timer
+
+This timer will run the `change-wallpaper` service 5 minutes after the timer first activates (from `OnActiveSec`), and then periodically every 5 minutes after that (from `OnUnitActiveSec`).
+You may want to set short intervals (e.g. ten seconds `10s`) when testing that the timer works properly, then set a longer time after that.
+
+Use `deamon-reload` to tell `systemd` you've created new unit files, then start and enable the timer service:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable --now change-wallpaper.timer
+
+# Optionally check that the timer is active
+systemctl --user list-timers
+```
+Note that you only enable and start the `change-wallpaper.timer` unit and not the `.service` unit.
+The wallpaper slideshow should be ready after this step.
