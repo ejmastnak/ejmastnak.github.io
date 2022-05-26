@@ -1,5 +1,5 @@
 ---
-title: Real-time LaTeX Using Vim or Neovim
+title: Real-time LaTeX using Vim/Neovim, VimTeX, and snippets
 
 carousels:
   - images: 
@@ -11,7 +11,7 @@ carousels:
     - image: /assets/images/vim-latex/screenshots/qm.png
 
 ---
-# Real-time LaTeX Using (Neo)Vim
+# Real-time LaTeX using (Neo)Vim, VimTeX, and snippets
 
 This tutorial series will help you set up the Vim or Neovim text editors for efficiently writing LaTeX documents.
 Here is an example of what I have in mind:
