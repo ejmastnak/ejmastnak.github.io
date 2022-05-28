@@ -26,7 +26,7 @@ Connect to the Internet via WiFi or Ethernet using NetworkManager.
 
 [**X Window System**]({% link notes/arch/basics/startx.md %})
 <br>
-A minimal graphical environment using the Xorg display server and the i3 window manager.
+Set up a minimal graphical environment using the Xorg display server and the i3 window manager.
 
 <!-- [**USB**]({% link notes/arch/basics/usb.md %}) -->
 <!-- <br> -->
@@ -69,13 +69,11 @@ Change audio volume with your keyboard function keys.
 
 ## Eye candy
 
-*Coming soon (e.g. 2 weeks).*
-
 [**Background wallpaper**]({% link notes/arch/graphics/wallpaper.md %})
 <br>
 Set your background wallpaper to an image of your choice, or to a slideshow of images.
 Best served with transparent windows and `i3gaps`.
 
-[**Transparent windows**](#)
+[**Transparent windows**]({% link notes/arch/graphics/picom.md %})
 <br>
-Make unfocused window backgrounds slightly transparent to see wallpaper.
+Use the `picom` compositor to make unfocused window backgrounds slightly transparent, so you can enjoy your background wallpaper.
