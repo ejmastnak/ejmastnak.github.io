@@ -184,13 +184,13 @@ This rule runs the above `hotplug-monitor` service whenever `udev` detects chage
 
 ## Appendix: Technicalities
 
-So...
+There are (at least) two fair questions here:
 
 1. Why are we complicating things with a `systemd` service instead of running the hotplug script directly from the `udev` rule, as in e.g. in these [ArchWiki](https://wiki.archlinux.org/title/Udev#Execute_when_HDMI_cable_is_plugged_in_or_unplugged) [examples](https://wiki.archlinux.org/title/Udev#Execute_on_VGA_cable_plug_in)?
 
 1. Why are we checking device connections using the `sysfs` device file `sys/class/drm/*/status` instead of just running `xrandr`, as in [part 1]({% link notes/arch/graphics/displays.md %})?
 
-Based on my basic understanding of `udev` and `systemd` best practices and some empirical testing:
+Based on my current understanding of `udev` and `systemd` best practices and some empirical testing, here are my answers:
 
 1. `udev` rules are meant to run only short processes, and will block events from the triggering device until the initial process completes (see e.g. [ArchWiki: udev/Spawning long-running processes](https://wiki.archlinux.org/title/Udev#Spawning_long-running_processes) and the references therein).
    This is why we use a `systemd` service to run the shell script, and then only use the `udev` rule to start the service.
