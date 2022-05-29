@@ -12,14 +12,14 @@ The material should be applicable, with adjustments to package installation, to 
 
 <details>
   <summary>
-  <strong>How this relates to the ArchWiki</strong> (click to expand)
+  <strong>What about the ArchWiki?</strong> (click to expand)
   </summary>
-  <p>TLDR: The ArchWiki is the canonical resource for Arch-related information;
-  these guides are my attempt to distill information from the ArchWiki, Arch forums, and my personal experience into self-contained, immediately actionable guides more friendly to new users.</p>
+  <p>TLDR: The ArchWiki is the canonical resource for Arch-related information, 
+  while these guides are my attempt to distill information from the ArchWiki, Arch forums, and my personal experience into self-contained, immediately actionable guides more friendly to new users.</p>
 
   <p>Longer version: I’ve tried to address the following issue:
   the ArchWiki, like the Unix <code class="language-plaintext highlighter-rouge">man</code> pages, is the best and fastest place to go when you know what you’re doing and what you’re looking for,
-  but can be intimidating to new users because of the sheer amount of information and lack of strong opinions on how to approach a given topic.</p>
+  but can be intimidating to new users because of the sheer amount of information, lack of strong opinions on how to approach a given topic, and the need to read multiple cross-linked articles before fully understanding a concept.</p>
 
   <p>This series is <em>intentionally</em> opinionated, and leans towards a minimalistic setup of the i3 window manager with the X Window System.
   It aims to make you quickly functional by teaching atomic tasks in self-contained articles;
