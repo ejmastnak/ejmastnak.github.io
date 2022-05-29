@@ -4,7 +4,7 @@ title: Connect laptop to an external monitor on Linux on X
 
 # Connect laptop to an external monitor on X
 
-{% include arch-notes-header.html comment='and part 1 in a 2-part monitor sequence. Read <a href="/notes/arch/graphics/monitor-hotplug.html">part 2</a> for monitor hot-plugging.' %}
+{% include arch-notes-header.html comment='and part 1 in a two-part monitor sequence. Read <a href="/notes/arch/graphics/monitor-hotplug.html">part 2</a> for monitor hot-plugging.' %}
 
 **Goal:** understand how to make an X Window System display appear on an external monitor using `xrandr`, then write a shell script that does this for you.
 
