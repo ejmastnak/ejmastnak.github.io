@@ -1,5 +1,5 @@
 ---
-title: Copy and Paste on Alacritty, tmux, and Vim
+title: Copy and paste in Alacritty, tmux, and Vim on Arch Linux
 ---
 
 # Clipboard on X11, Alacritty, and Vim

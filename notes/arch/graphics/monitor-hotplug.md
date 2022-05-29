@@ -2,7 +2,7 @@
 title: Monitor hot-plugging on Linux using X
 ---
 
-# Monitor hot-plugging on Linux using X
+# Monitor hot-plugging with X
 
 (This is part 2. You should be familiar with [part 1]({% link notes/arch/graphics/displays.md %}) first.)
 

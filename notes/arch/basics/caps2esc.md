@@ -1,5 +1,5 @@
 ---
-title: Remap Caps Lock to Escape and Control
+title: Remap Caps Lock to Escape and Control on Arch Linux
 ---
 
 # Remap Caps Lock to Escape and Control

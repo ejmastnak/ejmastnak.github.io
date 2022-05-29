@@ -1,5 +1,5 @@
 ---
-title: Transparent windows backgrounds with picom on Linux
+title: Transparent windows backgrounds with picom on Arch Linux
 ---
 
 # Transparent windows with `picom`

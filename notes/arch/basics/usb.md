@@ -2,7 +2,7 @@
 title: USB drives on Arch Linux
 ---
 
-# USB drives on Arch Linux
+# USB drives
 
 **Goal:** Read from and write to external USB drives, including those with the NTFS file system.
 

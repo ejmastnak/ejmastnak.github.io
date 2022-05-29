@@ -1,8 +1,8 @@
 ---
-title: Media Player Control on Arch Linux
+title: Media player control on Arch Linux
 ---
 
-# Media Player Control on Arch Linux
+# Media player control
 
 **Goal:** Trigger common media player actions (e.g. play, pause, skip forward, etc.) using convenient keyboard shortcuts.
 

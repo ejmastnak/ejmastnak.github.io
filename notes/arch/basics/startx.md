@@ -1,7 +1,7 @@
 ---
-title: Install and Start Xorg on Arch Linux
+title: Install and start Xorg on Arch Linux
 ---
-# Install and Start Xorg on Arch Linux
+# Install and start Xorg
 
 **Goal:** Set up a minimal working graphical environment using the X Window System, the i3 window manager, and a terminal emulator of your choice;
 and help you understand and navigate the choices between window managers, desktop environments, and display managers.

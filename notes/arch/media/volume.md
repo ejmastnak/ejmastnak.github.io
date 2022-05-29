@@ -1,8 +1,8 @@
 ---
-title: Adjust volume on Arch Linux
+title: Adjust volume with keyboard keys on Arch Linux
 ---
 
-# Volume adjustment on Arch Linux
+# Keyboard-based volume adjustment
 
 **Goal:** understand how to programmatically adjust audio playback volume from the command line either through ALSA or PulseAudio, then create convenient key bindings to do this for you.
 

@@ -1,8 +1,8 @@
 ---
-title: Wallpaper
+title: Background wallpaper with feh on Arch Linux
 ---
 
-# Set wallpaper with feh on Linux
+# Set wallpaper with feh
 
 **Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
 

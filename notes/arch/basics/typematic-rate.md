@@ -1,5 +1,5 @@
 ---
-title: Key delay and repeat rate on X11
+title: Key delay and repeat rate on X11 on Arch Linux
 ---
 
 # Key delay and repeat rate on X11

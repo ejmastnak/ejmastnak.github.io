@@ -1,8 +1,8 @@
 ---
-title: First Steps with NetworkManager
+title: First steps with NetworkManager on Linux
 ---
 
-# First Steps with NetworkManager
+# First steps with NetworkManager
 
 **Goal:** Connect to the Internet via Wi-Fi or Ethernet using NetworkManager from the command line.
 
