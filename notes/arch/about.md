@@ -8,9 +8,7 @@ title: Arch Linux Post-Installation Configuration
 (read: mostly solutions to my stumbling points when migrating to Arch from macOS).
 The material should be applicable, with adjustments to package installation, to most `systemd`-based Linux distros.
 
-**Purpose:** lower the barrier to entry and improve the transition experience for new users.
-
-
+**Purpose:** improve the transition and onboarding experience for new users.
 
 <details>
   <summary>
