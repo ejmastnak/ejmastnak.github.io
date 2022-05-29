@@ -219,9 +219,19 @@ body {
   padding: 0;
 }
 
+.markdown-body details {
+  background-color: $light2;
+}
+
 .markdown-body details summary {
   cursor: pointer;
+  background-color: $background-color;
 }
+
+.markdown-body details p {
+  padding: 0px 10px;
+}
+
 
 // Unidentified!
 .markdown-body kbd {
