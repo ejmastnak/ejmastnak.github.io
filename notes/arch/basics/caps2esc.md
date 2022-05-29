@@ -35,7 +35,7 @@ title: Remap Caps Lock to Escape and Control on Arch Linux
 
 - Create the `systemd` unit file `/etc/systemd/system/udevmon.service` (if necessary) and inside it add the contents
 
-  ```conf
+  ```systemd
   [Unit]
   Description=udevmon
   Wants=systemd-udev-settle.service

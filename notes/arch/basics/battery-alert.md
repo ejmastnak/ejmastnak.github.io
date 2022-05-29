@@ -132,7 +132,7 @@ Plan: create a `systemd` user service to run `alert-battery.sh`, and then create
 
 Create the file `~/.config/systemd/user/alert-battery.service` and inside it paste
 
-```conf
+```systemd
 [Unit]
 Description=Desktop alert warning of low remaining battery
 
@@ -151,7 +151,7 @@ The `~/.config/systemd/user` directory is the standard location for user units.
 #### Create timer
 
 Create the file `~/.config/systemd/user/alert-battery.timer` and inside it paste
-```conf
+```systemd
 [Unit]
 Description=Check battery status every few minutes to warn the user in case of low battery
 # Set `Requires` to the name of the battery alert service

@@ -151,7 +151,7 @@ We'll run the above shell script from a `systemd` service.
 
 Create a `systemd` unit `/etc/systemd/system/hotplug-monitor.service` with the following contents:
 
-```conf
+```systemd
 [Unit]
 Description=Monitor hotplug service
 
