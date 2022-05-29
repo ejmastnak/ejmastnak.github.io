@@ -4,6 +4,8 @@ title: First steps with NetworkManager on Linux
 
 # First steps with NetworkManager
 
+{% include arch-notes-header.html %}
+
 **Goal:** Connect to the Internet via Wi-Fi or Ethernet using NetworkManager from the command line.
 
 **About:** For our current purposes, NetworkManager is a network management tool that provides easy automatic connection to the Internet.
@@ -122,7 +124,7 @@ $ ip link
 ```
 
 Wired network interfaces are conventionally prefixed with `en` and wireless interfaces with `wl`,
-in the above example `lo` is my loopback interface, `enp0s31f6` my Ethernet interface, and `wlp4s0` my wireless interface.
+in the above example `lo` is my loopback interface, `enp0s31f6` is my Ethernet interface, and `wlp4s0` is my wireless interface.
 
 **Troubleshooting**
 - If `ip link` does not show a wireless interface, your wireless network card probably requires a kernel driver that does not ship by default with Arch, and you will have to install this kernel driver and load the corresponding kernel module.
@@ -230,3 +232,5 @@ ip -c addresses  # use the `-c` flag for colored output
 ```
 
 The output of `ip address` is a bit verbose---check the `inet` field of each interface for an IPv4 address and the `inet6` field for an IPv6 address.
+
+{% include arch-notes-footer.html %}

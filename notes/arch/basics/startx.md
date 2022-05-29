@@ -3,6 +3,8 @@ title: Install and start Xorg on Arch Linux
 ---
 # Install and start Xorg
 
+{% include arch-notes-header.html %}
+
 **Goal:** Set up a minimal working graphical environment using the X Window System, the i3 window manager, and a terminal emulator of your choice;
 and help you understand and navigate the choices between window managers, desktop environments, and display managers.
 
@@ -207,3 +209,5 @@ We'll use the default `xinitrc` file in `/etc/X11/xinit/` as a starting point, a
   install and/or customize a status bar,
   set a background wallpaper;
   customize your shell prompt, etc.
+
+{% include arch-notes-footer.html %}

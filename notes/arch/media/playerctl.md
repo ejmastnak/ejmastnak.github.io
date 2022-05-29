@@ -4,6 +4,8 @@ title: Media player control on Arch Linux
 
 # Media player control
 
+{% include arch-notes-header.html %}
+
 **Goal:** Trigger common media player actions (e.g. play, pause, skip forward, etc.) using convenient keyboard shortcuts.
 Best served with this series's [volume control guide]({% link notes/arch/media/volume.md %}).
 
@@ -175,3 +177,4 @@ For more information and examples using `xbindkeys` see [ArchWiki: Xbindkeys](ht
    ```
    See [ArchWiki: Xbindkeys/Making changes permanent](https://wiki.archlinux.org/title/Xbindkeys#Making_changes_permanent) for more information.
 
+{% include arch-notes-footer.html %}

@@ -4,6 +4,8 @@ title: Adjust laptop backlight on Arch Linux
 
 # Adjust laptop backlight
 
+{% include arch-notes-header.html %}
+
 **Goal:** understand how to programmatically adjust your laptop's backlight brightness from the command line, then create convenient key bindings to do this for you.
 
 **Read this if:** your laptop has two keyboard functions keys for increasing and decreasing backlight brightness, but these keys have no effect after a standard install of Arch (so you find yourself unable to adjust your backlight brightness).
@@ -345,3 +347,5 @@ options root=/dev/sdaXYZ rw acpi_backlight=video     # after
 (Or, for a one-time test, type `e` in the `systemd-boot` boot screen when logging in, and add `acpi_backlight=video` to the kernel parameters.) 
 
 For adding kernel parameters with other boot loaders, consult [ArchWiki: Kernel parameters](https://wiki.archlinux.org/title/Kernel_parameters).
+
+{% include arch-notes-footer.html %}

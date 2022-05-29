@@ -4,6 +4,8 @@ title: Transparent windows backgrounds with picom on Arch Linux
 
 # Transparent windows with `picom`
 
+{% include arch-notes-header.html %}
+
 **Goal:** Use the `picom` compositor to make unfocused window backgrounds slightly transparent, so you can enjoy [your background wallpaper]({% link notes/arch/graphics/wallpaper.md %}).
 
 **Dependencies:** This guide works on the X Window System.
@@ -202,3 +204,5 @@ fading = false
 # Disable rounded window corners; search picom.conf for "Corners" for details
 corner-radius = 0
 ```
+
+{% include arch-notes-footer.html %}

@@ -4,6 +4,8 @@ title: Key delay and repeat rate on X11 on Arch Linux
 
 # Key delay and repeat rate on X11
 
+{% include arch-notes-header.html %}
+
 **Goal:** Understand and control your typematic rate and typematic delay.
 You'll usually do this to make pressed-down keys repeat faster.
 
@@ -56,3 +58,5 @@ sudo kbdrate -d 200 -r 30
 
 You can use a `systemd` unit to make the change permanent at every boot.
 I suggest following the ArchWiki's clear instructions at [ArchWiki: Linux console/Keyboard configuration/Systemd service](https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration#Systemd_service).
+
+{% include arch-notes-footer.html %}

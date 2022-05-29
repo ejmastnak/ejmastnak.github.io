@@ -4,6 +4,8 @@ title: Battery level alert on Arch Linux
 
 # Battery level alert 
 
+{% include arch-notes-header.html %}
+
 **Goal:** Create a desktop notification when battery falls below a threshold percentage of your choice.
 
 **Motivation:** Remind you to charge your battery, which will happily drain completely if given the chance.
@@ -203,3 +205,5 @@ The battery alert system should be ready after this step.
 Troubleshooting: If the timer fails to enable with a message along the lines of `Failed to enable unit: Unit file ~/.config/systemd/user/timers.target.wants/alert-battery.timer does not exist.`, just create the empty directory `~/.config/systemd/user/timers.target.wants/`.
 Explanation: enabling units requires creating symlinks, and `systemctl` is complaining because the directory in which it would create a symlink does not exist yet.
 Creating the directory solves the problem.
+
+{% include arch-notes-footer.html %}

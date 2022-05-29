@@ -4,7 +4,7 @@ title: Monitor hot-plugging on Linux using X
 
 # Monitor hot-plugging with X
 
-(This is part 2. You should be familiar with [part 1]({% link notes/arch/graphics/displays.md %}) first.)
+{% include arch-notes-header.html comment='and part 2 in a 2-part monitor sequence. You should be familiar with <a href="/notes/arch/graphics/displays.html">part 1</a> first.' %}
 
 **Goal:** use `udev` to detect when a monitor cable is physically connected or disconnected, and use `xrandr` to automatically update the monitor display in response.
 
@@ -200,3 +200,5 @@ Based on my current understanding of `udev` and `systemd` best practices and som
    As far as I can tell, in such cases `/sys/class/drm/*/status` will show the correct connection status, but `xrandr` will still be lagging behind by a few hundred milliseconds or so.
 
    For hot-plugging, it is thus more reliable to check a display's connection state from the contents of `/sys/class/drm/*/status` than to use `grep` to parse the output of the `xrandr` command, as in e.g. [part 1]({% link notes/arch/graphics/displays.md %}).
+
+{% include arch-notes-footer.html %}

@@ -4,6 +4,8 @@ title: Adjust volume with keyboard keys on Arch Linux
 
 # Keyboard-based volume adjustment
 
+{% include arch-notes-header.html %}
+
 **Goal:** understand how to programmatically adjust audio playback volume from the command line either through ALSA or PulseAudio, then create convenient key bindings to do this for you.
 Best served with this series's [media player control]({% link notes/arch/media/playerctl.md %}).
 
@@ -320,3 +322,5 @@ else
   echo "Usage should be: volume.sh <raise|lower|mute>"
 fi
 ```
+
+{% include arch-notes-footer.html %}

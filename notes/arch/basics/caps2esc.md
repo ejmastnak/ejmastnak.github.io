@@ -4,6 +4,8 @@ title: Remap Caps Lock to Escape and Control on Arch Linux
 
 # Remap Caps Lock to Escape and Control
 
+{% include arch-notes-header.html %}
+
 **Goal:** make the Caps Lock key act like the Escape key when pressed alone and act like the Control key when pressed in combination with other keys.
 
 **Motivation:** pleasant and ergonomic access system-wide to the very useful escape and control keys and a better Vim or Emacs experience.
@@ -60,3 +62,5 @@ title: Remap Caps Lock to Escape and Control on Arch Linux
   systemctl status udevmon
   ```
   At this point you should be done---try using e.g. `<CapsLock>-L` to clear the terminal screen (like you would normally do with `<Ctrl>-L`).
+
+{% include arch-notes-footer.html %}

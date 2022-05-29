@@ -4,6 +4,8 @@ title: USB drives on Arch Linux
 
 # USB drives
 
+{% include arch-notes-header.html %}
+
 **Goal:** Read from and write to external USB drives, including those with the NTFS file system.
 
 **References:**
@@ -96,7 +98,7 @@ Reference:
 
 ### File systems
 
-
 The `mount` command should detect the USB drive's file system and use the appropriate library if needed.
 See e.g. [https://wiki.archlinux.org/title/NTFS-3G](https://wiki.archlinux.org/title/NTFS-3G): the `mount` command should know to use the `ntfs` file system after an installation of `ntfs-3g`.
 
+{% include arch-notes-footer.html %}

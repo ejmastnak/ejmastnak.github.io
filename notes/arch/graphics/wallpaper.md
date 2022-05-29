@@ -4,6 +4,8 @@ title: Background wallpaper with feh on Arch Linux
 
 # Set wallpaper with feh
 
+{% include arch-notes-header.html %}
+
 **Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
 
 **Dependencies:** This guide works on the X Window System.
@@ -147,3 +149,5 @@ systemctl --user list-timers
 ```
 Note that you only enable and start the `change-wallpaper.timer` unit and not the `.service` unit.
 The wallpaper slideshow should be ready after this step.
+
+{% include arch-notes-footer.html %}
