@@ -29,6 +29,9 @@ In practice, NM provides "set it and forget it" functionality---after connecting
   * [Disable currently running network daemons (if needed)](#disable-currently-running-network-daemons-if-needed)
   * [Start NetworkManager](#start-networkmanager)
 * [Hello world network connection](#hello-world-network-connection)
+  * [Check network interfaces](#check-network-interfaces)
+  * [Ethernet](#ethernet)
+  * [Wi-Fi](#wi-fi)
 * [Checking basic network status](#checking-basic-network-status)
 
 <!-- vim-markdown-toc -->
@@ -88,12 +91,60 @@ Reboot to ensure all changes take effect.
 
 ## Hello world network connection
 
-**Ethernet:** should be plug and play (assuming `NetworkManager.service` is enabled)---just plug a working Ethernet cable into your computer (potentially via a USB adapter) and NetworkManager should take care of the rest.
+### Check network interfaces
+
+<details>
+  <summary>
+  What is a network interface?
+  </summary>
+  <p>Briefly, a network interface is the connection point between your computer and a computer network.
+  A typical computer has a wireless, Ethernet, and loopback interface;
+  the loopback is virtual interface used by your computer to communicate with itself.</p>
+</details>
+
+You *must* have an available wireless interface to use Wi-Fi and an Ethernet interface to use wired Ethernet, so you should first check you have these network interfaces available.
+
+You can list network interfaces with the `ip link` command:
+
+```sh
+# List network interfaces
+ip link       
+ip -c link    # the `-c` flag gives better-readable colored output
+```
+
+You should expect a loopback, Ethernet, and wireless interface; here is an example `ip link` output on my computer:
+
+```sh
+$ ip link
+1: lo         # ...additional output ommitted...
+2: enp0s31f6  # ...additional output ommitted...
+3: wlp4s0     # ...additional output ommitted...
+```
+
+Wired network interfaces are conventionally prefixed with `en` and wireless interfaces with `wl`,
+in the above example `lo` is my loopback interface, `enp0s31f6` my Ethernet interface, and `wlp4s0` my wireless interface.
+
+**Troubleshooting**
+- If `ip link` does not show a wireless interface, your wireless network card probably requires a kernel driver that does not ship by default with Arch, and you will have to install this kernel driver and load the corresponding kernel module.
+
+  This falls beyond the scope of this guide---you will need to know the manufacturer and model of your wireless network card (use `lspci -v` (or `lsusb -v` if the wireless device is connected via USB) and search the output for "Network controller") and what kernel driver is currently handling the network card device (use `lspci -k` or `lsusb -k`).
+  Then consult [ArchWiki: Network configuration/Wireless](https://wiki.archlinux.org/title/Network_configuration/Wireless) and the references therein to see if your network card should be using a different kernel driver.
+
+- If `ip link` shows a wireless interface, but its status shows `status DOWN`, your Wi-Fi might be blocked.
+  You can unblock it with `rfkill unblock wifi`; see `man rfkill` for more information.
+
+**Check-in point:** The `ip link` command lists both a wireless and Ethernet network interface (in addition to the loopback interface `lo`).
+
+### Ethernet
+
+Ethernet should be plug and play (assuming `NetworkManager.service` is enabled)---just plug a working Ethernet cable into your computer (potentially via a USB adapter) and NetworkManager should take care of the rest.
 You can verify your connection with `nmcli general status` or `nmcli device status`, which should show a `connected` state.
 
-Your mileage may vary, of course, but I have never had problems with Ethernet network connection using NetworkManager.
+Your mileage may vary, of course, but Ethernet network connections have always worked automatically for me when using NetworkManager.
 
-**Wi-Fi:** First enable Wi-Fi and list available wireless networks:
+### Wi-Fi
+
+First enable Wi-Fi and list available wireless networks:
 
 ```sh
 # Ensure Wi-Fi is enabled---verify status with `nmcli radio wifi`
@@ -101,7 +152,7 @@ nmcli radio wifi on
 ```
 
 ```sh
-# List available Wi-Fi access points 
+# List available Wi-Fi networks
 $ nmcli device wifi list
 
 # Example output of `nmcli device wifi list`:
@@ -168,22 +219,14 @@ Use `nmcli connection show --active` to show only current connections.
 NetworkManager stores connection files in `/etc/NetworkManager/system-connections/`---note that Wi-Fi passwords are stored in plain text and are protected only with root access permissions.
 See [ArchWiki: NetworkManager/Encrypted Wi-Fi passwords](https://wiki.archlinux.org/title/NetworkManager#Encrypted_Wi-Fi_passwords) for ways to encrypt Wi-Fi passwords.
 
-**Network interfaces**
+**IP addresses**
 
-You can list network interfaces with the `ip` command:
+You can list the IP address associated with each of your network interfaces with the `ip address` command:
+
 ```sh
-# List network interfaces
-ip link       # use `ip -c link` for colored output
-
-# List network interfaces and IP addresses
-ip a[ddress]  # use `ip -c a` for colored output
+# List network interfaces and their corresponding IP addresses
+ip address       # `ip addr` or even `ip a` should work, too
+ip -c addresses  # use the `-c` flag for colored output
 ```
-Briefly, a network interface is the connection point between your computer and a computer network.
-A typical computer has a wireless, Ethernet, and loopback interface;
-the loopback is virtual interface used by your computer to communicate with itself.
 
-You should know the names of your network interfaces---wired network interfaces are conventionally prefixed with `en` and wireless interfaces with `wl`; mine were `enp0s20u1` and `wlan0`.
-
-(Aside: if `ip link` shows `status DOWN` for your wireless interface, your Wi-Fi might be blocked.
-You can unblock it with `rfkill unblock wifi`; see `man rfkill` for more information.)
-
+The output of `ip address` is a bit verbose---check the `inet` field of each interface for an IPv4 address and the `inet6` field for an IPv6 address.
