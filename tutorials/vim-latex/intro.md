@@ -18,7 +18,7 @@ Here is an example of what I have in mind:
 
 <image src="/assets/images/vim-latex/show-off/gauss.gif" alt="Writing LaTeX quickly" />
 
-The middle blue bar shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
+The blue bar with white text shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 More on how this works below.
 
 **Goal of this guide:** make writing LaTeX as easy (fast, efficient, enjoyable...) as writing math by hand.
