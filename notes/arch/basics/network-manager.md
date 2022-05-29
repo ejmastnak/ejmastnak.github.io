@@ -98,15 +98,17 @@ Your mileage may vary, of course, but I have never had problems with Ethernet ne
 ```sh
 # Ensure Wi-Fi is enabled---verify status with `nmcli radio wifi`
 nmcli radio wifi on
+```
 
-# List available Wi-Fi access points
-nmcli device wifi list
+```sh
+# List available Wi-Fi access points 
+$ nmcli device wifi list
 
 # Example output of `nmcli device wifi list`:
-> BSSID              SSID            MODE   CHAN  RATE        SIGNAL  BARS  SECURITY
-> AA:11:BB:22:CC:33  MyCoolNetwork   Infra  6     230 Mbit/s  95      ▂▄▆_  WPA2
-> DD:44:EE:55:FF:66  AnotherNetork   Infra  6     195 Mbit/s  90      ▂▄▆_  WPA1 WPA2
-> GG:77:HH:88:II:99  FooBarNetwork   Infra  6     175 Mbit/s  85      ▂▄▆_  --
+BSSID              SSID            MODE   CHAN  RATE        SIGNAL  BARS  SECURITY
+AA:11:BB:22:CC:33  MyCoolNetwork   Infra  6     230 Mbit/s  95      ▂▄▆_  WPA2
+DD:44:EE:55:FF:66  AnotherNetork   Infra  6     195 Mbit/s  90      ▂▄▆_  WPA1 WPA2
+GG:77:HH:88:II:99  FooBarNetwork   Infra  6     175 Mbit/s  85      ▂▄▆_  --
 ```
 
 Identify your desired network's SSID, and connect as follows:
@@ -136,21 +138,23 @@ Use `nmcli general status` to show general NetworkManager status.
 Here is an example output for an active wireless connection
 
 ```sh
-nmcli general satus
-> STATE      CONNECTIVITY  WIFI-HW  WIFI     WWAN-HW  WWAN
-> connected  full          enabled  enabled  enabled  enabled
+# Example output of `nmcli general status`
+$ nmcli general status
+STATE      CONNECTIVITY  WIFI-HW  WIFI     WWAN-HW  WWAN
+connected  full          enabled  enabled  enabled  enabled
 ```
 See the `GENERAL COMMANDS` section of `man nmcli` for more information.
 
 Use `nmcli device status` to see the connection status of each of your network interfaces.
 Here is example output for an active wireless connection on a wireless network with the SSID `FooBarNetwork`:
 
-```
-nmcli device status
-> DEVICE  TYPE      STATE         CONNECTION
-> wlan0   wifi      connected     FooBarNetwork
-> enp0s1  ethernet  unavailable   --
-> lo      loopback  unmanaged     --
+```sh
+# Example output of `nmcli device status`
+$ nmcli device status
+DEVICE  TYPE      STATE         CONNECTION
+wlan0   wifi      connected     FooBarNetwork
+enp0s1  ethernet  unavailable   --
+lo      loopback  unmanaged     --
 ```
 Use `nmcli device show` for more detailed information than `nmcli device status`.
 See the `DEVICE MANAGEMENT COMMANDS` section of `man nmcli` for more information.

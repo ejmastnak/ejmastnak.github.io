@@ -62,7 +62,7 @@ Here's an example `acpi` output for a discharging battery at 60% capacity:
 
 ```sh
 $ acpi -b
-> Battery 0: Discharging, 60%, 03:54:00 remaining
+Battery 0: Discharging, 60%, 03:54:00 remaining
 ```
 
 <details>
