@@ -23,8 +23,8 @@ Most anything associated with modern desktop computing requires a window system.
 * [What's involved](#whats-involved)
   * [Making sense of all the Xs](#making-sense-of-all-the-xs)
   * [Choices: Standalone window manager vs. desktop environment](#choices-standalone-window-manager-vs-desktop-environment)
-  * [Display manager or not?](#display-manager-or-not)
-* [Example: Installing Xorg and i3](#example-installing-xorg-and-i3)
+  * [Choices: Display manager or not?](#choices-display-manager-or-not)
+* [Installing Xorg and i3](#installing-xorg-and-i3)
   * [Installation](#installation)
   * [Starting X](#starting-x)
   * [Next steps](#next-steps)
@@ -35,8 +35,9 @@ Most anything associated with modern desktop computing requires a window system.
 
 ### Making sense of all the Xs
 
-**Note:** These technical details don't matter much once you actually begin using a window system, and you usually won't think about them or need them from the perspective of an everyday user.
-Feel free to [skip to installation](#example-installing-xorg-and-i3).
+**Note:** Feel free to [skip to installation](#example-installing-xorg-and-i3).
+The technical details in this section don't matter much once you actually begin using a window system, and you usually won't think about them or need them from the perspective of an everyday user.
+
 
 Confusingly, the X window system, display server, and display server communication protocol are all called X in everyday usage.
 [Wikipedia](https://en.wikipedia.org/wiki/Windowing_system) [does](https://en.wikipedia.org/wiki/X_Window_System) [a good job](https://en.wikipedia.org/wiki/X.Org_Server) of explaining what's involved;
@@ -99,7 +100,7 @@ You really have three choices, not two:
 Need help choosing a desktop environment or window manager?
 You can browse through a bunch of options on Ermanno Ferrari's excellent [desktop customization playlist](https://www.youtube.com/playlist?list=PL-odKaUzOz3Knbk8vs_T1pItsTZtkO6ZL).
 
-### Display manager or not?
+### Choices: Display manager or not?
 
 It depends on how you want to log in.
 After a standard Arch install you log in by typing your username and password into a text-based console prompt displayed at the end of the boot process.
@@ -113,7 +114,7 @@ You can also configure most DMs to start Xorg automatically after logging in.
 My suggestion for beginners: begin without a display manager and log in using the text-based console---you'll have fewer things to set up and potentially misconfigure.
 You can always install a DM after setting up your window manager and/or desktop environment.
 
-## Example: Installing Xorg and i3
+## Installing Xorg and i3
 
 Here's the minimal window setup I'll cover on this page:
 - Display server: Xorg
