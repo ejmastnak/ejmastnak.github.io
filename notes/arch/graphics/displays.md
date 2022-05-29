@@ -4,17 +4,20 @@ title: Connect laptop to an external monitor on Linux on X
 
 # Connect laptop to an external monitor on X
 
+(This is part 1. Read [part 2]({% link notes/arch/graphics/monitor-hotplug.md %}) for hot-plugging.)
+
 **Goal:** understand how to make an X Window System display appear on an external monitor using `xrandr`, then write a shell script that does this for you.
 
 **Read this if:** you've just installed Arch, start up an X session, connect your laptop to an external monitor, and... nothing happens---blank monitor screen.
 I only cover a single-monitor set-up here;
 see [ArchWiki: Multihead](https://wiki.archlinux.org/title/Multihead) for multi-monitor set-ups.
 
+**Dependencies:** This guide works on the X Window System.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+
 **References:**
 - [ArchWiki: xrandr](https://wiki.archlinux.org/title/xrandr): the de-facto tool for controlling displays on the X Window System.
 - [GitHub: autorandr](https://github.com/phillipberndt/autorandr): a well-received, automated alternative to `xrandr` (not covered here).
-
-(This is part 1. Read [part 2]({% link notes/arch/graphics/monitor-hotplug.md %}) for hot-plugging.)
 
 ## Procedure
 

@@ -9,6 +9,9 @@ title: Battery level alert on Arch Linux
 **Motivation:** Remind you to charge your battery, which will happily drain completely if given the chance.
 And then your laptop's dead, and you have to find a charger, reboot and restart all your programs, and who wants to do that?
 
+**Dependencies:** This guide works on the X Window System.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+
 **Reference:** [ArchWiki: Desktop notifications](https://wiki.archlinux.org/title/Desktop_notifications).
 
 <div style="display: flex; justify-content: center; width: 100%;">

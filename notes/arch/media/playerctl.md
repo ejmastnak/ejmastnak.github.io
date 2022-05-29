@@ -5,6 +5,7 @@ title: Media player control on Arch Linux
 # Media player control
 
 **Goal:** Trigger common media player actions (e.g. play, pause, skip forward, etc.) using convenient keyboard shortcuts.
+Best served with this series's [volume control guide]({% link notes/arch/media/volume.md %}).
 
 **References:**
 - [ArchWiki: MPRIS](https://wiki.archlinux.org/title/MPRIS)

@@ -7,6 +7,9 @@ title: Key delay and repeat rate on X11 on Arch Linux
 **Goal:** Understand and control your typematic rate and typematic delay.
 You'll usually do this to make pressed-down keys repeat faster.
 
+**Dependencies:** This guide works on the X Window System.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+
 **References:**
 - [ArchWiki: Xorg/Keyboard configuration](https://wiki.archlinux.org/title/Xorg/Keyboard_configuration)
 - [ArchWiki: Linux console/Keyboard configuration](https://wiki.archlinux.org/title/Linux_console/Keyboard_configuration)

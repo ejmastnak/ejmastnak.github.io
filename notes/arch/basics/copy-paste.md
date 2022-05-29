@@ -6,8 +6,8 @@ title: Copy and paste in Alacritty, tmux, and Vim on Arch Linux
 
 **Goal:** Comfortably copy and paste between GUI applications in the X Window System, the Alacritty terminal, and Vim/Neovim.
 
-**Audience:** users of the X Window System, Alacritty, and Vim/Neovim.
-The instructions here may not work for other terminals or text editors.
+**Dependencies:** This guide works on the X Window System, and is targetted towards Alacritty and Vim/Neovim users.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
 
 **References:**
 - [ArchWiki: Clipboard](https://wiki.archlinux.org/title/Clipboard): lists tools for interacting with the clipboard

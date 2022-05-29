@@ -6,6 +6,9 @@ title: Background wallpaper with feh on Arch Linux
 
 **Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
 
+**Dependencies:** This guide works on the X Window System.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+
 **References:**
 
 - [ArchWiki: feh](https://wiki.archlinux.org/title/feh)

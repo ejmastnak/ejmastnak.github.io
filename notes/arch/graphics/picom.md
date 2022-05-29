@@ -6,6 +6,9 @@ title: Transparent windows backgrounds with picom on Arch Linux
 
 **Goal:** Use the `picom` compositor to make unfocused window backgrounds slightly transparent, so you can enjoy [your background wallpaper]({% link notes/arch/graphics/wallpaper.md %}).
 
+**Dependencies:** This guide works on the X Window System.
+You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+
 **References:**
 - [ArchWiki: picom](https://wiki.archlinux.org/title/Picom)
 - `man picom`
