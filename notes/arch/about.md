@@ -4,14 +4,35 @@ title: Arch Linux Post-Installation Configuration
 
 # Find Your Footing After Installing Arch Linux
 
-**What you're reading:** Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch Linux
-(read: mostly solutions to all my stumbling points when migrating to Arch from macOS).
+**What you're reading:** Bite-sized, actionable tutorials to help you set up a functional work environment after a minimal install of Arch Linux
+(read: mostly solutions to my stumbling points when migrating to Arch from macOS).
 The material should be applicable, with adjustments to package installation, to most `systemd`-based Linux distros.
 
 **Purpose:** lower the barrier to entry and improve the transition experience for new users.
 
-**X11 Warning:** most tutorials involve the X window system in one form or another, so Wayland users may have to look elsewhere.
-Use the i3 window manager and the Alacritty terminal if you want to follow along exactly, but most of these tutorials should work fine on an X-based setup.
+
+
+<details>
+  <summary>
+  <strong>How this relates to the ArchWiki</strong> (click to expand)
+  </summary>
+  <p>TLDR: The ArchWiki is the canonical resource for Arch-related information;
+  these guides are my attempt to distill information from the ArchWiki, Arch forums, and my personal experience into self-contained, immediately actionable guides more friendly to new users.</p>
+
+  <p>Longer version: I’ve tried to address the following issue:
+  the ArchWiki, like the Unix <code class="language-plaintext highlighter-rouge">man</code> pages, is the best and fastest place to go when you know what you’re doing and what you’re looking for,
+  but can be intimidating to new users because of the sheer amount of information and lack of strong opinions on how to approach a given topic.</p>
+
+  <p>This series is <em>intentionally</em> opinionated, and leans towards a minimalistic setup of the i3 window manager with the X Window System.
+  It aims to make you quickly functional by teaching atomic tasks in self-contained articles;
+  I try to cover only the information you need to solve each task (while still understanding what you’re doing), and move supplemental information to external references.
+  Individual articles are meant to be self-contained and immediately actionable.</p>
+
+  <p>Spending hours hopping through the ArchWiki’s cross-referenced articles is great—that’s how I learned myself—but in hindsight I’d argue that it’s not excessive hand-holding to first walk a new user through reliably connecting to the Internet, using their monitor, copying and pasting text, and confidently performing the handful of other basic, generally taken-for-granted tasks needed to find your footing on Arch Linux.</p>
+</details>
+
+**X11 Warning:** most of these tutorials involve the X window system in one form or another, so Wayland users may have to look elsewhere.
+Use the i3 window manager and the Alacritty terminal emulator if you want to follow along exactly, but most of these tutorials should work fine on any X-based setup.
 
 ## Useful basics
 
