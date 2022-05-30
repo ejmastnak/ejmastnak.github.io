@@ -34,8 +34,8 @@ Here are the full filter specifications:
 
 ## About the project
 
-The project is a pedagogical exercise meant to help new signal processing students (originally me when making the project) develop hands-on familiarity with foundational concepts and algorithms in FIR digital filter design, which should provide insight into the under-the-hood workings of conventional tools like Matlab's `fir1` and `fir2` or SciPy's `firwin`.
+This was originally a project for the third-year course *Zajemanje in obdelava podatkov* (Data Acquisition and Processing) at the Faculty of Mathematics and Physics and the University of Ljubljana, Slovenia, which I later put online for a public audience.
+
+The project is a pedagogical exercise meant to help new signal processing students (read: me when making the project) develop hands-on familiarity with foundational concepts and algorithms in FIR digital filter design, which should provide insight into the under-the-hood workings of conventional tools like Matlab's `fir1` and `fir2` or SciPy's `firwin`.
 I draw the third-party library line at Numpy's implementation of the fast Fourier transform, and do remaining tasks---e.g. computing filter kernels and frequency responses; applying window functions; implementing the overlap-add method for online convolution; etc.---by hand.
 The project is certainly *not* an attempt at creating a production-ready, high-performance digital filter.
-
-This was originally a project for the third-year course *Zajemanje in obdelava podatkov* (Data Acquisition and Processing) at the Faculty of Mathematics and Physics and the University of Ljubljana, Slovenia, which I later put online for a public audience.
