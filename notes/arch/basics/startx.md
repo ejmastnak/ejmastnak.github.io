@@ -37,7 +37,7 @@ Most anything associated with modern desktop computing requires a window system.
 
 ### Making sense of all the Xs
 
-**Note:** Feel free to [skip to installation](#example-installing-xorg-and-i3).
+**Note:** Feel free to [skip to installation](#installing-xorg-and-i3).
 The technical details in this section don't matter much once you actually begin using a window system, and you usually won't think about them or need them from the perspective of an everyday user.
 
 
