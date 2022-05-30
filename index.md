@@ -17,7 +17,7 @@ A professionally-written guide to turbocharged mathematical typesetting
 <br>
 From the final two years of undergrad at the Faculty of Math and Physics in Ljubljana
 
-[**Find your footing after installing Arch Linux**]({% link notes/arch/about.md %})
+[**Find your footing on Arch Linux**]({% link notes/arch/about.md %})
 <br>
 Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch
 
