@@ -22,5 +22,25 @@ $nord15: #b48ead;
 $light0: #fbfbfc;
 $light1: #f8f9fb;
 $light2: #f3f4f6;
+$link-blue: #0079c0;
+// -----------------------------------------------
 
-$link-color: #0366d6;
+// Semantically-named colors
+// -----------------------------------------------
+$text-color: $nord1;
+$background-color: $light0;
+$link-color: $link-blue;
+$border-color: $nord4;
+
+$inline-code-text-color: $nord1;
+$inline-code-background-color: $nord5;
+$block-code-text-color: $nord4;
+$block-code-background-color: $nord0;
+
+$quote-text-color: $nord3;
+$quote-background-color: $light2;
+
+$table-row-color-light: $background-color;
+$table-row-color-dark: $light2;
+$table-border-color: $nord4;
+// -----------------------------------------------

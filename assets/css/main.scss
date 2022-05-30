@@ -2,23 +2,6 @@
 ---
 @import "colors";
 
-$text-color: $nord1;
-$background-color: $light0;
-$link-color: #0079c0;
-$border-color: $nord4;
-
-$inline-code-text-color: $nord1;
-$inline-code-background-color: $nord5;
-$block-code-text-color: $nord4;
-$block-code-background-color: $nord0;
-
-$quote-text-color: $nord3;
-$quote-background-color: $light2;
-
-$table-row-color-light: $background-color;
-$table-row-color-dark: $light2;
-$table-border-color: $nord4;
-
 // Note: body text and background color
 body {
   line-height: 1.5;
@@ -93,7 +76,7 @@ body {
 }
 
 .markdown-body h1 {
-  font-size: 1.75em;
+  font-size: 2.00em;
   padding-bottom: .3em;
   border-bottom: 1px solid $border-color;
 }
@@ -227,8 +210,6 @@ body {
 // -----------------------------------------------
 .markdown-body ol,
 .markdown-body ul {
-  margin-top: 0;
-  margin-bottom: 0;
   padding-left: 1.75em;
 }
 
@@ -427,3 +408,6 @@ body {
     padding: 15px;
   }
 }
+// -----------------------------------------------
+
+@import "topnav", "nord-syntax", "vim-latex", "arch-notes";
