@@ -1,7 +1,10 @@
 ---
 title: Digital Hilbert Transformer
+<!-- date: 2017-12-01 23:22:00 +0000 -->
 ---
 # Digital Bandpass Hilbert Transformer 
+
+{% include date.html %}
 
 Project goal: design and implement a finite impulse response (FIR) Hilbert transformer and bandpass filter using the windowed-sinc method, but without using the usual filter design tools provided by software like Matlab or SciPy.
 

@@ -5,7 +5,6 @@ prev-filename: "ftplugin"
 prev-display-name: "« 3. Vim's ftplugin system"
 next-filename: "compilation"
 next-display-name: "5. Compilation »"
-
 ---
 
 {% include vim-latex-navbar.html %}

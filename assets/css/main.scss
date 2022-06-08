@@ -70,7 +70,7 @@ body {
 .markdown-body h5,
 .markdown-body h6 {
   margin-top: 24px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-weight: 600;
   line-height: 1.25;
 }
@@ -78,7 +78,8 @@ body {
 .markdown-body h1 {
   font-size: 2.00em;
   padding-bottom: .3em;
-  border-bottom: 1px solid $border-color;
+  text-align: center;
+  // border-bottom: 1px solid $border-color;
 }
 
 .markdown-body h2 {
@@ -410,4 +411,4 @@ body {
 }
 // -----------------------------------------------
 
-@import "topnav", "nord-syntax", "vim-latex", "arch-notes";
+@import "topnav", "date-nav", "nord-syntax", "vim-latex", "arch-notes";
