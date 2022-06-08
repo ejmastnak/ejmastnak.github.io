@@ -1,10 +1,14 @@
 ---
 title: Background wallpaper with feh on Arch Linux
+date: 2022-05-07 23:12:33 -0400
+date_last_mod: 2022-05-29 13:38:37 +0200
 ---
 
 # Set wallpaper with feh
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
 

@@ -10,6 +10,8 @@ carousels:
     - image: /assets/images/vim-latex/screenshots/fizmer.png
     - image: /assets/images/vim-latex/screenshots/qm.png
 
+date: 2021-10-08 20:44:02 -0400
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 # Real-time LaTeX using (Neo)Vim, VimTeX, and snippets
 

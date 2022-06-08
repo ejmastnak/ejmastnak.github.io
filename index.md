@@ -1,5 +1,7 @@
 ---
 title: Home
+date: 2021-09-17 14:16:32 +0200
+date_last_mod: 2022-06-07 18:29:21 +0200
 ---
 # Welcome
 You have reached Elijan J. Mastnak's website.

@@ -1,10 +1,14 @@
 ---
 title: First steps with NetworkManager on Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-05-29 17:06:28 +0200
 ---
 
 # First steps with NetworkManager
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Connect to the Internet via Wi-Fi or Ethernet using NetworkManager from the command line.
 

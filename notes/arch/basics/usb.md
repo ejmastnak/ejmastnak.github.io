@@ -1,10 +1,14 @@
 ---
 title: USB drives on Arch Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-05-29 13:38:13 +0200
 ---
 
 # USB drives
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Read from and write to external USB drives, including those with the NTFS file system.
 

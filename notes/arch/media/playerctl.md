@@ -1,10 +1,14 @@
 ---
 title: Media player control on Arch Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-05-29 13:38:50 +0200
 ---
 
 # Media player control
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Trigger common media player actions (e.g. play, pause, skip forward, etc.) using convenient keyboard shortcuts.
 Best served with this series's [volume control guide]({% link notes/arch/media/volume.md %}).

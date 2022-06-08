@@ -6,11 +6,16 @@ prev-display-name: "« 5. Compilation"
 next-filename: "vimscript"
 next-display-name: "7. Vimscript »"
 
+date: 2021-10-08 20:44:02 -0400
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 6. Setting Up a PDF Reader for Writing LaTeX with Vim
+
+{% include date.html %}
+
 This is part six in a [seven part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article explains, for both Linux and macOS, how to set up a PDF reader for displaying the PDF file associated with the LaTeX source file being edited in Vim.
 

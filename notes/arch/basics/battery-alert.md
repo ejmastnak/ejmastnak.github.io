@@ -1,10 +1,14 @@
 ---
 title: Battery level alert on Arch Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-05-29 13:37:38 +0200
 ---
 
 # Battery level alert 
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Create a desktop notification when battery falls below a threshold percentage of your choice.
 

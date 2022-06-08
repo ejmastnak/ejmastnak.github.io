@@ -6,11 +6,16 @@ prev-display-name: "« 1. Prerequisites"
 next-filename: ftplugin
 next-display-name: "3. Vim's ftplugin system »"
 
+date: 2021-10-08 20:44:02 -0400
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 2. An UltiSnips guide for LaTeX workflows
+
+{% include date.html %}
+
 This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 

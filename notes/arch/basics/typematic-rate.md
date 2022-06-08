@@ -1,10 +1,14 @@
 ---
 title: Key delay and repeat rate on X11 on Arch Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-05-29 13:38:13 +0200
 ---
 
 # Key delay and repeat rate on X11
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Understand and control your typematic rate and typematic delay.
 You'll usually do this to make pressed-down keys repeat faster.

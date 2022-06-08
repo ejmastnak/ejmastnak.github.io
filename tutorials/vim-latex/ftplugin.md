@@ -6,11 +6,16 @@ prev-display-name: "« 2. Snippets"
 next-filename: "vimtex"
 next-display-name: "4. The VimTeX plugin »"
 
+date: 2022-03-20 10:08:22 -0400
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 3. Vim's `ftplugin` system
+
+{% include date.html %}
+
 This is part three in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers explains Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
 Understanding this article will give you a clearer mental model of how the VimTeX plugin works.

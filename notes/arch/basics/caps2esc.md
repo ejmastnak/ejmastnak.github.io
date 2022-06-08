@@ -1,10 +1,14 @@
 ---
 title: Remap Caps Lock to Escape and Control on Arch Linux
+date: 2022-04-29 19:15:09 -0400
+date_last_mod: 2022-06-08 17:26:05 +0200
 ---
 
 # Remap Caps Lock to Escape and Control
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** use the `caps2esc` utility to make the Caps Lock key act like the Escape key when pressed alone and act like the Control key when pressed in combination with other keys.
 

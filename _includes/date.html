@@ -1,5 +1,5 @@
-{% if page.date %}
+{% if page.date_last_mod %}
 <div class="date-nav">
-Last modified: {{ page.date | date: "%-d %B %Y" }}
+Last modified: {{ page.date_last_mod | date: "%-d %B %Y" }}
 </div>
 {% endif %}

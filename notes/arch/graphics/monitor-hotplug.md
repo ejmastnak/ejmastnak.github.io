@@ -1,10 +1,14 @@
 ---
 title: Monitor hot-plugging on Linux using X
+date: 2022-05-07 23:12:33 -0400
+date_last_mod: 2022-05-29 17:12:55 +0200
 ---
 
 # Monitor hot-plugging with X
 
 {% include arch-notes-header.html comment='and part 2 in a two-part monitor sequence. You should be familiar with <a href="/notes/arch/graphics/displays.html">part 1</a> first.' %}
+
+{% include date.html %}
 
 **Goal:** use `udev` to detect when a monitor cable is physically connected or disconnected, and use `xrandr` to automatically update the monitor display in response.
 

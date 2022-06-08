@@ -1,10 +1,14 @@
 ---
 title: Adjust laptop backlight on Arch Linux
+date: 2022-05-07 23:12:33 -0400
+date_last_mod: 2022-05-29 13:38:37 +0200
 ---
 
 # Adjust laptop backlight
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** understand how to programmatically adjust your laptop's backlight brightness from the command line, then create convenient key bindings to do this for you.
 

@@ -1,9 +1,13 @@
 ---
 title: Install and start Xorg on Arch Linux
+date: 2022-05-03 22:40:52 -0400
+date_last_mod: 2022-05-30 09:54:34 +0200
 ---
 # Install and start Xorg
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Set up a minimal working graphical environment using the X Window System, the i3 window manager, and a terminal emulator of your choice;
 and help you understand and navigate the choices between window managers, desktop environments, and display managers.

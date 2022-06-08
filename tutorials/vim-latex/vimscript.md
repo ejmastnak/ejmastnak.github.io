@@ -6,11 +6,16 @@ prev-display-name: "« 6. PDF Reader"
 next-filename: "intro"
 next-display-name: "Introduction"
 
+date: 2021-10-08 20:44:02 -0400
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 7. A Vimscript Primer for Filetype-Specific Workflows
+
+{% include date.html %}
+
 This is part seven in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article provides a theoretical background for use of Vimscript in filetype-specific workflows and aims to give you a foundation for understanding the filetype plugin system, key mapping syntax, and Vimscript functions used earlier in this series.
 

@@ -6,11 +6,16 @@ prev-display-name: ""
 next-filename: "ultisnips"
 next-display-name: "2. Snippets »"
 
+date: 2022-01-24 11:22:07 -0800
+date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
 {% include vim-latex-navbar.html %}
 
 # 1. Suggested Prerequisites for Writing LaTeX in Vim
+
+{% include date.html %}
+
 This is part one in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 I wrote this series with beginners in mind, but some prerequisite knowledge is unavoidable.
 Each prerequisites is listed below and includes a suggestion or mini-tutorial for getting up to speed.

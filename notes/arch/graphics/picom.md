@@ -1,10 +1,14 @@
 ---
 title: Transparent windows backgrounds with picom on Arch Linux
+date: 2022-05-28 19:57:29 +0200
+date_last_mod: 2022-05-29 13:38:37 +0200
 ---
 
 # Transparent windows with `picom`
 
 {% include arch-notes-header.html %}
+
+{% include date.html %}
 
 **Goal:** Use the `picom` compositor to make unfocused window backgrounds slightly transparent, so you can enjoy [your background wallpaper]({% link notes/arch/graphics/wallpaper.md %}).
 
