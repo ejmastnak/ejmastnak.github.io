@@ -3,7 +3,9 @@ title: Home
 date: 2021-09-17 14:16:32 +0200
 date_last_mod: 2022-06-07 18:29:21 +0200
 ---
-# Welcome
+
+<h1 style="text-align: left;">Welcome</h1>
+
 You have reached Elijan J. Mastnak's website.
 For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or read through the following:
 
