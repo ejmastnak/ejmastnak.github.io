@@ -525,7 +525,8 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
    brew unlink girara
 
    # Uninstall
-   brew uninstall zathura-pdf-mupdf
+   brew uninstall zathura-pdf-poppler
+   # or use `brew uninstall zathura-pdf-mupdf` if you have mupdf installed
    brew uninstall zathura
    brew uninstall girara
     ```
