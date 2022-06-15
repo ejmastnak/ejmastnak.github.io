@@ -587,7 +587,7 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
    - You might be prompted by Homebrew to install the Apple Command Line Tools before you can complete `brew install girara --HEAD`.
      If so, just follow Homebrew's suggestion (which will probably be something along the lines of `xcode-select --install`), then retry  `brew install girara --HEAD`.
    - Ensure you use `brew install zathura --HEAD --with-synctex` to get a Zathura with SyncTeX support;
-   the `hombrew-zathura` GitHub page only suggests `brew install zathura --HEAD`.
+   the `homebrew-zathura` GitHub page only suggests `brew install zathura --HEAD`.
    
 1. Reboot and enjoy Zathura.
 
