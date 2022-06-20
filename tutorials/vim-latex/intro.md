@@ -33,7 +33,7 @@ The series should help if you...
 - just want to browse someone else's workflow and configuration out of curiosity.
 
 **What it costs you:** everything in the guide is free, but it will cost you time and effort.
-You can skim through the guide in about 15 minutes; a closer read-through might take 45-60 minutes;
+You can skim through the guide in about 15-30 minutes; a closer read-through might take a few hours;
 and you'll realistically need a few weekends (or perhaps a few weeks if you're new to Vim) of focus and effort to become fully functional.
 From that point reaching the speed in this page's GIFs would probably take a few months of practice.
 
