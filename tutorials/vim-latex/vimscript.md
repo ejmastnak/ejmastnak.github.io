@@ -313,14 +313,7 @@ Here's how the whole `<Plug>` business works:
  
 1. The user then uses their own `{lhs}` to trigger the plugin functionality associated with the original `<Plug>` mapping.
 
-It might help to think of `<Plug>` mappings as a sort of API for calling plugin's functionality---users interface with the plugin's internal workings via `<Plug>` mappings provided by the plugin author.
-
-Here's why `<Plug>` mappings are useful:
-- They give plugin users flexibility in choosing the `{lhs}` shortcut they personally want to use to trigger plugin functions (each user is different and has their own preferences), instead of the plugin author forcing one shortcut on all users.
-
-- Since `<Plug>` is special Vim keyword that cannot be produced by physical keyboard keys (see `:help using-<Plug>`), there is no risk of the plugin's `<Plug>` mapping overriding any of the plugin users' existing mappings.
-
-And here is a real-life example of the exact three-step `<Plug>` process described above, taken from the VimTeX plugin.
+Since that probably sounds abstract, here is a real-life example, taken from the VimTeX plugin, of this exact three-step `<Plug>` process:
 
 1. The VimTeX documentation at `:help vimtex-default-mappings` and `:help VimtexCompile` explains that VimTeX maps the `:VimtexCompile` command (which triggers the compilation functionality provided by the VimTeX plugin) to the `<Plug>` mapping `<Plug>(vimtex-compile)`.
    (Note that the `<Plug>` keyword is case-insensitive, so e.g. `<Plug>` and `<plug>` mean the same thing.)
@@ -335,6 +328,14 @@ And here is a real-life example of the exact three-step `<Plug>` process describ
    (It is important to use `nmap` instead of `noremap`, since it is *intended* for the mapping's `rhs`, i.e. `<Plug>(vimtex-compile)`, to remap to its original meaning of `:VimtexCompile` as defined in the VimTeX plugin.)
 
 1. The user can then use `<leader>c` in normal mode to call `:VimtexCompile` and thus compile their LaTeX documents.
+
+It might help to think of `<Plug>` mappings as a sort of API for calling plugin's functionality---users interface with the plugin's internal workings via `<Plug>` mappings provided by the plugin author.
+
+Here's why `<Plug>` mappings are useful:
+- They give plugin users flexibility in choosing the `{lhs}` shortcut they personally want to use to trigger plugin functions (each user is different and has their own preferences), instead of the plugin author forcing one shortcut on all users.
+
+- `<Plug>` is a special Vim keyword that cannot be produced by physical keyboard keys (see `:help using-<Plug>`), so there is no risk of a plugin's `<Plug>` mapping overriding any of the plugin users' existing mappings.
+
 
 Note that, in addition to its `<Plug>` mappings, VimTeX also defines default shortcuts for most of its commands (for example `<localleader>ll` to call `:VimtexCompile`), but any `<Plug>` remappings done by the user, such as `nmap <leader>c <Plug>(vimtex-compile)` above, will override VimTeX's default mappings and respect the user's.
 This behavior was mentioned earlier in this series in the article [4. Getting started with the VimTeX plugin]({% link tutorials/vim-latex/vimtex.md %}), and is described in the VimTeX documentation at `:help vimtex-default-mappings`.
