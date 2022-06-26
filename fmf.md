@@ -9,12 +9,15 @@ date_last_mod: 2022-06-02 20:23:38 +0200
 
 - What you're reading: the collection of typeset notes I compiled while studying in the physics program at the [Faculty of Mathematics and Physics](https://www.fmf.uni-lj.si/en/) (FMF) at the University of Ljubljana in Slovenia.
   The notes come mostly from the final three semesters.
-- Wait you wrote 1500 pages of LaTeX lecture notes[^1] in three semesters?
-  Yeah I guess it turned out that way, here's a guide to how I did it: [Real-time LaTeX with (Neo)Vim]({% link tutorials/vim-latex/intro.md %}).
-  
-- Intended audience: primarily FMF students taking the same courses, but everyone is welcome!
-- Bonus: [summary of the FMF undergraduate curriculum]({% link fmf-pdfs/meta/fmf-courses.pdf %})
+  [(Link to the curriculum)]({% link fmf-pdfs/meta/fmf-courses.pdf %}).
 
+- Intended audience: primarily FMF students taking the same courses, but everyone is welcome!
+
+- Wait you wrote 1500 pages of LaTeX lecture notes in three semesters?
+  Yeah I guess it turned out that way, here's a guide to how I did it: [**Real-time LaTeX with (Neo)Vim**]({% link tutorials/vim-latex/intro.md %}).
+
+  1500 pages of notes is nothing too special by the way---check out [Dexter Chua's Cambridge notes](https://dec41.user.srcf.net/notes/) for something *really* cool.
+  
 ## Year 3 courses
 
 - [Electromagnetism]({% link fmf-course-pages/year3/emp.md %})
@@ -41,4 +44,3 @@ Missing: Laboratory 3, Laboratory 4, Modern physics 1, Modern physics 2, Electro
 
 Nothing to show here. I had not yet learned LaTeX and only took handwritten notes.
 
-[^1]: 1500 pages of notes is nothing too special by the way---check out [Dexter Chua's Cambridge notes](https://dec41.user.srcf.net/notes/) for something *really* cool.
