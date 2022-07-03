@@ -382,7 +382,7 @@ The macros and their modifiers can also be combined, for example:
 | Macro | Meaning | For the above example |
 | ----- | ------- | -------------- |
 | `%:p:h` | full path to file's parent directory | `~/Documents/demo` |
-| `%:p:r` | full path to file's parent directory | `~/Documents/demo/myfile` |
+| `%:p:r` | full path to file, without extension | `~/Documents/demo/myfile` |
 
 These are all the modifiers we need for this series, but there are quite a few more.
 If you're curious, you can read more about the `%` macro in `:help cmdline-special` and about the various modifiers in `:help filename-modifiers`.
