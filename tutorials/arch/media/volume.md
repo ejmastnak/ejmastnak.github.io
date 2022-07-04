@@ -11,7 +11,7 @@ date_last_mod: 2022-05-29 13:38:49 +0200
 {% include date.html %}
 
 **Goal:** understand how to programmatically adjust audio playback volume from the command line either through ALSA or PulseAudio, then create convenient key bindings to do this for you.
-Best served with this series's [media player control]({% link notes/arch/media/playerctl.md %}).
+Best served with this series's [media player control]({% link tutorials/arch/media/playerctl.md %}).
 
 **Read this if:** your laptop has keyboard functions keys for increasing and decreasing audio volume, but these keys have no effect on your volume after a standard install of Arch.
 If your volume keys already work (perhaps your window manager or desktop environment configured them for you), you probably don't need this guide.
@@ -21,7 +21,7 @@ If your volume keys already work (perhaps your window manager or desktop environ
 - [ArchWiki: acpid](https://wiki.archlinux.org/title/Acpid)
 - [Wikipedia: Sound server](https://en.wikipedia.org/wiki/Sound_server)
 
-<!-- (Note: this page closely parallels my guide to [controlling a laptop's backlight brightness]({% link notes/arch/graphics/backlight.md %}), since both rely `acpid` to set key bindings.) -->
+<!-- (Note: this page closely parallels my guide to [controlling a laptop's backlight brightness]({% link tutorials/arch/graphics/backlight.md %}), since both rely `acpid` to set key bindings.) -->
 
 ## Procedure
 
@@ -177,14 +177,14 @@ chmod +x ~/scripts/volume.sh
 
 ## Convenient key mappings for volume control
 
-We'll set up volume key bindings using `xbindkeys`, just like in the article on [media player control]({% link notes/arch/media/playerctl.md %}).
+We'll set up volume key bindings using `xbindkeys`, just like in the article on [media player control]({% link tutorials/arch/media/playerctl.md %}).
 
 <details>
   <summary> 
   Why use <code class="language-plaintext highlighter-rouge">xbindkeys</code> and not <code class="language-plaintext highlighter-rouge">acpid</code>
   </summary>
   <p>To ensure we’re on the same page: there are <em>many</em> different ways to set key bindings on Linux, including through
-    <code class="language-plaintext highlighter-rouge">acpid</code> events (like in the <a href="/notes/arch/graphics/backlight.html">laptop backlight article</a>),
+    <code class="language-plaintext highlighter-rouge">acpid</code> events (like in the <a href="/tutorials/arch/graphics/backlight.html">laptop backlight article</a>),
     using <code class="language-plaintext highlighter-rouge">xbindkeys</code> (like in this article)
     or through your window manager (for example i3 offers <code class="language-plaintext highlighter-rouge">bindsym XF86AudioRaiseVolume &lt;shell-command&gt;</code>).</p>
 
@@ -193,7 +193,7 @@ We'll set up volume key bindings using `xbindkeys`, just like in the article on 
   I choose to use <code class="language-plaintext highlighter-rouge">xbindkeys</code> in this guide as a compromise that will work for all X users, regardless of window manager and choice of <code class="language-plaintext highlighter-rouge">amixer</code> vs. <code class="language-plaintext highlighter-rouge">pactl</code>.</p>
 </details>
 
-Following the recipe from the [media player control article]({% link notes/arch/media/playerctl.md %}), you'll need two pieces of information to define a key binding with `xbindkeys`:
+Following the recipe from the [media player control article]({% link tutorials/arch/media/playerctl.md %}), you'll need two pieces of information to define a key binding with `xbindkeys`:
 
 1. The X11 key symbol (keysym) of the key you want to bind.
    (`xbindkeys` identifies keyboard keys by their X11 keysym, which is, loosely, just a short code name for the key.)

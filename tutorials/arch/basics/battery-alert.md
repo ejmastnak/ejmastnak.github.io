@@ -16,7 +16,7 @@ date_last_mod: 2022-05-29 13:37:38 +0200
 And then your laptop's dead, and you have to find a charger, reboot and restart all your programs, and who wants to do that?
 
 **Dependencies:** This guide works on the X Window System.
-You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+You should first [set up X]({% link tutorials/arch/basics/startx.md %}) if you have not yet done so.
 
 **Reference:** [ArchWiki: Desktop notifications](https://wiki.archlinux.org/title/Desktop_notifications).
 
@@ -188,7 +188,7 @@ See the `OPTIONS` section in `man 5 systemd.timer` for more on timer options.
   The theoretical problem is that <code class="language-plaintext highlighter-rouge">OnUnitActiveSec</code> runs relative to when the unit it triggers becomes active, but <code class="language-plaintext highlighter-rouge">Type=oneshot</code> units never become active—see e.g. <a href="https://github.com/systemd/systemd/issues/6680">.timer doesn’t fire #6680</a>.
   But the <code class="language-plaintext highlighter-rouge">OnUnitActiveSec</code> and <code class="language-plaintext highlighter-rouge">Type=oneshot</code> combination has worked well for me, and <a href="https://github.com/systemd/systemd/issues/21600">OnUnitActiveSec timer and Type=oneshot service #21600</a> rightly points out that the <code class="language-plaintext highlighter-rouge">OnUnitActiveSec</code> and <code class="language-plaintext highlighter-rouge">Type=oneshot</code> combination is used in official <code class="language-plaintext highlighter-rouge">systemd</code> examples.
   So I’m not sure if there is currently a problem or not.
-  If anyone reading this knows the best-practice way to run a <code class="language-plaintext highlighter-rouge">Type=oneshot</code> service once at boot and periodically thereafter, please <a href="/notes/arch/basics/network-manager.html">let me know</a>!</p>
+  If anyone reading this knows the best-practice way to run a <code class="language-plaintext highlighter-rouge">Type=oneshot</code> service once at boot and periodically thereafter, please <a href="/tutorials/arch/basics/network-manager.html">let me know</a>!</p>
 </details>
 
 #### Reload and start timer

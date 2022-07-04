@@ -13,7 +13,7 @@ date_last_mod: 2022-05-29 13:38:37 +0200
 **Goal:** learn how to programmatically set an image as your background wallpaper in the X window system, then (optionally) create a slideshow to cycle the wallpaper through a set of images.
 
 **Dependencies:** This guide works on the X Window System.
-You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+You should first [set up X]({% link tutorials/arch/basics/startx.md %}) if you have not yet done so.
 
 **References:**
 
@@ -92,7 +92,7 @@ You then just need to wrap the above command in a `systemd` timer and you have a
 ### systemd timer
 
 Goal: create a `systemd` service/timer pair to periodically run the above wallpaper-setting command over a time interval of your choice.
-Note that the rest of this guide closely parallels this series's [battery alert guide]({% link notes/arch/basics/battery-alert.md %}), since both use a `systemd` timer to run a `Type=oneshot` user service.
+Note that the rest of this guide closely parallels this series's [battery alert guide]({% link tutorials/arch/basics/battery-alert.md %}), since both use a `systemd` timer to run a `Type=oneshot` user service.
 
 First create the shell script `~/scripts/change-wallpaper.sh` (or use any other readable location on your file system), make the script executable, and inside place the wallpaper-setting command:
 

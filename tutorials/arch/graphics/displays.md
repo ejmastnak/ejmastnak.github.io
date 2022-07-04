@@ -6,7 +6,7 @@ date_last_mod: 2022-05-29 17:12:48 +0200
 
 # Connect laptop to an external monitor on X
 
-{% include arch-notes-header.html comment='and part 1 in a two-part monitor sequence. Read <a href="/notes/arch/graphics/monitor-hotplug.html">part 2</a> for monitor hot-plugging.' %}
+{% include arch-notes-header.html comment='and part 1 in a two-part monitor sequence. Read <a href="/tutorials/arch/graphics/monitor-hotplug.html">part 2</a> for monitor hot-plugging.' %}
 
 {% include date.html %}
 
@@ -17,7 +17,7 @@ I only cover a single-monitor set-up here;
 see [ArchWiki: Multihead](https://wiki.archlinux.org/title/Multihead) for multi-monitor set-ups.
 
 **Dependencies:** This guide works on the X Window System.
-You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+You should first [set up X]({% link tutorials/arch/basics/startx.md %}) if you have not yet done so.
 
 **References:**
 - [ArchWiki: xrandr](https://wiki.archlinux.org/title/xrandr): the de-facto tool for controlling displays on the X Window System.

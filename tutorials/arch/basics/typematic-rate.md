@@ -14,7 +14,7 @@ date_last_mod: 2022-05-29 13:38:13 +0200
 You'll usually do this to make pressed-down keys repeat faster.
 
 **Dependencies:** This guide works on the X Window System.
-You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+You should first [set up X]({% link tutorials/arch/basics/startx.md %}) if you have not yet done so.
 
 **References:**
 - [ArchWiki: Xorg/Keyboard configuration](https://wiki.archlinux.org/title/Xorg/Keyboard_configuration)

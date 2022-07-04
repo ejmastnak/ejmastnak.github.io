@@ -13,7 +13,7 @@ date_last_mod: 2022-05-29 13:38:13 +0200
 **Goal:** Comfortably copy and paste between GUI applications in the X Window System, the Alacritty terminal, and Vim/Neovim.
 
 **Dependencies:** This guide works on the X Window System, and is targetted towards Alacritty and Vim/Neovim users.
-You should first [set up X]({% link notes/arch/basics/startx.md %}) if you have not yet done so.
+You should first [set up X]({% link tutorials/arch/basics/startx.md %}) if you have not yet done so.
 
 **References:**
 - [ArchWiki: Clipboard](https://wiki.archlinux.org/title/Clipboard): lists tools for interacting with the clipboard

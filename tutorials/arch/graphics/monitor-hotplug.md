@@ -6,7 +6,7 @@ date_last_mod: 2022-05-29 17:12:55 +0200
 
 # Monitor hot-plugging with X
 
-{% include arch-notes-header.html comment='and part 2 in a two-part monitor sequence. You should be familiar with <a href="/notes/arch/graphics/displays.html">part 1</a> first.' %}
+{% include arch-notes-header.html comment='and part 2 in a two-part monitor sequence. You should be familiar with <a href="/tutorials/arch/graphics/displays.html">part 1</a> first.' %}
 
 {% include date.html %}
 
@@ -41,7 +41,7 @@ By the way, the approach used here comes from [Arch Forums: udev rule doesn't wo
 
 **Goal:** learn how to check a video output's `connected`/`disconnected` status using the device files in `/sys/class/drm`.
 
-First make sure you know the `xrandr` name (e.g. `HDMI-1`, `DP-1`, etc.) of the video output from [part 1]({% link notes/arch/graphics/displays.md %}) that you plan on using to connect your monitor---I'll use `HDMI-1` in this guide, but change this as needed for your own case.
+First make sure you know the `xrandr` name (e.g. `HDMI-1`, `DP-1`, etc.) of the video output from [part 1]({% link tutorials/arch/graphics/displays.md %}) that you plan on using to connect your monitor---I'll use `HDMI-1` in this guide, but change this as needed for your own case.
 
 Then check the contents of the directory `/sys/class/drm`.
 Here's what this looks like on my computer:
@@ -56,7 +56,7 @@ card0-HDMI-A-2
 ```
 
 Each directory represents a display device.
-The names should match the video outputs shown by `xrandr` in [part 1]({% link notes/arch/graphics/displays.md %});
+The names should match the video outputs shown by `xrandr` in [part 1]({% link tutorials/arch/graphics/displays.md %});
 for example, `card0-HDMI-A-1` corresponds to `HDMI-1`.
 There should be a `status` file inside `card0` directory that shows the `connected`/`disconnected` state of each device.
 For example:
@@ -74,7 +74,7 @@ disconnected
 **Check-in point:** you should know the `sysfs` directory name (e.g. `card0-HDMI-A-1`, `card0-DP-A-1`) of the device you'll use to connect your monitor.
 We'll need this name in the following shell script.
 
-<!-- The value of a device's `status` file should agree with corresponding video output's `connected`/`disconnected` state shown by `xrandr` in [part 1]({% link notes/arch/graphics/displays.md %}). -->
+<!-- The value of a device's `status` file should agree with corresponding video output's `connected`/`disconnected` state shown by `xrandr` in [part 1]({% link tutorials/arch/graphics/displays.md %}). -->
 
 ### Hotplug script
 
@@ -126,7 +126,7 @@ fi
 Some comments:
 
 - The `internal` and `external` variables store the `xrandr` names of the video outputs for your internal display and HDMI connection.
-  This should be clear from [part 1]({% link notes/arch/graphics/displays.md %}).
+  This should be clear from [part 1]({% link tutorials/arch/graphics/displays.md %}).
 
 - The `device` variable is the name of `sysfs` graphics device identified above in the section [Check monitor connection with `sysfs`](check-monitor-connection-with-sysfs).
   We use this variable in the `cat /sys/class/drm/${device}/status` calls to check the device's connection status.
@@ -192,7 +192,7 @@ There are (at least) two fair questions here:
 
 1. Why are we complicating things with a `systemd` service instead of running the hotplug script directly from the `udev` rule, as in e.g. in these [ArchWiki](https://wiki.archlinux.org/title/Udev#Execute_when_HDMI_cable_is_plugged_in_or_unplugged) [examples](https://wiki.archlinux.org/title/Udev#Execute_on_VGA_cable_plug_in)?
 
-1. Why are we checking device connections using the `sysfs` device file `sys/class/drm/*/status` instead of just running `xrandr`, as in [part 1]({% link notes/arch/graphics/displays.md %})?
+1. Why are we checking device connections using the `sysfs` device file `sys/class/drm/*/status` instead of just running `xrandr`, as in [part 1]({% link tutorials/arch/graphics/displays.md %})?
 
 Based on my current understanding of `udev` and `systemd` best practices and some empirical testing, here are my answers:
 
@@ -203,6 +203,6 @@ Based on my current understanding of `udev` and `systemd` best practices and som
    the `udev` rule for hotplugging a display device can be triggered before `xrandr` becomes aware of the corresponding video output's updated `connected`/`disconnected` status.
    As far as I can tell, in such cases `/sys/class/drm/*/status` will show the correct connection status, but `xrandr` will still be lagging behind by a few hundred milliseconds or so.
 
-   For hot-plugging, it is thus more reliable to check a display's connection state from the contents of `/sys/class/drm/*/status` than to use `grep` to parse the output of the `xrandr` command, as in e.g. [part 1]({% link notes/arch/graphics/displays.md %}).
+   For hot-plugging, it is thus more reliable to check a display's connection state from the contents of `/sys/class/drm/*/status` than to use `grep` to parse the output of the `xrandr` command, as in e.g. [part 1]({% link tutorials/arch/graphics/displays.md %}).
 
 {% include arch-notes-footer.html %}
