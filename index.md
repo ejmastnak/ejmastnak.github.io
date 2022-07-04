@@ -15,15 +15,15 @@ For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or r
 <br>
 A professionally-written guide to turbocharged mathematical typesetting
 
+[**Find your footing on Arch Linux**]({% link tutorials/arch/about.md %})
+<br>
+Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch
+
 ### Notes
 
 [**1500+ pages of undergraduate physics notes typeset with LaTeX**]({% link fmf.md %})
 <br>
 From the final two years of undergrad at the Faculty of Math and Physics in Ljubljana
-
-[**Find your footing on Arch Linux**]({% link notes/arch/about.md %})
-<br>
-Bite-sized tutorials to help you set up a functional work environment after a minimal install of Arch
 
 ### Projects
 
