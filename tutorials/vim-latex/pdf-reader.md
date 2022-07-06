@@ -29,7 +29,7 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
 * [Summary: What works on what platform](#summary-what-works-on-what-platform)
     * [Zathura on Linux (tested with i3 on Arch using Zathura 0.4.8)](#zathura-on-linux-tested-with-i3-on-arch-using-zathura-048)
     * [Skim on macOS (tested on macOS 12.1 using Skim 1.6.9)](#skim-on-macos-tested-on-macos-121-using-skim-169)
-    * [Zathura on macOS (Intel-based Macbook Pro 11,5; macOS 12.1; Zathura 0.4.9 built from `homebrew-zathura`)](#zathura-on-macos-intel-based-macbook-pro-115-macos-121-zathura-049-built-from-homebrew-zathura)
+    * [Zathura on macOS (Intel-based MacBook Pro 11,5; macOS 12.1; Zathura 0.4.9 built from `homebrew-zathura`)](#zathura-on-macos-intel-based-macbook-pro-115-macos-121-zathura-049-built-from-homebrew-zathura)
 * [Cross-platform concepts](#cross-platform-concepts)
   * [Forward search and inverse search](#forward-search-and-inverse-search)
     * [Forward search](#forward-search)
@@ -119,7 +119,7 @@ I tested 9 combinations of editor, OS, and PDF reader when preparing this articl
 | Vim | ✅ | ❌ | ✅ | ❌ |
 | MacVim | ✅ | ✅ | ✅ | ✅ |
 
-#### Zathura on macOS (Intel-based Macbook Pro 11,5; macOS 12.1; Zathura 0.4.9 built from [`homebrew-zathura`](https://github.com/zegervdv/homebrew-zathura))
+#### Zathura on macOS (Intel-based MacBook Pro 11,5; macOS 12.1; Zathura 0.4.9 built from [`homebrew-zathura`](https://github.com/zegervdv/homebrew-zathura))
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Focus returns to editor after inverse search |
 | - | - | - | - | - |
@@ -522,7 +522,7 @@ It is possible to use Zathura with VimTeX on macOS thanks to the Homebrew formul
     That said, if anyone reading this successfully set up Zathura and VimTeX on an ARM64 Mac, I would be very interested in hearing more.</p>
 </details>
 
-For Intel Macs, building Zathura is described in the VimTeX documentation at `:help vimtex-faq-zathura-macos`, and I can confirm the process works (at least from my own testing on an Intel CPU Macbook Pro 11,5 running macOS 12.1).
+For Intel Macs, building Zathura is described in the VimTeX documentation at `:help vimtex-faq-zathura-macos`, and I can confirm the process works (at least from my own testing on an Intel CPU MacBook Pro 11,5 running macOS 12.1).
 
 ### Building Zathura and dependencies on macOS (Intel Macs)
 Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how to build Zathura on macOS (reminder: this seems to work only on Intel Macs):
