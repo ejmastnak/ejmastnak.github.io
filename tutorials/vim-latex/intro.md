@@ -37,7 +37,7 @@ You can skim through the guide in about 15-30 minutes; a closer read-through mig
 and you'll realistically need a few weekends (or perhaps a few weeks if you're new to Vim) of dedicated focus and effort to become fully functional.
 From that point reaching the speed in this page's GIFs would probably take months of practice.
 
-### Plan
+### Contents
 
 1. Cover [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of the series, along with references that should get you up to speed if needed.
 
