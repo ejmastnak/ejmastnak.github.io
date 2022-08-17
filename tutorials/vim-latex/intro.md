@@ -108,7 +108,7 @@ Since someone will probably be curious, here is an overview of the setup used in
 
 Feedback is welcome and appreciated.
 
-You can reach me by email, in English, Spanish, or Slovene, at [`ejmastnak@gmail.com`](mailto:ejmastnak@gmail.com) or [`ejmastnak@protonmail.com`](mailto:ejmastnak@protonmail.com) (or open an issue or pull request at [`github.com/ejmastnak/ejmastnak.github.io`](https://github.com/ejmastnak/ejmastnak.github.io)).
+You can reach me by email, in English, Spanish, or Slovene, at [`ejmastnak@gmail.com`](mailto:ejmastnak@gmail.com) or by opening an issue or pull request at [`github.com/ejmastnak/ejmastnak.github.io`](https://github.com/ejmastnak/ejmastnak.github.io)).
 
 #### Have ideas for future projects?
 If there is collective interest from readers of this guide, I would consider creating follow-up content expanding on this series.
