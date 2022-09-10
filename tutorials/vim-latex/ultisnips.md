@@ -302,12 +302,19 @@ The `b` options ensures the snippet only expands at the start of line; see the [
 Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
 
 #### Useful: the visual placeholder
-The visual placeholder enables you to use text selected in Vim's visual mode as the content of a snippet body.
-The visual placeholder is useful when you want to surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command or to surround a word with quotation marks).
-You can have one visual placeholder per snippet, and you specify it with the `${VISUAL}` keyword.
-This usually is (but does not have to be) integrated into tabstops.
 
-As an example, here is a snippet to the LaTeX `\textit` command, using a visual placeholder to make it easer to surround text in italics:
+The visual placeholder lets you use text selected in Vim's visual mode inside the content of a snippet body.
+Here is the how to use it:
+
+1. Create and save an UltiSnips snippet that includes the `${VISUAL}` keyword (explained below).
+1. Use Vim to open a file in which you want to trigger the snippet.
+1. Use Vim's visual mode to select some text.
+1. Press the Tab key (or the more generally the key stored in the `g:UltiSnipsExpandTrigger` variable, which is Tab by default).
+   The selected text is deleted, stored by UltiSnips in memory, and you are placed into Vim's insert mode.
+1. Type the trigger to expand the previously-written snippet that included the `${VISUAL}` keyword.
+   The snippet expands, and the text you had selected in visual mode appears in place of the `${VISUAL}` keyword in the snippet body.
+
+As an example, here is a snippet for the LaTeX `\textit` command that uses a visual placeholder to make it easer to surround text in italics:
 
 ```py
 snippet tii "The \textit{} command for italic font"
@@ -318,8 +325,12 @@ And here is what this snippet looks like in action:
 
 <image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Demonstrating the visual placeholder"  /> 
 
-The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
+Indeed (as far as I know) the most common use case for the visual placeholder is to quickly surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command, to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
+You can have one visual placeholder per snippet, and you specify it with the `${VISUAL}` keyword---this keyword is usually (but does not have to be) integrated into tabstops.
 
+Of course, you can still use any snippet that includes the `${VISUAL}` keyword without going through the select-and-Tab procedure described above---you just type the snippet trigger and use it like any other snippet.
+
+The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
 
 ### Dynamically-evaluated code inside snippets
 It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "code interpolation").
