@@ -17,7 +17,7 @@ date_last_mod: 2022-06-08 18:02:37 +0200
 {% include date.html %}
 
 This is part three in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
-This article covers explains Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
+This article covers Vim's `ftplugin` system, which allows you to create customizations that apply only to LaTeX files (or any other file type).
 Understanding this article will give you a clearer mental model of how the VimTeX plugin works.
 
 ## Contents of this article
@@ -38,7 +38,7 @@ Understanding this article will give you a clearer mental model of how the VimTe
 
 ### What is a plugin?
 Officially, as defined in `:help plugin`, a *plugin* is the name for a Vimscript file that is loaded when you start Vim.
-If you have every created a `vimrc` or `init.vim` file, which are just simple Vimscript files, you have technically written a Vim plugin.
+If you have ever created a `vimrc` or `init.vim` file, which are just simple Vimscript files, you have technically written a Vim plugin.
 Just like your `vimrc`, a plugin's purpose is to extend Vim's default functionality to meet your personal needs.
 
 A *package*, as defined in `:help packages`, is a set of Vimscript files.
@@ -143,7 +143,7 @@ Here's what to do for manual filetype detection:
    Inside the file add the single line
 
    ```vim
-   autocommand BufNewFile,BufRead *.ly set filetype=lilypond
+   autocmd BufNewFile,BufRead *.ly set filetype=lilypond
    ```
    Of course replace `.ly` with your target extension and `lilypond` with the value of `filetype` you chose in step 2.
    
