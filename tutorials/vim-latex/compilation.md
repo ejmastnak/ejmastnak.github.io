@@ -310,7 +310,7 @@ A `pdflatex` call with `-shell-escape` enabled might look like this:
 ```sh
 pdflatex -shell-escape myfile.tex
 ```
-However, as warned in Section 3.1 (Basic Usage/Preliminary) of the [`minted` documentation](http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf), using `-shell-escape` is a security risk:
+However, as warned in Section 3.1 (Basic Usage/Preliminary) of the [`minted` documentation](https://tug.ctan.org/macros/latex/contrib/minted/minted.pdf), using `-shell-escape` is a security risk:
 
 > using `-shell-escape` allows LaTeX to run potentially
 arbitrary commands on your system.

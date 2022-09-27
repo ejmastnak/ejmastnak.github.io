@@ -212,10 +212,10 @@ Explanation: I have a lot of `tex` snippets, so I prefer to further organize the
 
 ## Watch the screencasts!
 Quite a few years ago now, Holger Rapp, the author of UltiSnips, created four screencasts demonstrating the plugin's features:
-- [Episode 1: What are snippets and do I need them?](http://www.sirver.net/blog/2011/12/30/first-episode-of-ultisnips-screencast/)
-- [Episode 2: Creating Basic Snippets](http://www.sirver.net/blog/2012/01/08/second-episode-of-ultisnips-screencast/)
-- [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/)
-- [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/)
+- [Episode 1: What are snippets and do I need them?](https://www.sirver.net/blog/2011/12/30/first-episode-of-ultisnips-screencast/)
+- [Episode 2: Creating Basic Snippets](https://www.sirver.net/blog/2012/01/08/second-episode-of-ultisnips-screencast/)
+- [Episode 3: What's new in version 2.0](https://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/)
+- [Episode 4: Python Interpolation](https://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/)
 
 They're old but gold, and pack an impressively thorough demonstration of UltiSnips's capabilities into about 20 minutes of video.
 I strongly suggest your watch them---you will find many of the features described in this article covered from a different perspective in the screencasts.
@@ -388,12 +388,12 @@ You can have one visual placeholder per snippet, and you specify it with the `${
 
 Of course, you can still use any snippet that includes the `${VISUAL}` keyword without going through the select-and-Tab procedure described above---you just type the snippet trigger and use it like any other snippet.
 
-The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](http://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
+The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](https://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
 
 ### Dynamically-evaluated code inside snippets
 It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "code interpolation").
 Shell script, Vimscript, and Python are all supported.
-Interpolation is covered in `:help UltiSnips-interpolation` and in the UltiSnips screencast [Episode 4: Python Interpolation](http://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
+Interpolation is covered in `:help UltiSnips-interpolation` and in the UltiSnips screencast [Episode 4: Python Interpolation](https://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
 I will only cover two examples I subjectively find to be most useful for LaTeX:
 
 1. making certain snippets expand only when the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
