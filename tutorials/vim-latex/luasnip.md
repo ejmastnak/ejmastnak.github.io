@@ -23,7 +23,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 <!-- vim-markdown-toc GFM -->
 
 * [What snippets do](#what-snippets-do)
-* [Getting started with UltiSnips](#getting-started-with-ultisnips)
+* [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
   * [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)
   * [A home for your snippets](#a-home-for-your-snippets)
@@ -55,43 +55,101 @@ Here is a simple example:
 
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with auto-trigger snippets"  /> 
 
-## Getting started with UltiSnips
-This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
-If you use Neovim, note that UltiSnips's support of Neovim is "best-effort only".
-Don't let this discourage you---I and many other Neovim users daily drive Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
-If you use regular Vim, you should be fine in any case.
+## Getting started with LuaSnip
+
+This tutorial will use [the LuaSnip plugin](https://github.com/L3MON4D3/LuaSnip), which is the de-facto snippet plugin in Neovim's Lua ecosystem.
+Alternative: [UltiSnips article]({% link tutorials/vim-latex/ultisnips.md %}).
+
+*UltiSnips or LuaSnip?*:
+
+- Vim users: use UltiSnips---LuaSnip only works with Neovim
+- Neovim users: I suggest LuaSnip---it is faster (I don't have benchmarks), integrates better into the Neovim ecosystem, and is free of external dependencies (UltiSnips requires Python).
+  That said, UltiSnips still works fine in Neovim.
 
 ### Installation
-Install UltiSnips like any other Vim plugin using your plugin installation method of choice.
-Because the UltiSnips plugin uses Python...
-- you need a working installation of Python 3 on your system (see `:help UltiSnips-requirements`)
-- your Vim must be compiled with the `python3` feature enabled---you can test this with `:echo has("python3")`, which will return `1` if `python3` is enabled and `0` otherwise.
-  Note that Neovim comes with `python3` enabled by default.
 
-UltiSnips is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
-The canonical source of existing snippets is GitHub user `honza`'s [`vim-snippets`](https://github.com/honza/vim-snippets) repository.
+Install LuaSnip like any other Neovim plugin using your plugin installation method of choice (e.g. Packer, Vim-Plug, native, etc.).
+See the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#install) for details.
+LuaSnip has no external dependencies and should be ready to go immediately after installation.
+
+LuaSnip is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
+It is possible to use existing snippet repositories (e.g. [`rafamadriz/friendly-snippets`](https://github.com/rafamadriz/friendly-snippets)) with some additional configuration---see the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#add-snippets) and `:help luasnip-loaders` if interested.
 Whether you download someone else's snippets, write your own, or use a mixture of both, you should know:
 
 1. where the text files holding your snippets are stored on your local file system, and
 1. how to write, edit, and otherwise tweak snippets to suit your particular needs, so you are not stuck using someone else's without the possibility of customization.
 
-Both questions are answered in this article.
+This article covers both questions.
 
 ### First steps: snippet trigger and tabstop navigation keys
-After installing UltiSnips you should configure...
-1. the key you use to trigger (expand) snippets, which is set using the global variable `g:UltiSnipsExpandTrigger`,
-1. the key you use to move forward through a snippet's tabstops, which is set using `g:UltiSnipsJumpForwardTrigger`, and
-1. the key you use to move backward through a snippet's tabstops, which is set with `g:UltiSnipsJumpBackwardTrigger`.
 
-For orientation, here is an example configuration, which you would place the code in your `vimrc` or `init.vim`:
+After installing LuaSnip you should immediately configure...
+
+1. the key you use to trigger (expand) snippets
+1. the key you use to move forward through a snippet's tabstops, and
+1. the key you use to move backward through a snippet's tabstops.
+
+See the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#keymaps) for official examples.
+
+This is easiest to do in Vimscript.
+(See `:help vim.cmd()` for running Vimscript from within Lua files).
+
+**Choose one** of the following two options:
+
+1. Use a single key (e.g. Tab) to both expand snippets and jump forward through snippet tabstops.
+
+   ```vim
+   " Expand or jump in insert mode
+   imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
+ 
+   " Jump forward through tabstops in visual mode
+   smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+   ```
+
+   This code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops---the decision is made by LuaSnip's `expand_or_jumpable` function.
+
+1. Use two different keys (e.g. Tab and Control-K) to expand snippets and jump forward through snippet tabstops
+
+   ```vim
+   " Expand snippets in insert mode with <Tab>
+   imap <silent><expr> <Tab> luasnip#expandable() ? '<Plug>luasnip-expand-snippet' : '<Tab>'
+
+   " Jump forward in through tabstops in insert and visual mode with TODO
+   imap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+   smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+   ```
+
+The same in both cases:
 
 ```vim
-" This code should go in your vimrc or init.vim
-let g:UltiSnipsExpandTrigger       = '<Tab>'    " use Tab to expand snippets
-let g:UltiSnipsJumpForwardTrigger  = '<Tab>'    " use Tab to move forward through tabstops
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'  " use Shift-Tab to move backward through tabstops
+" Jump backward
+imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
 ```
-Explanation: this code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops (yes, UltiSnips lets you use the same key for both expansion and tabstop navigation), and make the key combination `<Shift>`+`<Tab>` navigate backward through tabstops.
+
+<!-- ```vim -->
+<!-- " Official recommendation -->
+<!-- inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr> -->
+<!-- snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr> -->
+<!-- ``` -->
+
+Two notes:
+
+1. The conditional ternary operator `A ? expr1 : expr2 ` executes `expr1` if `A` is true and executes `expr2` if `A` is false---it is common in C and [many other languages](https://en.wikipedia.org/wiki/%3F:).
+In the above `imap` mapping, for example, the ternary operator is used to map `<Tab>` to `<Plug>luasnip-expand-or-jump` if `luasnip#expand_or_jumpable()` returns `true` and to `<Tab>` if `luasnip#expand_or_jumpable()` returns `false`.
+
+2. You'll want to map tabstop jumping in both insert and visual modes, hence the use of both `imap` and `smap` for the forward and backward jump mappings.
+   (Technically select mode and not visual mode, hence the use of `smap` and not `vmap`---see `:help smap` and `:help select-mode` for details.)
+
+Choice nodes:
+
+```vim
+" Cycle forward through choice nodes
+imap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
+smap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
+```
+
+*TODO:* left off here
 
 In the above GIF, I am actually using `jk` as the `g:UltiSnipsJumpForwardTrigger` key.
 I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to;
