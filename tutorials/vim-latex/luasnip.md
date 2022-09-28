@@ -26,7 +26,9 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
   * [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)
-  * [A home for your snippets](#a-home-for-your-snippets)
+* [Snippet files, directories, and loaders](#snippet-files-directories-and-loaders)
+  * [Snippet format](#snippet-format)
+  * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
     * [Snippet folders](#snippet-folders)
 * [Watch the screencasts!](#watch-the-screencasts)
 * [Writing Snippets](#writing-snippets)
@@ -168,56 +170,102 @@ Choice nodes are a more advanced tool we will cover later, so you can safely ski
 <!-- I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to; -->
 <!-- scroll down to the [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the bottom of this article for more on using `jk` as a jump-forward key and similar tips. -->
 
-### A home for your snippets
-You store snippets in text files with the `.snippets` extension.
-The file's base name determines which Vim `filetype` the snippets apply to.
-For example, snippets inside the file `tex.snippets` would apply to files with `filetype=tex`.
-If you want certain snippets to apply globally to *all* file types, place these global snippets in the file `all.snippets`, which is documented towards the bottom of `:help UltiSnips-how-snippets-are-loaded`.
+## Snippet files, directories, and loaders
 
-By default, UltiSnips expects your `.snippet` files to live in directories called `UltiSnips`, which, if you wanted, you could place anywhere in your Vim `runtimepath`.
-You can use folder names other than the default `UltiSnips`, too---the snippet directory name is controlled with the global variable `g:UltiSnipsSnippetDirectories`.
-From `:help UltiSnips-how-snippets-are-loaded`,
+Warning: LuaSnip offers a lot of choices here, and the required decision-making can be overwhelming for new users.
+I'll try my best to guide you through your options and give a sensible recommendation for what to choose.
 
-> UltiSnips will search each `runtimepath` directory for the subdirectory names
-defined in `g:UltiSnipsSnippetDirectories` in the order they are defined.
+### Snippet format
 
-For example, to use `MySnippets` as a snippet directory, you would place the following Vimscript in your `vimrc` or `init.vim`:
+LuaSnip supports multiple snippet formats.
+Your first step is to decide which format you will write your snippets in.
+You main options are:
 
-```vim
-" Use both `UltiSnips` and `MySnippets` as snippet directories
- let g:UltiSnipsSnippetDirectories=["UltiSnips", "MySnippets"]
-```
-UltiSnips would then load `*.snippet` files from all `UltiSnips` and `MySnippets` directories in your Vim `runtimepath`.
+1. **Covered in this article:** Native LuaSnip snippets written in Lua (support for all LuaSnip features, best integration with general Neovim ecosystem)
+1. Parsing third-party snippets written for another snippet engine (e.g. VS Code, SnipMate).
+   Fewer features are available and complex snippets may not be parseable and will not work.
 
-Possible optimization: if, like me, you use only a single predefined snippet directory and don't need UltiSnips to scan your entire `runtimepath` each time you open Vim (which can slow down Vim's start-up time), set `g:UltiSnipsSnippetDirectories` to use a *single*, *absolute* path to your snippets directory, for example
+*The rest of this article covers only native LuaSnip snippets written in Lua.*
+I think this makes sense because:
 
-```vim
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']          " using Vim
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/UltiSnips']  " using Neovim
-```
-This behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
-(The `.` joining `$HOME` and `'/.vim/UltiSnips'` is the Vimscript string concatenation operator.)
+- People seem to have the most trouble with native LuaSnip syntax, so covering it should benefit the most people.
+- Native LuaSnip snippets give you far more power, and integrate much better into the Neovim ecosystem (e.g. Tree-sitter and Telescope), than imported third-party snippets.
+
+If you want to use third-party snippets the rest of this article will probably not be of much help to you;
+see `:help luasnip-loaders`, `:help luasnip-vscode` and `:help luasnip-snipmate` instead.
+
+### Loading snippets and directory structure
+
+You have two ways to load snippets:
+
+- **Covered in this article:** store snippets in text files and load snippets from the text files using LuaSnip's Lua loader feature.
+
+- Define and load snippets in your Neovim startup files using LuaSnip's `add_snippets` function.
+
+This article covers the Lua loader---I chose this approach because using dedicated snippet files with the Lua loader decouples your snippets from your Neovim startup configuration.
+This approach is "cleaner" and more modular than writing snippets directly in, say, your `init.lua` file.
+If you want to use the `add_snippets` function instead, see the documentation in `:help luasnip-api-reference`---most of this article will still be useful to you because the syntax for writing snippets is the same whether you load snippets with `add_snippets` or LuaSnip's loader.
+
+Here's how to load snippets from Lua files:
+
+- Store LuaSnip snippets in regular Lua files with the `.lua` extension.
+  (Actually writing snippets is described soon.)
+  The file's base name determines which Vim `filetype` the snippets apply to.
+  For example, snippets inside the file `tex.lua` would apply to files with `filetype=tex`.
+  If you want certain snippets to apply globally to *all* file types, place these global snippets in the file `all.lua`.
+  (This is the same naming scheme used by UltiSnips, in case you are migrating from UltiSnips).
+
+- By default, LuaSnip expects your snippets to live in directories called `luasnippets` placed anywhere in your Neovim `runtimepath`---this is documented in the description of the `paths` key in `:help luasnip-loaders`.
+
+  However, you can easily override the default `luasnippets` directory name and store snippets in any directory (or set of directories) on your file system---LuaSnip's loaders let you manually specify the snippet directory path(s) to load.
+ I recommend a directory in your Neovim config folder, e.g. `"${HOME}/.config/nvim/LuaSnip/"`.
+
+- Load snippets by calling LuaSnip Lua loader's `load` fuction from somewhere in your Neovim startup config (e.g. `init.lua`, `init.vim`, etc.):
+
+  ```lua
+  -- Load all snippets from the LuaSnip directory at startup
+  require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})
+
+  -- Lazy-load snippets---only load when required, e.g. for a given filetype
+  require("luasnip.loaders.from_lua").lazy_load({paths = "~/.config/nvim/LuaSnip/"})
+  ```
+
+  Bonus: if you manually set the `paths` key when calling `load` or `lazy_load`, LuaSnip will not need to scan your entire Neovim `runtimepath` looking for `luasnippets` directories---this should save you a few milliseconds of startup time.
+    
+- Want to use multiple snippet directories?
+  No problem---the `paths` key's value can be a table or comma-separated string of multiple directories.
+  Here are two ways to load snippets from both the directory `LuaSnip1` and `LuaSnip2`:
+
+  ```lua
+  -- Two ways to load snippets from both LuaSnip1 and LuaSnip2
+  -- Using a table
+  require("luasnip.loaders.from_lua").lazy_load({paths = {"~/.config/nvim/LuaSnip1/", "~/.config/nvim/LuaSnip2/"}})
+  -- Using a comma-separated list
+  require("luasnip.loaders.from_lua").lazy_load({paths = "~/.config/nvim/LuaSnip1/,~/.config/nvim/LuaSnip2/"})
+  ```
+  
+Full syntax for the `load` call is documented in `:help luasnip-loaders`.
 
 #### Snippet folders
+
 You might prefer to further organize `filetype`-specific snippets into multiple files of their own.
 To do so, make a folder named with the target `filetype` inside your snippets directory.
-UltiSnips will then load *all* `.snippet` files inside this folder, regardless of their basename.
-Again, this behavior is documented in `:help UltiSnips-how-snippets-are-loaded`.
-As a concrete example, a selection of my UltiSnips directory looks like this:
+LuaSnip will then load *all* `.lua` files inside this folder, regardless of their basename.
+As a concrete example, a selection of my LuaSnip directory looks like this:
 
 ```sh
-${HOME}/.vim/UltiSnips/           # Vim
-${HOME}/.config/nvim/UltiSnips/   # Neovim
-├── all.snippets
-├── markdown.snippets
-├── python.snippets
+${HOME}/.config/nvim/LuaSnip/
+├── all.lua
+├── markdown.lua
+├── python.lua
 └── tex
-    ├── delimiters.snippets
-    ├── environments.snippets
-    ├── fonts.snippets
-    └── math.snippets
+    ├── delimiters.lua
+    ├── environments.lua
+    ├── fonts.lua
+    └── math.lua
 ```
-Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated directory, while a single file suffices for `all`, `markdown`, and `python`.
+
+Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated subdirectory, while a single file suffices for `all`, `markdown`, and `python`.
 
 ## Watch the screencasts!
 Quite a few years ago now, Holger Rapp, the author of UltiSnips, created four screencasts demonstrating the plugin's features:
@@ -231,6 +279,9 @@ I strongly suggest your watch them---you will find many of the features describe
 
 
 ## Writing Snippets
+
+FMT: https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#fmt
+
 **TLDR:** create a `{filetype}.snippets` file in your `UltiSnips` directory (e.g. `tex.snippets`) and write your snippets inside this file using the syntax described in `:help UltiSnips-basic-syntax`.
 
 ### Anatomy of an UltiSnips snippet
@@ -636,3 +687,6 @@ In any case, this problem is specific to using the string `snippet` inside a sni
 {% include vim-latex-navbar.html %}
 
 {% include vim-latex-license.html %}
+
+<!-- Extras: -->
+<!-- - Filetype loading https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#filetype_functions -->
