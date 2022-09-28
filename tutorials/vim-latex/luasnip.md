@@ -30,9 +30,13 @@ This article covers snippets, which are templates of commonly reused code that, 
   * [Snippet format](#snippet-format)
   * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
     * [Snippet folders](#snippet-folders)
-* [Writing Snippets](#writing-snippets)
-  * [Anatomy of an UltiSnips snippet](#anatomy-of-an-ultisnips-snippet)
+* [Writing snippets](#writing-snippets)
+  * [Setting snippet parameters](#setting-snippet-parameters)
+  * [Nodes (a first look)](#nodes-a-first-look)
+    * [Text node](#text-node)
+    * [Insert node](#insert-node)
   * [Options](#options)
+  * [Format---a nicer syntax for writing snippets](#format---a-nicer-syntax-for-writing-snippets)
   * [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)
   * [Tabstops](#tabstops)
     * [Some example LaTeX snippets](#some-example-latex-snippets)
@@ -266,77 +270,137 @@ ${HOME}/.config/nvim/LuaSnip/
 
 Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated subdirectory, while a single file suffices for `all`, `markdown`, and `python`.
 
-## Writing Snippets
+## Writing snippets
+
+**Think in terms of nodes:**
+LuaSnip snippets are composed of nodes---think of nodes as building blocks that you put together to make snippets.
+LuaSnip provides about 10 types of nodes (perhaps 4 are needed for most use cases) that offer different features---your job is to combine these nodes in ways that create useful snippets.
+
+Here are the three components of a LuaSnip snippet:
+
+1. A table of basic snippet parameters (e.g. the trigger, a description, the snippet's priority level, the option to auto-expand option).
+   Most parameters have sensible defaults and you often only need to set the trigger.
+1. A table of nodes making up the snippet.
+1. *Optionally*: a table of additional arguments for more advanced workflows, for example a condition function to implementing custom logic to control snippet expansion or callback functions triggered when navigating through snippet nodes.
+   You'll leave this optional table blank for most use cases.
+
+Here is the anatomy:
+
+```lua
+require("luasnip").snippet(
+  snip_params:table,  -- table of snippet parameters
+  nodes:table,        -- table of snippet nodes
+  opts:table          -- optional: additional snippet options
+)
+```
+
+### Setting snippet parameters
+
+Possible entries in the first table: see `:help luasnip-snippets`
+
+For example:
+
+```lua
+s(
+  { -- Table 1: snippet parameters
+    trig="hi",
+    dscr="An auto-triggering snippet that expands 'hi' into 'Hello, world!'",
+    priority=100,
+    snippetType="autosnippet"
+  },
+  { -- Table 2: snippet nodes
+    t("Hello, world!"), -- A single text node
+  }
+),
+```
+
+A few keys to be comfortable with:
+
+- `trig`: the string or Lua pattern (i.e. Lua-flavored regular expression) used to trigger the snippet.
+  The only required key.
+- `regTrig`: whether the snippet trigger should be treated as a Lua pattern.
+  `true` or `false`; `false` by default.
+- `snippetType`: `snippet` (manually triggered) or `autosnippet` (auto-triggered); `snippet` by default.
+
+Full docs in `:help luasnip-basics`.
+
+### Nodes (a first look)
+
+Begin with two simple nodes: text nodes and insert nodes.
+These should be easy to understand if you have used another snippet engine.
+
+#### Text node
+
+`:help luasnip-textnode`
+
+Discuss new lines: pass a table of strings.
+
+```lua
+s({trig="hi"},
+  {
+    t({"Line 1", "Line 2", "Line 3"}),
+  }
+),
+```
+
+#### Insert node
+
+`:help luasnip-insertnode`
+
+Discuss:
+- Tabstops and number order
+- Tabstop `0` being exit
+- Initial text
+
+### Options
+
+We'll return to this later.
+
+### Format---a nicer syntax for writing snippets
 
 FMT: https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#fmt
 
-**TLDR:** create a `{filetype}.snippets` file in your `UltiSnips` directory (e.g. `tex.snippets`) and write your snippets inside this file using the syntax described in `:help UltiSnips-basic-syntax`.
+`:help luasnip-fmt`
 
-### Anatomy of an UltiSnips snippet
-The general form of an UltiSnips snippet is:
+Recall how every snippet requires a table of nodes?
+LuaSnip's `fmt` function (`require("luasnip.extras.fmt").fmt`) returns a table of nodes.
 
-```text
-snippet {trigger} ["description" [options]]
-{snippet body}
-endsnippet
+Goal basically: get a clean overview of the snippet text.
+Remove noise from text snippets.
+Decouple nodes from text.
+
+General syntax:
+
+```lua
+fmt(format:string, nodes:table of nodes, opts:table|nil) -> table of nodes
 ```
-The `trigger` and `snippet body` are mandatory, while `"description"` (which should be enclosed in quotes) and `options` are optional; `options` can be included only if a `"description"` is also provided.
-The keywords `snippet` and `endsnippet` define the beginning and end of the snippet.
-See `:help UltiSnips-authoring-snippets` for the relevant documentation.
 
-<details>
-  <summary>
-  <strong>An apology about syntax highlighting</strong>
-  </summary>
-  <p>Please excuse the sub-optimal syntax highlighting of UltiSnips snippet code blocks throughout this article.
-  This website is written with Jekyll and GitHub Pages, which use the <a href="https://github.com/rouge-ruby/rouge"><code class="language-plaintext highlighter-rouge">rogue</code></a> Ruby Gem for syntax highlighting.
-  At the time of writing, <code class="language-plaintext highlighter-rouge">rogue</code> does not support the UltiSnips snippet language 
-  (see here for the <a href="https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/lexers">current list of <code class="language-plaintext highlighter-rouge">rogue</code> lexers</a>),
-  and so the snippet code looks meh.
-  For lack of a better option, I shuffle between plain text and generic shell-script highlighting
-  (which at least highlights comments),
-  neither of which are particularly satisfactory.
-  I might or might not get around to fixing this by just writing and contributing an UltiSnips lexer for <code class="language-plaintext highlighter-rouge">rouge</code>;
-  for the time being, we’ll have to put up less-than-perfect snippet highlighting.</p>
-</details>
-
-### Options
-You'll need to use a few options to get the full UltiSnips experience.
-All options are clearly documented at `:help UltiSnips-snippet-options`, and I'll summarize here only what is necessary for understanding the snippets that appear later in this document.
-Based on my (subjective) experience, with a focus on LaTeX files, here are some good options to know:
-- `A` enables automatic expansion, i.e. a snippet with the `A` option will expand immediately after `trigger` is typed, without you having to press the`g:UltiSnipsExpandTrigger` key.
-  If you're aiming for real-time LaTeX, using well thought-out automatic snippet expansion will dramatically increase your efficiency---more on this in [(subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing).
-
-- `r` allows the use of regular expansions in the snippet's trigger.
-  More on this in the section on [regex snippet triggers](#regex-snippet-triggers).
-
-- `b` expands snippets only if `trigger` is typed at the beginning of a line---this is a useful option when writing snippets for LaTeX environments, which are usually defined at the beginning of a new line.
-
-- `i` (for "in-word" expansion) expands snippets regardless of where `trigger` is typed.
-  (By default snippets expand only if `trigger` begins a new line or is preceded by whitespace.)
-
+Discuss:
+- Escaping curly braces with `{{}}`
+- Use `fmta` for LaTeX, which uses `<>` as the default delimiter.
+- The `delimiters` key in the optional table, e.g. `{delimiters = "<>"}`
 
 ### Assorted snippet syntax rules
-- UltiSnips supports comments, which start with `#` and can be used to document snippets (see `:help UltiSnips-basic-syntax` for reference).
 
-- According to `:help UltiSnips-character-escaping`, the characters `'`, `{`, `$`, and `\` need to be escaped by prepending a backslash `\`.
-  The actual rules of what needs to be escaped when are a little more subtle (see [UltiSnips Issue #1437](https://github.com/SirVer/ultisnips/issues/1437) for context) and more lenient in practice, 
-  so you can often get away with using `'`, `{`, and `\` in snippet bodies without escaping them.
+- LuaSnip supports the usual `--` Lua comment---the snippet files are just files, after all.
 
-- Including the line
+- Backslash (i.e. `\\`) must be escape in text nodes or `fmt` strings.
+
+- Extending snippets:
+
+  For example
+
+  ```lua
+  -- Could place this in e.g. `ankitex.lua` or just call manually
+  require('luasnip').filetype_extend("ankitex", {"tex"})
   ```
-  extends filetype
-  ```
-  anywhere in a `*.snippets` file will load all snippets from `filetype.snippets` into the snippets file containing `extends filetype`.
-  As an example use case from `:help UltiSnips-basic-syntax`, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
 
-- The line `priority {N}`, where `N` is an integer number (e.g. `priority 5`), placed *anywhere* in `.snippets` file on its own line will set the priority of all snippets below that line to `N`.
-  When multiple snippets have the same `trigger`, only the highest-priority snippet is expanded.
-  Using `priority` can be useful to override global snippets defined in `all.snipets`.
-  If `priority` is not specified anywhere in a file, the implicit value is `priority 0`.
-  You can read more about the `priority` keyword in `:help UltiSnips-basic-syntax`.
+  As a classic example, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
+
+- Perhaps mention priority
 
 ### Tabstops
+
 Tabstops are predefined positions within a snippet body to which you can move by pressing the key mapped to `g:UltiSnipsJumpForwardTrigger`.
 Tabstops allow you to efficiently navigate through a snippet's variable content while skipping the positions of static content.
 You navigate through tabstops by pressing, in insert mode, the keys mapped to `g:UltiSnipsJumpForwardTrigger` and `g:UltiSnipsJumpBackwardTrigger`.
