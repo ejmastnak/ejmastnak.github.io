@@ -30,7 +30,6 @@ This article covers snippets, which are templates of commonly reused code that, 
   * [Snippet format](#snippet-format)
   * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
     * [Snippet folders](#snippet-folders)
-* [Watch the screencasts!](#watch-the-screencasts)
 * [Writing Snippets](#writing-snippets)
   * [Anatomy of an UltiSnips snippet](#anatomy-of-an-ultisnips-snippet)
   * [Options](#options)
@@ -266,17 +265,6 @@ ${HOME}/.config/nvim/LuaSnip/
 ```
 
 Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated subdirectory, while a single file suffices for `all`, `markdown`, and `python`.
-
-## Watch the screencasts!
-Quite a few years ago now, Holger Rapp, the author of UltiSnips, created four screencasts demonstrating the plugin's features:
-- [Episode 1: What are snippets and do I need them?](https://www.sirver.net/blog/2011/12/30/first-episode-of-ultisnips-screencast/)
-- [Episode 2: Creating Basic Snippets](https://www.sirver.net/blog/2012/01/08/second-episode-of-ultisnips-screencast/)
-- [Episode 3: What's new in version 2.0](https://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/)
-- [Episode 4: Python Interpolation](https://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/)
-
-They're old but gold, and pack an impressively thorough demonstration of UltiSnips's capabilities into about 20 minutes of video.
-I strongly suggest your watch them---you will find many of the features described in this article covered from a different perspective in the screencasts.
-
 
 ## Writing Snippets
 
