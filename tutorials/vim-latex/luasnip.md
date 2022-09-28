@@ -6,7 +6,7 @@ prev-display-name: "« 1. Prerequisites"
 next-filename: ftplugin
 next-display-name: "3. Vim's ftplugin system »"
 
-date: 2021-10-08 20:44:02 -0400
+date: 2022-09-27 20:00:00 +0200
 date_last_mod: 2022-06-08 18:02:37 +0200
 ---
 
@@ -69,11 +69,11 @@ Alternative: [UltiSnips article]({% link tutorials/vim-latex/ultisnips.md %}).
 ### Installation
 
 Install LuaSnip like any other Neovim plugin using your plugin installation method of choice (e.g. Packer, Vim-Plug, native, etc.).
-See the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#install) for details.
+See the [LuaSnip README's installation section](https://github.com/L3MON4D3/LuaSnip#install) for details.
 LuaSnip has no external dependencies and should be ready to go immediately after installation.
 
 LuaSnip is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
-It is possible to use existing snippet repositories (e.g. [`rafamadriz/friendly-snippets`](https://github.com/rafamadriz/friendly-snippets)) with some additional configuration---see the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#add-snippets) and `:help luasnip-loaders` if interested.
+It is possible to use existing snippet repositories (e.g. [`rafamadriz/friendly-snippets`](https://github.com/rafamadriz/friendly-snippets)) with some additional configuration---see the [LuaSnip README's add snippets section](https://github.com/L3MON4D3/LuaSnip#add-snippets) and `:help luasnip-loaders` if interested.
 Whether you download someone else's snippets, write your own, or use a mixture of both, you should know:
 
 1. where the text files holding your snippets are stored on your local file system, and
@@ -89,10 +89,9 @@ After installing LuaSnip you should immediately configure...
 1. the key you use to move forward through a snippet's tabstops, and
 1. the key you use to move backward through a snippet's tabstops.
 
-See the [LuaSnip README](https://github.com/L3MON4D3/LuaSnip#keymaps) for official examples.
+See the [LuaSnip README's keymaps section](https://github.com/L3MON4D3/LuaSnip#keymaps) for official examples.
 
-This is easiest to do in Vimscript.
-(See `:help vim.cmd()` for running Vimscript from within Lua files).
+Setting these keymaps is easiest to do in Vimscript (because they use Vimscript's conditional ternary operator), so the examples below are in Vimscript.
 
 **Choose one** of the following two options:
 
@@ -119,7 +118,7 @@ This is easiest to do in Vimscript.
    smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
    ```
 
-The same in both cases:
+After choosing one of the above options, **set your your backward-jump keymap:**
 
 ```vim
 " Jump backward
@@ -133,31 +132,41 @@ smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '
 <!-- snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr> -->
 <!-- ``` -->
 
-Two notes:
+A few notes:
 
-1. The conditional ternary operator `A ? expr1 : expr2 ` executes `expr1` if `A` is true and executes `expr2` if `A` is false---it is common in C and [many other languages](https://en.wikipedia.org/wiki/%3F:).
-In the above `imap` mapping, for example, the ternary operator is used to map `<Tab>` to `<Plug>luasnip-expand-or-jump` if `luasnip#expand_or_jumpable()` returns `true` and to `<Tab>` if `luasnip#expand_or_jumpable()` returns `false`.
+1. Place the keymap code somewhere in you Neovim startup configuration (e.g. `init.lua`, `init.vim`, etc.).
+   If you have a Lua-based config and need help running Vimscript from within Lua files, just enclose the Vimscript within `vim.cmd[[]]`, e.g.
+   
+   ```lua
+   -- Any Lua config file, e.g. init.lua
+   vim.cmd[[
+      " Vimscript goes here!
+   ]]
+   ```
+   See `:help vim.cmd()` for details.
 
-2. You'll want to map tabstop jumping in both insert and visual modes, hence the use of both `imap` and `smap` for the forward and backward jump mappings.
-   (Technically select mode and not visual mode, hence the use of `smap` and not `vmap`---see `:help smap` and `:help select-mode` for details.)
+1. The conditional ternary operator `condition ? expr1 : expr2 ` executes `expr1` if `condition` is true and executes `expr2` if `condition` is false---it is common in C and [many other languages](https://en.wikipedia.org/wiki/%3F:).
+In the first `imap` mapping, for example, the ternary operator is used to map `<Tab>` to `<Plug>luasnip-expand-or-jump` if `luasnip#expand_or_jumpable()` returns `true` and to `<Tab>` if `luasnip#expand_or_jumpable()` returns `false`.
 
-Choice nodes:
+1. You need to apply tabstop navigation in both insert and visual modes, hence the use of both `imap` and `smap` for the forward and backward jump mappings.
+   (Well, technically select mode and not visual mode, hence the use of `smap` and not `vmap`, but for a typical end user's purposes select and visual mode look identical---see `:help select-mode` for details.)
+
+1. Power users: you can implement custom snippet expansion and navigation behavior by working directly with LuaSnip API functions controlling expand and jump behavior---see `:help luasnip-api-reference` (scroll down to the `jumpable(direction)` entry) for details.
+   For most users the example mappings given above should be fine.
+
+Finally, you may want to **set mappings to cycle through choice nodes**:
 
 ```vim
-" Cycle forward through choice nodes
+" Cycle forward through choice nodes with Control-f (for example)
 imap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
 smap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
 ```
 
-*TODO:* left off here
+Choice nodes are a more advanced tool we will cover later, so you can safely skip this step for now.
 
-In the above GIF, I am actually using `jk` as the `g:UltiSnipsJumpForwardTrigger` key.
-I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to;
-scroll down to the [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the bottom of this article for more on using `jk` as a jump-forward key and similar tips.
-
-See `:help UltiSnips-trigger-key-mappings` for official documentation of trigger keys.
-For fine-grained control one can also work directly with functions controlling expand and jump behavior; for more information on this see `:help UltiSnips-trigger-functions`.
-For most users just setting the three global trigger key variables, as in the example above, should suffice.
+<!-- In the above GIF, I am actually using `jk` to navigate forward through snippet tabstops. -->
+<!-- I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to; -->
+<!-- scroll down to the [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the bottom of this article for more on using `jk` as a jump-forward key and similar tips. -->
 
 ### A home for your snippets
 You store snippets in text files with the `.snippets` extension.
