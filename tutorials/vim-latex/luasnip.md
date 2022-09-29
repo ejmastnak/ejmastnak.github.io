@@ -30,8 +30,10 @@ This article covers snippets, which are templates of commonly reused code that, 
   * [Snippet format](#snippet-format)
   * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
     * [Snippet folders](#snippet-folders)
+  * [Heads up---some abbreviations](#heads-up---some-abbreviations)
 * [Writing snippets](#writing-snippets)
   * [Setting snippet parameters](#setting-snippet-parameters)
+    * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
   * [Nodes (a first look)](#nodes-a-first-look)
     * [Text node](#text-node)
     * [Insert node](#insert-node)
@@ -270,75 +272,179 @@ ${HOME}/.config/nvim/LuaSnip/
 
 Explanation: I have a lot of `tex` snippets, so I prefer to further organize them in a dedicated subdirectory, while a single file suffices for `all`, `markdown`, and `python`.
 
+### Heads up---some abbreviations
+
+Writing require is tedious.
+All common LuaSnip functions have short abbreviations.
+
+*TODO:* only keep the ones needed for this tutorial.
+
+```lua
+local ls = require("luasnip")
+local s = ls.snippet
+local sn = ls.snippet_node
+local isn = ls.indent_snippet_node
+local t = ls.text_node
+local i = ls.insert_node
+local f = ls.function_node
+local c = ls.choice_node
+local d = ls.dynamic_node
+local r = ls.restore_node
+local events = require("luasnip.util.events")
+local ai = require("luasnip.nodes.absolute_indexer")
+local fmt = require("luasnip.extras.fmt").fmt
+local m = require("luasnip.extras").m
+local lambda = require("luasnip.extras").l
+local postfix = require("luasnip.extras.postfix").postfix
+```
+
+Listed in the LuaSnip docs just above `:help luasnip-basics` and defined (at the time of writing) around line 120 of the file `LuaSnip/lua/luasnip/config.lua`.
+
+I'll use the full names the first few times for the sake of completeness,
+but will transition to the abbreviations later.
+Just know the that the mysterious-looking `s`s and `t`s and `i`s are defined!
+
 ## Writing snippets
 
 **Think in terms of nodes:**
-LuaSnip snippets are composed of nodes---think of nodes as building blocks that you put together to make snippets.
-LuaSnip provides about 10 types of nodes (perhaps 4 are needed for most use cases) that offer different features---your job is to combine these nodes in ways that create useful snippets.
+LuaSnip snippets are composed of *nodes*---think of nodes as building blocks that you put together to make snippets.
+(Actual node syntax is described soon.)
+LuaSnip provides a bit under 10 types of nodes (only about 4 are needed for most use cases) that offer different features---your job is to combine these nodes in ways that create useful snippets.
 
-Here are the three components of a LuaSnip snippet:
+You create snippets by specifying:
 
-1. A table of basic snippet parameters (e.g. the trigger, a description, the snippet's priority level, the option to auto-expand option).
-   Most parameters have sensible defaults and you often only need to set the trigger.
-1. A table of nodes making up the snippet.
-1. *Optionally*: a table of additional arguments for more advanced workflows, for example a condition function to implementing custom logic to control snippet expansion or callback functions triggered when navigating through snippet nodes.
-   You'll leave this optional table blank for most use cases.
+- the snippet's basic parameters (trigger, name, etc.),
+- the snippet's nodes, and
+- possibly some custom expansion conditions and callback functions.
 
-Here is the anatomy:
+Here is the anatomy of a LuaSnip snippet in code:
 
 ```lua
 require("luasnip").snippet(
   snip_params:table,  -- table of snippet parameters
   nodes:table,        -- table of snippet nodes
-  opts:table          -- optional: additional snippet options
+  opts:table|nil      -- *optional* table of additional snippet options
 )
 ```
 
+And here is an English language summary of the arguments:
+
+1. `snip_params`: a table of basic snippet parameters.
+   This is where you put the snippet's trigger, description, and priority level, autoexpansion policy, and so on.
+1. `nodes`: a table of nodes making up the snippet.
+1. `opts`: an *optional* table of additional arguments for more advanced workflows, for example a condition function to implementing custom logic to control snippet expansion or callback functions triggered when navigating through snippet nodes.
+   You'll leave this optional table blank for most use cases.
+
+I'll first cover the `snip_params` table, then move to the `nodes` table, which is the most important part.
+
 ### Setting snippet parameters
 
-Possible entries in the first table: see `:help luasnip-snippets`
+**TLDR** (if you're familiar with Lua):
+`snip_params` is a Lua table;
+the data type and purpose of each table key is clearly stated in `:help luasnip-snippets` (just sroll jdown just a bit).
 
-For example:
+**If you're not familiar with Lua tables**, you:
+
+- define any Lua table, including the `snip_params` table, with curly braces, 
+- find the list of possible table parameter keys in the LuaSnip docs at `:help luasnip-snippets`,
+- use `key=value` syntax to set each of the tables.
+
+Since that might sound vague, here is a concrete example of creating a snippet with a bunch of parameters manually specified, to give you a feel for how this works.
 
 ```lua
-s(
+require("luasnip").snippet(
   { -- Table 1: snippet parameters
     trig="hi",
     dscr="An auto-triggering snippet that expands 'hi' into 'Hello, world!'",
+    regTrig=false,
     priority=100,
     snippetType="autosnippet"
   },
-  { -- Table 2: snippet nodes
+  { -- Table 2: snippet nodes (don't worry about this for now---we'll cover nodes shortly)
     t("Hello, world!"), -- A single text node
   }
 ),
 ```
 
-A few keys to be comfortable with:
+This snippet expands the trigger string `"hi"` into the string `"Hello, world!"`;
+we have given the snippet a human-readable description (with `dscr`),
+explicitly specified that the trigger is not a Lua regular expression (with `regTrig=false`),
+lowered the snippet's priority to `100` (the default is `1000`),
+and made the snippet autoexpand by setting `snippetType="autosnippet"`.
+Don't worry about the `t("Hello, world!")` part for now---this is a *text node*, which we'll cover shortly.
+
+You should probably read through `:help luasnip-snippets` to see the full list of table parameter keys (e.g. `trig`, `dscr`, etc.).
+You usually only use a few keys and leave the rest with their default values;
+we'll only need the following parameters in this guide:
 
 - `trig`: the string or Lua pattern (i.e. Lua-flavored regular expression) used to trigger the snippet.
-  The only required key.
 - `regTrig`: whether the snippet trigger should be treated as a Lua pattern.
-  `true` or `false`; `false` by default.
-- `snippetType`: `snippet` (manually triggered) or `autosnippet` (auto-triggered); `snippet` by default.
+  A `true`/`false` boolean value; `false` by default.
+- `snippetType`: either the string `"snippet"` (manually triggered) or `"autosnippet"` (auto-triggered); `'snippet'` by default.
 
-Full docs in `:help luasnip-basics`.
+#### A common shortcut you'll see in the wild
+
+The `trig` key is the only required snippet key,
+and if you only need to set `trig`, you can use the following shorthand syntax:
+
+```lua
+-- Shorthand example: the same snippet as above, but only setting the `trig` param
+s("hi", -- the snip_param table is replaced by a single string holding `trig`
+  { -- Table 2: snippet nodes
+    t("Hello, world!"),
+  }
+),
+```
+
+Explanation: the `snip_param` table of snippet parameters is gone--if you only want to set the `trig`, you can replace the parameter table with a single string, and LuaSnip will interpret this string as the value of the `trig` key.
+You'll see this syntax a lot in the LuaSnip docs and on the Internet, so I wanted to show it here, but in this article I'll always explicitly specify the `trig` key and use a parameter table, which I think is clearer for new users.
 
 ### Nodes (a first look)
 
-Begin with two simple nodes: text nodes and insert nodes.
+We'll begin with the simple nodes: text nodes and insert nodes.
 These should be easy to understand if you have used another snippet engine.
 
 #### Text node
 
-`:help luasnip-textnode`
+- **Purpose:** Text nodes insert static text into a snippet.
+- **Docs:** `:help luasnip-textnode`
+- **Use case:**
 
-Discuss new lines: pass a table of strings.
+  On their own: transform a short, easy-to-type trigger into a longer, inconvenient-to-type piece of text.
+
+  In combination with other snippets: insert text into the snippet.
+
+How to use: pass a string or a table of strings to `ls.text_node`.
+
+```
+s({trig = "txt1"},
+  {
+    t("Hello, world!")
+  }
+),
+s({trig = "txt1", dscr = "Demo: a multiline text node."},
+  {
+    t({"Line 1", "Line 2", "Line 3"})
+  }
+),
+```
+
+Some real-life examples
 
 ```lua
-s({trig="hi"},
+s({trig=";a", snippetType="autosnippet"},
   {
-    t({"Line 1", "Line 2", "Line 3"}),
+    t("\\alpha"),
+  }
+),
+s({trig=";b", snippetType="autosnippet"},
+  {
+    t("\\beta"),
+  }
+),
+s({trig=";g", snippetType="autosnippet"},
+  {
+    t("\\gamma"),
   }
 ),
 ```
@@ -376,7 +482,7 @@ fmt(format:string, nodes:table of nodes, opts:table|nil) -> table of nodes
 ```
 
 Discuss:
-- Escaping curly braces with `{{}}`
+- Escaping curly braces with `{\{\}}`
 - Use `fmta` for LaTeX, which uses `<>` as the default delimiter.
 - The `delimiters` key in the optional table, e.g. `{delimiters = "<>"}`
 
@@ -394,6 +500,11 @@ Discuss:
   -- Could place this in e.g. `ankitex.lua` or just call manually
   require('luasnip').filetype_extend("ankitex", {"tex"})
   ```
+
+  Docs: `:help `
+
+  Search for `filetype_extend`;
+  there is an entry in `:help luasnip-api-reference`
 
   As a classic example, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
 
