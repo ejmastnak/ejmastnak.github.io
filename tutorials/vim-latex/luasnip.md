@@ -36,10 +36,9 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
   * [Nodes (a first look)](#nodes-a-first-look)
     * [Text node](#text-node)
-    * [Insert node](#insert-node)
-  * [Options](#options)
+    * [Insert node and tabstops](#insert-node-and-tabstops)
   * [Format---a nicer syntax for writing snippets](#format---a-nicer-syntax-for-writing-snippets)
-  * [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)
+  * [Extending snippets:](#extending-snippets)
   * [Tabstops](#tabstops)
     * [Some example LaTeX snippets](#some-example-latex-snippets)
     * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
@@ -449,24 +448,29 @@ s({trig=";g", snippetType="autosnippet"},
 ),
 ```
 
-#### Insert node
+Backslash (i.e. `\\`) must be escape in text nodes or `fmt` strings.
 
-`:help luasnip-insertnode`
+#### Insert node and tabstops
+
+A text node inserts *static* pieces of text.
+An insert node loads the user dynamically type (insert) whatever text they like into a snippet.
+
+- **Purpose:** dynamically type text at a given position within a snippet.
+- **Docs:** `:help luasnip-insertnode`
+- Example use case: combine with text nodes to insert values into LaTeX commands.
+
+How to use: pass a tabstop number, and optionally some initial text, to `ls.insert_node`.
 
 Discuss:
 - Tabstops and number order
 - Tabstop `0` being exit
 - Initial text
 
-### Options
-
-We'll return to this later.
-
 ### Format---a nicer syntax for writing snippets
 
-FMT: https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#fmt
+Just repeat insert node example with format syntax.
 
-`:help luasnip-fmt`
+Docs: `:help luasnip-fmt`
 
 Recall how every snippet requires a table of nodes?
 LuaSnip's `fmt` function (`require("luasnip.extras.fmt").fmt`) returns a table of nodes.
@@ -486,29 +490,19 @@ Discuss:
 - Use `fmta` for LaTeX, which uses `<>` as the default delimiter.
 - The `delimiters` key in the optional table, e.g. `{delimiters = "<>"}`
 
-### Assorted snippet syntax rules
+### Extending snippets:
 
-- LuaSnip supports the usual `--` Lua comment---the snippet files are just files, after all.
+For example
 
-- Backslash (i.e. `\\`) must be escape in text nodes or `fmt` strings.
+```lua
+-- Use both HTML and JavaScript snippets in Vue files
+require('luasnip').filetype_extend("vue", {"html", "javascript"})
 
-- Extending snippets:
+-- Use C snippets in C++ files
+require('luasnip').filetype_extend("c++", {"c"})
+```
 
-  For example
-
-  ```lua
-  -- Could place this in e.g. `ankitex.lua` or just call manually
-  require('luasnip').filetype_extend("ankitex", {"tex"})
-  ```
-
-  Docs: `:help `
-
-  Search for `filetype_extend`;
-  there is an entry in `:help luasnip-api-reference`
-
-  As a classic example, you might use `extends c` inside a `cpp.snippets` file, since C++ could use many snippets from C.
-
-- Perhaps mention priority
+Search docs for `filetype_extend`---there is an entry in `:help luasnip-api-reference`.
 
 ### Tabstops
 
