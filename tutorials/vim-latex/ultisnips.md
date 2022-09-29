@@ -245,7 +245,7 @@ Paraphrasing from `:help UltiSnips-tabstops`:
 - Tabstops should start at `$1` and proceed in sequential order, i.e. `$2`, `$3`, and so on.
 
 - The `$0` tabstop is special---it is always the last tabstop in the snippet no matter how many tabstops are defined.
-If `$0` is not explicitly defined, the `$0` tabstop is implicitly placed at the end of the snippet.
+  If `$0` is not explicitly defined, the `$0` tabstop is implicitly placed at the end of the snippet.
 
 As far as I'm aware, this is a similar tabstop syntax to that used in the popular IDE Visual Studio Code.
 
