@@ -44,9 +44,8 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Repeated nodes](#repeated-nodes)
     * [Custom snippet exit point with the zeroth insert node](#custom-snippet-exit-point-with-the-zeroth-insert-node)
     * [Insert node placeholder text](#insert-node-placeholder-text)
-  * [Tricks with more advanced nodes](#tricks-with-more-advanced-nodes)
-    * [The visual placeholder](#the-visual-placeholder)
-  * [Dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)
+  * [The visual placeholder and a few advanced nodes](#the-visual-placeholder-and-a-few-advanced-nodes)
+  * [The missing piece: conditional snippet expansion](#the-missing-piece-conditional-snippet-expansion)
     * [Custom context expansion and VimTeX's syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
     * [Regex snippet triggers](#regex-snippet-triggers)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
@@ -806,46 +805,93 @@ Here is what this snippet looks like in action:
 
 See the end `:help luasnip-insertnode` for official documentation of insert node placeholder text.
 
-### Tricks with more advanced nodes
+### The visual placeholder and a few advanced nodes
 
-#### The visual placeholder
+We've barely scratched the surface of what LuaSnip can do.
+Using three nodes called *function nodes*, *dynamic nodes*, and *snippet nodes*, you can create nodes that call custom Lua functions and even recursively return other nodes, which opens up a world of possibilities.
+This section explains, cookbook-style, how to port an UltiSnips feature called the *visual placeholder* to LuaSnip.
 
 The visual placeholder lets you use text selected in Vim's visual mode inside the content of a snippet body.
-Here is the how to use it:
+Visual selection is an opt-in feature;
+to enable it, open your LuaSnip config and set the `store_selection_keys` option to the key you want to use to trigger visual selection.
+ The following example uses the Tab key, but you could use any key you like.
+  
+ ```lua
+ -- Somewhere in your Neovim startup, e.g. init.lua
+ local ls = require("luasnip")
+ ls.config.set_config({ -- Setting LuaSnip config
+   -- Use <Tab> (or some other key if you prefer) to trigger visual selection
+   store_selection_keys = "<Tab>",
+ })
+ ```
 
-1. Create and save an UltiSnips snippet that includes the `${VISUAL}` keyword (explained below).
-1. Use Vim to open a file in which you want to trigger the snippet.
+Pressing `<Tab>` in visual mode will then store the visually-selected text in a LuaSnip variable called `SELECT_RAW`, which we will reference later to retrieve the visual selection.
+
+Here's **how to use visual placeholder snippets** (it sounds really complicated when written out, but should make more sense in the GIF below and will quickly become part of your muscle memory):
+
+1. Create and save a LuaSnip snippet with a dynamic node that calls the `get_visual` function (all of this is described below, with a complete example---I'm just giving an overview for now).
+1. Use Vim to open a file in which you want to test out the just-created snippet.
 1. Use Vim's visual mode to select some text.
-1. Press the Tab key (or the more generally the key stored in the `g:UltiSnipsExpandTrigger` variable, which is Tab by default).
-   The selected text is deleted, stored by UltiSnips in memory, and you are placed into Vim's insert mode.
-1. Type the trigger to expand the previously-written snippet that included the `${VISUAL}` keyword.
-   The snippet expands, and the text you had selected in visual mode appears in place of the `${VISUAL}` keyword in the snippet body.
+1. Press the Tab key (or whatever other key you set earlier with `store_selection_keys`).
+   The selected text is deleted and stored in the LuaSnip variable `SELECT_RAW`, and you are placed into Vim's insert mode.
+1. Type the trigger to expand the previously-written snippet that included the dynamic node calling the `get_visual` function.
+   The snippet expands, and the text you had selected in visual mode and stored in `SELECT_RAW` appears in place of the dynamic node in the snippet body.
 
-As an example, here is a snippet for the LaTeX `\textit` command that uses a visual placeholder to make it easer to surround text in italics:
-
-```py
-snippet tii "The \textit{} command for italic font"
-\textit{${1:${VISUAL:}}}$0
-endsnippet
-```
-And here is what this snippet looks like in action:
+As an example, following is a snippet for the LaTeX `\textit` command that uses a visual placeholder to make it easer to surround text in italics.
+Here is what this snippet looks like in action:
 
 <image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Demonstrating the visual placeholder"  /> 
 
-Indeed (as far as I know) the most common use case for the visual placeholder is to quickly surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command, to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
-You can have one visual placeholder per snippet, and you specify it with the `${VISUAL}` keyword---this keyword is usually (but does not have to be) integrated into tabstops.
+Notice how I select the text and hit Tab, and after I trigger the snippet (with `tii` in this case) the `\textit{}` command's argument is automatically populated with the previously-selected text.
 
-Of course, you can still use any snippet that includes the `${VISUAL}` keyword without going through the select-and-Tab procedure described above---you just type the snippet trigger and use it like any other snippet.
+Here is the corresponding snippet code:
 
-The visual placeholder is documented at `:help UltiSnips-visual-placeholder` and explained on video in the UltiSnips screencast [Episode 3: What's new in version 2.0](https://www.sirver.net/blog/2012/02/05/third-episode-of-ultisnips-screencast/); I encourage you to watch the video for orientation, if needed.
+```lua
+-- This is the `get_visual` function I've been talking about.
+-- ----------------------------------------------------------------------------
+-- Summary: If `SELECT_RAW` is populated with a visual selection, returns an
+-- insert node whose initial text is set to the visual selection.
+-- If `SELECT_RAW` is empty, simply returns an empty insert node.
+local get_visual = function(args, parent)
+  if (#parent.snippet.env.SELECT_RAW > 0) then
+    return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
+  else  -- If SELECT_RAW is empty, return a blank insert node
+    return sn(nil, i(1))
+  end
+end
+-- ----------------------------------------------------------------------------
 
-### Dynamically-evaluated code inside snippets
-It is possible to add dynamically-evaluated code to snippet bodies (UltiSnips calls this "code interpolation").
-Shell script, Vimscript, and Python are all supported.
-Interpolation is covered in `:help UltiSnips-interpolation` and in the UltiSnips screencast [Episode 4: Python Interpolation](https://www.sirver.net/blog/2012/03/31/fourth-episode-of-ultisnips-screencast/).
-I will only cover two examples I subjectively find to be most useful for LaTeX:
+-- Example: italic font implementing visual selection
+s({trig = "tii", dscr = "Expands 'tii' into LaTeX's textit{} command."},
+  fmta("\\textit{<>}",
+    {
+      d(1, get_visual),
+    }
+  )
+),
+```
 
-1. making certain snippets expand only when the trigger is typed in LaTeX math environments, which is called *custom context* expansion, and
+A few comments:
+
+- You only need to write the `get_visual` function once per snippet file---you can then use it in all snippets in the file.
+  By the way, there is no need to use the name `get_visual`.
+  You could name the function anything you like.
+- You're probably wondering what the heck is a dynamic node---good question.
+  A full answer falls beyond the scope of this article; see `:help luasnip-dynamicnode` for details.
+  For our purposes, a dynamic node takes a numeric index (just like an insert node) as its first argument and a Lua function as its second argument, and this function (`get_visual` in the above example), returns a LuaSnip construct called a snippet node that *contains other nodes* (a single insert node in the above example).
+- In the above example the dynamic node has an index of 1, but you can of course set a dynamic node's index to anything you like if other nodes come earlier.
+  So, for example, you might first create a snippet that first uses an insert node `i(1)` and only then uses a visual dynamic node `d(2, get_visual)`.
+
+**Use case for visual selection:** as far as I know, the most common use case for the visual placeholder is to quickly surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command, to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
+
+Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a blank insert node.
+
+**Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not itself mentioned in the LuaSnip docs, but you can read about `SELECT_RAW` individually at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
+The `store_selection_keys` config key is documented in the [LuaSnip README's config section](https://github.com/L3MON4D3/LuaSnip#config).
+
+### The missing piece: conditional snippet expansion
+
+1. making certain snippets expand only when the trigger is typed in math or specific LaTeX environments, which is LuaSnip calls *conditional expansion*, and
 
 1. accessing characters captured by a regular expression trigger's capture group.
 
