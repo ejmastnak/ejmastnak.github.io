@@ -34,11 +34,13 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [Writing snippets](#writing-snippets)
   * [Setting snippet parameters](#setting-snippet-parameters)
     * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
+* [Writing snippets](#writing-snippets-1)
   * [Text node](#text-node)
   * [Insert node and tabstops](#insert-node-and-tabstops)
-    * [Some example LaTeX snippets](#some-example-latex-snippets)
+  * [Format: a human-friendly syntax for writing snippets](#format-a-human-friendly-syntax-for-writing-snippets)
+  * [Insert node tips and tricks](#insert-node-tips-and-tricks)
+    * [Insert node numbers](#insert-node-numbers)
     * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
-  * [Format---a nicer syntax for writing snippets](#format---a-nicer-syntax-for-writing-snippets)
   * [Extending snippets:](#extending-snippets)
     * [Useful: mirrored tabstops](#useful-mirrored-tabstops)
     * [Useful: the visual placeholder](#useful-the-visual-placeholder)
@@ -415,6 +417,8 @@ You'll see this syntax a lot in the LuaSnip docs and on the Internet, so I wante
 
 That's all for setting snippet parameters---let's write some actual snippets!
 
+## Writing snippets
+
 ### Text node
 
 - **Purpose:** Text nodes insert static text into a snippet.
@@ -470,70 +474,60 @@ s({trig = "txt1", dscr = "Demo: a text node with three lines."},
 
 ### Insert node and tabstops
 
-Insert nodes are positions within a snippet at which your cursor is placed to let you dynamically type text.
-We've seen that a text node inserts *static* pieces of text---insert nodes allow you to *dynamically* type whatever text you like.
-You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
-
-You can place multiple insert nodes in a snippet.
-You navigate through the various insert nodes by pressing, in insert mode, the key mapped to *TODO:* .
-You specify the order in which you jump through insert nodes with an integer number passed to the node.
-
-Since that might sound vague, here is an example of jumping through the tabstops for figure path, caption, and label in a LaTeX `figure` environment:
-
-<image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Showing how snippet tabstops work"  /> 
-
-- Example fraction node with `i(1)` and `i(2)`.
-  Example e.g. figure environment with a bunch of `i` nodes.
-
-- Tabstop `0` is the exit node---example equation environment using `i(0)`.
-
-  The `$0` tabstop is special---it is always the last tabstop in the snippet no matter how many tabstops are defined.
-  If `$0` is not explicitly defined, the `$0` tabstop is implicitly placed at the end of the snippet.
-
 Summary
 
 - **Purpose:** dynamically type text at a given position within a snippet.
 - **Docs:** `:help luasnip-insertnode`
 - **How to use:** pass a tabstop number, and optionally some initial text, to `ls.insert_node`.
 
-#### Some example LaTeX snippets
+Insert nodes are positions within a snippet at which you can dynamically type text.
+We've seen that a text node inserts *static* pieces of text---insert nodes allow you to *dynamically* type whatever text you like.
+If you are migrating from UltiSnips or SnipMate, LuaSnip insert nodes are analogous to other snippet engines' tabstops (`$1`, `$2`, etc.).
 
-For orientation, here are two examples: one maps `tt` to the `\texttt` command and the other maps `ff` to the `\frac` command.
-Note that (at least for me) the snippet expands correctly without escaping the `\`, `{`, and `}` characters as suggested in `:help UltiSnips-character-escaping` (see the second bullet in [Assorted snippet syntax rules](#assorted-snippet-syntax-rules)).
+You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
+Here are two concerete LaTeX examples using the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplace text and place insert nodes between the curly braces to dynamically type the commands' arguments:
 
-```py
-snippet tt "The \texttt{} command for typewriter-style font"
-\texttt{$1}$0
-endsnippet
+<image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action" /> 
 
-snippet ff "The LaTeX \frac{}{} command"
-\frac{$1}{$2}$0
-endsnippet
+And here is the corresponding code:
+
+```lua
+s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
+  {
+    t("\\texttt{"), -- remember: backslashes need to be escaped
+    i(1),
+    t("}"),
+  }
+),
+-- Yes, these jumbles of text nodes and insert nodes get messy fast, and yes,
+-- there is a much better, human-readable solution: ls.fmt, described shortly.
+s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
+  {
+    t("\\frac{"),
+    i(1),  -- insert node 1
+    t("}{"),
+    i(2),  -- insert node 2
+    t("}")
+  }
+),
 ```
-Here are the above `\texttt{}` and `\frac{}{}` snippets in action:
-<image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action"  /> 
 
-#### Useful: tabstop placeholders
-Placeholders are used to enrich a tabstop with a description or default text.
-The syntax for defining placeholder text is `${1:placeholder}`.
-Placeholders are documented at `:help UltiSnips-placeholders`.
-Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
+Notice that you can place multiple insert nodes in a snippet (the `\frac` snippet, for example, has two).
+You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and actually navigate forward and backward through the insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)).
 
-```py
-snippet hr "The hyperref package's \href{}{} command (for url links)"
-\href{${1:url}}{${2:display name}}$0
-endsnippet
-```
-Here is what this snippet looks like in practice:
+<!-- Since that might sound vague, here is an example of jumping through the tabstops for figure path, caption, and label in a LaTeX `figure` environment: -->
+<!-- <image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Showing how snippet tabstops work"  />  -->
 
-<image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Demonstrating the tabstop placeholder"  /> 
-
-
-### Format---a nicer syntax for writing snippets
-
-Just repeat insert node example with format syntax.
+### Format: a human-friendly syntax for writing snippets
 
 Docs: `:help luasnip-fmt`
+
+There's a problem: combinations of insert nodes and text nodes become hard to read very quickly.
+
+Consider, for example, this equation environment:
+*TODO:* Example code here.
+
+LuaSnip solves this by providing a format function.
 
 Recall how every snippet requires a table of nodes?
 LuaSnip's `fmt` function (`require("luasnip.extras.fmt").fmt`) returns a table of nodes.
@@ -552,6 +546,49 @@ Discuss:
 - Escaping curly braces with `{\{\}}`
 - Use `fmta` for LaTeX, which uses `<>` as the default delimiter.
 - The `delimiters` key in the optional table, e.g. `{delimiters = "<>"}`
+
+
+### Insert node tips and tricks
+
+#### Insert node numbers
+
+By default, you exit a snippet at the very last peice of text.
+You can specify a custom exit point using the special `i(0)` insert node (which has the same role as `$0` in UltiSnips).
+The `i(0)` node is always the last node jumped to, and you use it to specify the desired cursor position when the snippet completes.
+If `i(0)` is not explicitly defined, an `i(0)` node is implicitly placed at the very end of the snippet.
+Here is an example where an explicitly specified `i(0)` node is used to complete a snippet in the body of an equation environment:
+
+<!-- ```lua -->
+<!-- s({trig="eq", dscr="A LaTeX equation environment"}, -->
+<!--   { -->
+<!--     t({ -- remember: use a table of strings for multiline text -->
+<!--         "\\begin{equation}", -->
+<!--         "    " -->
+<!--       }), -->
+<!--     i(0), -->
+<!--     t({ -->
+<!--         "", -->
+<!--         "\\end{equation}" -->
+<!--       }), -->
+<!--   } -->
+<!-- ), -->
+<!-- ``` -->
+
+#### Useful: tabstop placeholders
+
+Placeholders are used to enrich a tabstop with a description or default text.
+The syntax for defining placeholder text is `${1:placeholder}`.
+Placeholders are documented at `:help UltiSnips-placeholders`.
+Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
+
+```py
+snippet hr "The hyperref package's \href{}{} command (for url links)"
+\href{${1:url}}{${2:display name}}$0
+endsnippet
+```
+Here is what this snippet looks like in practice:
+
+<image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Demonstrating the tabstop placeholder"  /> 
 
 ### Extending snippets:
 
