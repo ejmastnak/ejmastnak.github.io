@@ -41,11 +41,11 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [`fmt` is a function that returns a table of nodes](#fmt-is-a-function-that-returns-a-table-of-nodes)
     * [Using the format function](#using-the-format-function)
   * [Insert node tips and tricks](#insert-node-tips-and-tricks)
-    * [Insert node numbers](#insert-node-numbers)
-    * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
-  * [Extending snippets:](#extending-snippets)
-    * [Useful: mirrored tabstops](#useful-mirrored-tabstops)
-    * [Useful: the visual placeholder](#useful-the-visual-placeholder)
+    * [Repeated nodes](#repeated-nodes)
+    * [Custom snippet exit point with the zeroth insert node](#custom-snippet-exit-point-with-the-zeroth-insert-node)
+    * [Insert node placeholder text](#insert-node-placeholder-text)
+  * [Tricks with more advanced nodes](#tricks-with-more-advanced-nodes)
+    * [The visual placeholder](#the-visual-placeholder)
   * [Dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)
     * [Custom context expansion and VimTeX's syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
     * [Regex snippet triggers](#regex-snippet-triggers)
@@ -691,7 +691,7 @@ s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
   fmta(
     "\\texttt{<>}",
     { i(1) },
-  ),
+  )
 ),
 -- \frac
 s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
@@ -702,7 +702,7 @@ s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
       i(2)
     },
     {delimiters = "<>"} -- manually specifying angle bracket delimiters
-  ),
+  )
 ),
 -- Equation
 s({trig="eq", dscr="Expands 'eq' into an equation environment"},
@@ -713,7 +713,7 @@ s({trig="eq", dscr="Expands 'eq' into an equation environment"},
        \end{equation*}
      ]],
      { i(1) },
-  ),
+  )
 )
 ```
 
@@ -721,82 +721,94 @@ See `:help luasnip-fmt` for complete documentation of `fmt` and `fmta`, although
 
 ### Insert node tips and tricks
 
-#### Insert node numbers
+#### Repeated nodes
 
-By default, you exit a snippet at the very last peice of text.
-You can specify a custom exit point using the special `i(0)` insert node (which has the same role as `$0` in UltiSnips).
+Repeated nodes (analogous to what UltiSnips calls mirrored tabstops) allow you to reuse a node's content in multiple locations throughout the snippet body.
+In practice, you might use repeated insert nodes to simultaneously fill out the `\begin` and `\end` fields of a LaTeX environment.
+
+Here is an example:
+
+<image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Demonstrating repeated nodes" /> 
+
+The syntax for repeated nodes straightforward: you pass the index of the node you want to repeat to a `rep(index:number)` node, which is provided by the `luasnip.extras` module.
+For example, here is the code for the snippet shown in the above GIF---note how the `rep(1)` node in the environment's `\end` command repeats the `i(1)` node in the `\begin` command.
+
+```lua
+s({trig="env", snippetType="autosnippet"},
+  fmta(
+    [[
+      \begin{<>}
+          <>
+      \end{<>}
+    ]],
+    {
+      i(1),
+      i(2),
+      rep(1),
+    }
+  )
+),
+```
+
+Repeated nodes are are documented, in passing, in the section `:help luasnip-extras`.
+
+#### Custom snippet exit point with the zeroth insert node
+
+By default, you exit/complete a snippet with your cursor placed at the very last piece of text.
+(In the previous environment snippet, for example, this would be after the `\end{}` command.)
+But sometimes it is convenient to complete a snippet with your cursor still inside the snippet body.
+
+You can specify a custom exit point using the zero-index insert node `i(0)` (which is analogous to `$0` in UltiSnips).
 The `i(0)` node is always the last node jumped to, and you use it to specify the desired cursor position when the snippet completes.
-If `i(0)` is not explicitly defined, an `i(0)` node is implicitly placed at the very end of the snippet.
-Here is an example where an explicitly specified `i(0)` node is used to complete a snippet in the body of an equation environment:
+Here is an example where an explicitly-specified `i(0)` node makes you exit a equation snippet with you cursor conveniently placed inside the environment's body.
 
-<!-- ```lua -->
-<!-- s({trig="eq", dscr="A LaTeX equation environment"}, -->
-<!--   { -->
-<!--     t({ -- remember: use a table of strings for multiline text -->
-<!--         "\\begin{equation}", -->
-<!--         "    " -->
-<!--       }), -->
-<!--     i(0), -->
-<!--     t({ -->
-<!--         "", -->
-<!--         "\\end{equation}" -->
-<!--       }), -->
-<!--   } -->
-<!-- ), -->
-<!-- ``` -->
+```lua
+s({trig="eq", dscr=""},
+  fmta(
+    [[
+      \begin{equation}
+          <>
+      \end{equation}
+    ]],
+    { i(0) }
+  )
+),
+```
 
-#### Useful: tabstop placeholders
+If `i(0)` is not explicitly defined, an `i(0)` node is implicitly placed at the very end of the snippet---in this case this would be after the `\end{equation}` command.
+The zero-index insert node is documented in `:help luasnip-insertnode`.
 
-Placeholders are used to enrich a tabstop with a description or default text.
-The syntax for defining placeholder text is `${1:placeholder}`.
-Placeholders are documented at `:help UltiSnips-placeholders`.
+#### Insert node placeholder text
+
+Placeholder text is used to give an insert node a description or default text.
+You define placeholder text by passing an optional second string argument to an insert node; the call signature is
+
+```lua
+i(index:number, placeholder_text:string|nil)
+```
+
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
 
-```py
-snippet hr "The hyperref package's \href{}{} command (for url links)"
-\href{${1:url}}{${2:display name}}$0
-endsnippet
+```lua
+s({trig="hr", dscr="The hyperref package's href{}{} command (for url links)"},
+  fmta(
+    [[\href{<>}{<>}]],
+    {
+      i(1, "url"),
+      i(2, "display name"),
+    }
+  )
+),
 ```
-Here is what this snippet looks like in practice:
+Here is what this snippet looks like in action:
 
 <image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Demonstrating the tabstop placeholder"  /> 
 
-### Extending snippets:
+See the end `:help luasnip-insertnode` for official documentation of insert node placeholder text.
 
-For example
+### Tricks with more advanced nodes
 
-```lua
--- Use both HTML and JavaScript snippets in Vue files
-require('luasnip').filetype_extend("vue", {"html", "javascript"})
-
--- Use C snippets in C++ files
-require('luasnip').filetype_extend("c++", {"c"})
-```
-
-Search docs for `filetype_extend`---there is an entry in `:help luasnip-api-reference`.
-
-#### Useful: mirrored tabstops
-Mirrors allow you to reuse a tabstop's content in multiple locations throughout the snippet body.
-In practice, you might use mirrored tabstops for the `\begin` and `\end` fields of a LaTeX environment.
-Here is an example:
-
-<image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Demonstrating mirrored tabstops"  /> 
-
-The syntax for mirrored tabstops is what you might intuitively expect: just repeat the tabstop you wish to mirror.
-For example, following is the code for the snippet shown in the above GIF; note how the `$1` tabstop containing the environment name is mirrored in both the `\begin` and `\end` commands:
-
-```py
-snippet env "New LaTeX environment" b
-\begin{$1}
-    $2
-\end{$1}
-$0
-endsnippet
-```
-The `b` options ensures the snippet only expands at the start of line; see the [Options](#options) section for review of common UltiSnips options.
-Mirrored tabstops are documented at `:help UltiSnips-mirrors`.
-
-#### Useful: the visual placeholder
+#### The visual placeholder
 
 The visual placeholder lets you use text selected in Vim's visual mode inside the content of a snippet body.
 Here is the how to use it:
@@ -1067,3 +1079,18 @@ In any case, this problem is specific to using the string `snippet` inside a sni
 
 <!-- Extras: -->
 <!-- - Filetype loading https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#filetype_functions -->
+<!-- YOU CANT HAVE UNESCAPED BACKSLASHES IN DSCR -->
+
+<!-- ### Extending snippets: -->
+<!---->
+<!-- For example -->
+<!---->
+<!-- ```lua -->
+<!-- -- Use both HTML and JavaScript snippets in Vue files -->
+<!-- require('luasnip').filetype_extend("vue", {"html", "javascript"}) -->
+<!---->
+<!-- -- Use C snippets in C++ files -->
+<!-- require('luasnip').filetype_extend("c++", {"c"}) -->
+<!-- ``` -->
+<!---->
+<!-- Search docs for `filetype_extend`---there is an entry in `:help luasnip-api-reference`. -->
