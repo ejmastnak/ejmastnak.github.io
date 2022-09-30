@@ -36,8 +36,10 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
 * [Writing snippets](#writing-snippets-1)
   * [Text node](#text-node)
-  * [Insert node and tabstops](#insert-node-and-tabstops)
+  * [Insert node](#insert-node)
   * [Format: a human-friendly syntax for writing snippets](#format-a-human-friendly-syntax-for-writing-snippets)
+    * [`fmt` is a function that returns a table of nodes](#fmt-is-a-function-that-returns-a-table-of-nodes)
+    * [Using the format function](#using-the-format-function)
   * [Insert node tips and tricks](#insert-node-tips-and-tricks)
     * [Insert node numbers](#insert-node-numbers)
     * [Useful: tabstop placeholders](#useful-tabstop-placeholders)
@@ -305,6 +307,7 @@ local r = ls.restore_node
 local events = require("luasnip.util.events")
 local ai = require("luasnip.nodes.absolute_indexer")
 local fmt = require("luasnip.extras.fmt").fmt
+local fmta = require("luasnip.extras.fmt").fmta
 local m = require("luasnip.extras").m
 local lambda = require("luasnip.extras").l
 local postfix = require("luasnip.extras.postfix").postfix
@@ -472,7 +475,7 @@ s({trig = "txt1", dscr = "Demo: a text node with three lines."},
 ),
 ```
 
-### Insert node and tabstops
+### Insert node
 
 Summary
 
@@ -512,7 +515,7 @@ s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
 ),
 ```
 
-Notice that you can place multiple insert nodes in a snippet (the `\frac` snippet, for example, has two).
+**Insert node numbering:** notice that you can place multiple insert nodes in a snippet (the `\frac` snippet, for example, has two).
 You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and actually navigate forward and backward through the insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)).
 
 <!-- Since that might sound vague, here is an example of jumping through the tabstops for figure path, caption, and label in a LaTeX `figure` environment: -->
@@ -520,33 +523,201 @@ You specify the order in which you jump through insert nodes with a natural numb
 
 ### Format: a human-friendly syntax for writing snippets
 
-Docs: `:help luasnip-fmt`
-
-There's a problem: combinations of insert nodes and text nodes become hard to read very quickly.
-
-Consider, for example, this equation environment:
-*TODO:* Example code here.
-
-LuaSnip solves this by providing a format function.
-
-Recall how every snippet requires a table of nodes?
-LuaSnip's `fmt` function (`require("luasnip.extras.fmt").fmt`) returns a table of nodes.
-
-Goal basically: get a clean overview of the snippet text.
-Remove noise from text snippets.
-Decouple nodes from text.
-
-General syntax:
+<!-- Docs: `:help luasnip-fmt` -->
+**The problem:** you've probably noticed that combinations of insert nodes and text nodes become hard to read very quickly.
+Consider, for example, this snippet for a LaTeX equation environment:
 
 ```lua
-fmt(format:string, nodes:table of nodes, opts:table|nil) -> table of nodes
+-- Example: text and insert nodes quickly become hard to read.
+s({trig="eq", dscr="A LaTeX equation environment"},
+  {
+    t({ -- using a table of strings for multiline text
+        "\\begin{equation}",
+        "    "
+      }),
+    i(1),
+    t({
+        "",
+        "\\end{equation}"
+      }),
+  }
+),
 ```
 
-Discuss:
-- Escaping curly braces with `{\{\}}`
-- Use `fmta` for LaTeX, which uses `<>` as the default delimiter.
-- The `delimiters` key in the optional table, e.g. `{delimiters = "<>"}`
+<!-- *TODO:* click to see the rendered text with details/summary -->
+<!-- The snippet inserts an equation that looks like this: -->
+<!-- ```tex -->
+<!-- \begin{equation} -->
+<!--     % Cursor is here -->
+<!-- \end{equation} -->
+<!-- ``` -->
 
+This code is not particularly human-readable---the jumble of text and insert node code does not *look like* the nicely-indented LaTeX `equation` environment the code produces.
+The code is software-friendly (it is easy for LuaSnip to parse) but it is not *human-friendly*.
+
+LuaSnip solves the human-readability problem with its `fmt` and `fmta` functions.
+The point of these functions is to give you a clean overview of what the rendered snippet will actually look like.
+Here is the same `equation` environment snippet written with `fmt`:
+
+<!-- (the full names are `require("luasnip.extras.fmt").fmt` and `require("luasnip.extras.fmt").fmta`). -->
+
+```lua
+-- The same equation snippet, using LuaSnip's fmt function.
+-- The snippet is not shorter, but it is more *human-readable*.
+s({trig="eq", dscr="A LaTeX equation environment"},
+  fmt( -- The snippet code actually looks like the equation environment it produces.
+    [[
+      \begin{equation}
+          <>
+      \end{equation}
+    ]],
+    -- The insert node is placed in the <> angle brackets
+    { i(1) },
+    -- This is where I specify that angle brackets are used as node positions.
+    { delimiters = "<>" },
+  )
+),
+```
+
+Don't worry, we'll break the snippet down piece by piece---I just wanted to first show what the final product looks like.
+
+#### `fmt` is a function that returns a table of nodes
+
+LuaSnip's `fmt` (the full name is `require("luasnip.extras.fmt").fmt`) is just a function that returns a table of nodes, and lets you create these nodes in a relatively human-readable way.
+The point is: although `fmt` is a new technique, it is not *conceptually* different from how we've been creating snippets so far---it is just another way to supply a snippet with table of nodes.
+
+Here's a big picture perspective:
+
+```lua
+-- What we've done so far: write a snippet by specifying node table manaully
+require("luasnip").snippet(
+  snip_params:table,
+  nodes:table,        -- manually specified node table
+  opts:table|nil
+)
+
+-- Alternative: using the fmt function to create the node table
+require("luasnip").snippet(
+  snip_params:table,
+  fmt(args),          -- fmt returns the node table
+  opts:table|nil
+)
+```
+
+I explain how to actually use the `fmt` function below.
+
+#### Using the format function
+
+The `fmt` function's call signature looks like this:
+
+```lua
+fmt(format:string, nodes:table of nodes, fmt_opts:table|nil) -> table of nodes
+```
+
+The `fmta` function is almost identical to `fmt`---`fmt` uses `{}` curly braces as the default node placeholder and `fmta` uses `<>` angle brackets (this will make sense in just a moment).
+The `fmta` function is more convient for LaTeX, which itself uses curly braces to specify command and environment arguments, so I'll mostly use `fmta` below.
+
+And here's **how to call the `fmta` function**:
+
+1. Format string: use a Lua string (you can use quotes for single-line strings and `[[]]` for multiline strings) to create the snippet's boilerplate text, and place `<>` angle brackets at the positions where you want to place insert (or other non-text) nodes.
+   Here are examples of the earlier LaTeX snippets:
+ 
+   ```lua
+   -- \texttt snippet
+   "\\texttt{<>}"
+ 
+   -- \frac snippet
+   "\\frac{<>}{<>}"
+ 
+   -- Equation snippet, using a multiline Lua string.
+   -- (No need to escape backslashes in multiline strings.)
+   [[
+     \begin{equation*}
+         <>
+     \end{equation*}
+   ]]
+   ```
+
+   Escaping delimiters: if you want to insert a delimiter character literally, just repeat it.
+   For example, `<<>>` would insert literal angle brackets into a `fmta` string, and `{% raw %}{{}}{% endraw %}` would insert literal curly braces into a `fmt` string.
+ 
+1. Node table: Write one node for each angle bracket node placeholder in the boilerplate string.
+   Wrap the resulting list of nodes in a Lua table.
+   The `fmta` function will insert the nodes in this table, in sequential order, into the angle bracket placeholders in the boilerplate string.
+ 
+1. Format options: optionally create a third table of format options in `key = value` syntax.
+   In practice, you will usually only ever need the `delimiter` key, which you can use with regular `fmt` to specify delimiters other than `fmt`'s default `{}` curly braces.
+   See the `opts` entry in `:help luasnip-fmt` for the full list of possible keys.
+ 
+Then pass the format string, node table, and optional `fmt_opts` table (if you're using one) as agruments to `fmt()` or `fmta()`.
+As always, here are concrete examples---I'll continue with the `\texttt`, `\frac`, and `equation` snippets.
+
+```lua
+-- fmta call for the \texttt snippet
+fmta(
+  "\\texttt{<>}",
+  { i(1) },
+)
+
+-- Example: using fmt's `delimiters` key to manually specify angle brackets
+fmt(
+  "\\frac{<>}{<>}",
+  {
+    i(1),
+    i(2)
+  },
+  {delimiters = "<>"} -- manually specifying angle bracket delimiters
+)
+
+-- Using a multiline string for the equation snippet
+fmta(
+   [[
+     \begin{equation*}
+         <>
+     \end{equation*}
+   ]],
+   { i(1) }
+)
+```
+
+Finally, you create a snippet by using the call to the `fmt` or `fmta` function in place of a node table.
+At the risk of getting boring---I know I'm going slowly here, but I want to make sure everyone understands---here are the `\texttt`, `\frac`, and `equation` examples as complete snippets.
+
+```lua
+-- Examples of complete snippets using fmt and fmta
+
+-- \texttt
+s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
+  fmta(
+    "\\texttt{<>}",
+    { i(1) },
+  ),
+),
+-- \frac
+s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
+  fmt(
+    "\\frac{<>}{<>}",
+    {
+      i(1),
+      i(2)
+    },
+    {delimiters = "<>"} -- manually specifying angle bracket delimiters
+  ),
+),
+-- Equation
+s({trig="eq", dscr="Expands 'eq' into an equation environment"},
+  fmta(
+     [[
+       \begin{equation*}
+           <>
+       \end{equation*}
+     ]],
+     { i(1) },
+  ),
+)
+```
+
+See `:help luasnip-fmt` for complete documentation of `fmt` and `fmta`, although the above should have you covered for most use cases.
 
 ### Insert node tips and tricks
 
