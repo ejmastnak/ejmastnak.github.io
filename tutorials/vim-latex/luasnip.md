@@ -51,6 +51,7 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Expansion only at the start of a new line](#expansion-only-at-the-start-of-a-new-line)
     * [Intermezzo: function nodes and regex captures](#intermezzo-function-nodes-and-regex-captures)
     * [Suppress expansion after alphanumeric characters.](#suppress-expansion-after-alphanumeric-characters)
+    * [Exand only after alphanumeric characters and closing delimiters](#exand-only-after-alphanumeric-characters-and-closing-delimiters)
   * [Expansion only in math contexts](#expansion-only-in-math-contexts)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
 * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
@@ -950,9 +951,7 @@ For future reference, here are the Lua pattern keywords needed for this article:
 | `%s` |	white space characters |
 | `%p` |	punctuation characters |
 
-**Cookbook-style list of useful regex triggers**
-
-Here's how the following sections will work:
+**Here's how the following sections will work:**
 
 - I'll first give the generic snippet parameter table needed to use each class of regex triggers, and use `foo` as the example trigger.
 - I'll give a short explanation of each Lua regex works.
@@ -1071,67 +1070,101 @@ Here are the snippet parameter tables for a few variations on the same theme:
  s({trig = "([^%w])foo", regTrig = true}
 ```
 
-Explanation: `%a` represents letters and the `^` character, *when used in square brackets*, performs negation, so `[^%a]foo` will negate (reject) all matches when `foo` is typed after a letter;
-`([^%a])` captures matched non-letter characters to insert back into the snippet body.
+Explanation: `%a` represents letters;
+the `^` character, *when used in square brackets*, performs negation, so `[^%a]foo` will negate (reject) all matches when `foo` is typed after a letter;
+and `([^%a])` captures matched non-letter characters to insert back into the snippet body.
+(You get behavior similar to this out of the box from LuaSnip's default `wordTrig` snippet parameter (mentioned in `:help luasnip-snippets`), but I prefer the above triggers for finer-grained control.)
 
-This is by far my most-used class of regex triggers.
+This is by far my most-used class of regex triggers, because it prevents common snippet triggers from expanding in regular words.
 Here are some example use cases:
 
-- Make `mm` expand to `$ $` (inline math), including on new lines, but not in words like "communication", "command", etc...
-```py
-snippet "(^|[^a-zA-Z])mm" "Inline LaTeX math" rA
-`!p snip.rv = match.group(1)`\$ ${1:${VISUAL:}} \$$0
-endsnippet
-```
-Note that the dollar signs used for the inline math must be escaped (i.e. written `\$` instead of just `$`) to avoid conflict with UltiSnips tabstops, as described in `:help UltiSnips-character-escaping`.
+- Make `mm` expand to `$ $` (inline math), but not in words like "comment", "command", etc...
 
-- Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, `(`, `{`, and other delimiters, but not in words like "see", "feel", etc...
-```py
-snippet "([^a-zA-Z])ee" "e^{} supercript" rA
-`!p snip.rv = match.group(1)`e^{${1:${VISUAL:}}}$0
-endsnippet
-```
+  ```lua
+  s({trig = "([^%a])mm", regTrig = true},
+    fmta(
+      "<>$<>$",
+      {
+        f( function(_, snip) return snip.captures[1] end ),
+        d(1, get_visual),
+      }
+    )
+  ),
+  ```
+  
+  The `d(1, get_visual)` node implements the visual selection [covered earlier](#the-visual-placeholder-and-a-few-advanced-nodes) in this article.
+
+- Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, delimiters, and so on, but not in words like "see", "feel", etc...
+
+  ```lua
+  s({trig = '([^%a])ee', regTrig = true},
+    fmta(
+      "<>e^{<>}",
+      {
+        f( function(_, snip) return snip.captures[1] end ),
+        d(1, get_visual)
+      }
+    )
+  ),
+  ```
 
 - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
-```py
-snippet "(^|[^a-zA-Z])ff" "\frac{}{}" rA
-`!p snip.rv = match.group(1)`\frac{${1:${VISUAL:}}}{$2}$0
-endsnippet
+
+  ```lua
+  s({trig = '([^%a])ff', regTrig = true},
+    fmta(
+      "<>\frac{<>}{<>}",
+      {
+        f( function(_, snip) return snip.captures[1] end ),
+        i(1),
+        i(2)
+      }
+    )
+  ),
+  ```
+
+#### Exand only after alphanumeric characters and closing delimiters
+
+This class of triggers expands only after letter characters and closing delimiters, but not after blank spaces or numbers.
+
+```lua
+-- Only after letters
+s({trig = '([%a])foo', regTrig = true}
+
+-- Only after letters and closing delimiters
+s({trig = '([%a%)%]%}])foo', regTrig = true}
 ```
-The line `` `!p snip.rv = match.group(1)` `` inserts the regex group captured by the trigger parentheses back into the original text.
-Since that might sound vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the snippet trigger disappears after the snippet expands.
 
-1. Expands only after letters characters and closing delimiters, but not after blank spaces or numbers.
+Explanation: `%a` matches letters;
+`%)`, `%]`, and `%}` match closing parentheses, square brackets, and curly braces, respectively (these three characters have to be escaped with the percent sign);
+and `([%a%)%]%}])` saves the captured characters in a capture group.
 
-   ```lua
-   -- Only after letters
-   s({trig = '([%a])foo', regTrig = true}
+I don't use this trigger that often, but here is one example I really like.
+It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
 
-   -- Only after letters and closing delimiters
-   s({trig = '([%a%)%]%}])foo', regTrig = true}
-   ```
+```lua
+s({trig = '([%a%)%]%}])00', regTrig = true},
+  fmta(
+    "<>_{<>}",
+    {
+      f( function(_, snip) return snip.captures[1] end ),
+      t("0")
+    }
+  )
+),
+```
 
-   I don't use this one often, but here is one example I really like.
-   It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
+And here is the above snippet in action:
 
-   ```py
-   snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
-   `!p snip.rv = match.group(1)`_{0}
-   endsnippet
-   ```
-   Here is the above snippet in action:
-
-   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
+<image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
 
    
-Combined with math-context expansion (described below), these three classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
-Note that you can do much fancier stuff than this.
-See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
+Combined with math-context expansion (described below), these three classes of regex triggers cover the majority of my use cases and should give you enough tools to get started writing your own snippets.
 
 ### Expansion only in math contexts
 
-**External dependency:** you need [**the VimTeX plugin**](https://github.com/lervag/vimtex/) (which I cover in detail [later in the series]({% link tutorials/vim-latex/vimtex.md %})) to detect math contexts.
-(But the general technique of LuaSnip conditional expansion works in any filetype workflow and does not require VimTeX, so this section should be useful even if you don't use LaTeX.)
+**External dependency:** you need [**the VimTeX plugin**](https://github.com/lervag/vimtex/) (which I cover in detail [later in the series]({% link tutorials/vim-latex/vimtex.md %})) to detect math contexts in LaTeX files.
+(But the general technique of LuaSnip conditional expansion works in any filetype and does not require VimTeX, so this section should be useful even if you don't use LaTeX.)
 
 The `condition` option in a LuaSnip snippet's optional `opts` table (see `:help luasnip-snippets` and scroll down to the section on the `opts` table) gives you essentially arbitrary control over when snippets expand.
 
