@@ -309,7 +309,7 @@ Here is the how to use it:
 1. Create and save an UltiSnips snippet that includes the `${VISUAL}` keyword (explained below).
 1. Use Vim to open a file in which you want to trigger the snippet.
 1. Use Vim's visual mode to select some text.
-1. Press the Tab key (or the more generally the key stored in the `g:UltiSnipsExpandTrigger` variable, which is Tab by default).
+1. Press the Tab key (or more generally the key stored in the `g:UltiSnipsExpandTrigger` variable, which is Tab by default).
    The selected text is deleted, stored by UltiSnips in memory, and you are placed into Vim's insert mode.
 1. Type the trigger to expand the previously-written snippet that included the `${VISUAL}` keyword.
    The snippet expands, and the text you had selected in visual mode appears in place of the `${VISUAL}` keyword in the snippet body.
@@ -377,7 +377,7 @@ My original source for the implementation of math-context expansion: [https://ca
 
 #### Regex snippet triggers
 For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers.
-You could use a regular expression trigger, for example, to do something like "make `^` expand to a superscript snippet like `^{$1}$0`, but only if the `^` trigger immediately follows an alphanumeric character".
+You could use a regular expression trigger, for example, to do something like "make `_` expand to a subscript snippet like `_{$1}$0`, but only if the `_` trigger immediately follows an alphanumeric character".
 
 A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
 Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial on YouTube](https://www.youtube.com/watch?v=sa-TUpSx1JA).
