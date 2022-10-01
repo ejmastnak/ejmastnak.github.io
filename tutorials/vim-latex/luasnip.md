@@ -34,7 +34,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [Writing snippets](#writing-snippets)
   * [Setting snippet parameters](#setting-snippet-parameters)
     * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
-* [Writing snippets](#writing-snippets-1)
+* [Writing snippets 101](#writing-snippets-101)
   * [Text node](#text-node)
   * [Insert node](#insert-node)
   * [Format: a human-friendly syntax for writing snippets](#format-a-human-friendly-syntax-for-writing-snippets)
@@ -45,9 +45,13 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Custom snippet exit point with the zeroth insert node](#custom-snippet-exit-point-with-the-zeroth-insert-node)
     * [Insert node placeholder text](#insert-node-placeholder-text)
   * [The visual placeholder and a few advanced nodes](#the-visual-placeholder-and-a-few-advanced-nodes)
-  * [The missing piece: conditional snippet expansion](#the-missing-piece-conditional-snippet-expansion)
-    * [Custom context expansion and VimTeX's syntax detection](#custom-context-expansion-and-vimtexs-syntax-detection)
-    * [Regex snippet triggers](#regex-snippet-triggers)
+* [Conditional snippet expansion](#conditional-snippet-expansion)
+  * [The problem and the solution](#the-problem-and-the-solution)
+  * [Regex snippet triggers](#regex-snippet-triggers)
+    * [Expansion only at the start of a new line](#expansion-only-at-the-start-of-a-new-line)
+    * [Intermezzo: function nodes and regex captures](#intermezzo-function-nodes-and-regex-captures)
+    * [Suppress expansion after alphanumeric characters.](#suppress-expansion-after-alphanumeric-characters)
+  * [Expansion only in math contexts](#expansion-only-in-math-contexts)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
 * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
 * [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
@@ -419,7 +423,7 @@ You'll see this syntax a lot in the LuaSnip docs and on the Internet, so I wante
 
 That's all for setting snippet parameters---let's write some actual snippets!
 
-## Writing snippets
+## Writing snippets 101
 
 ### Text node
 
@@ -884,23 +888,271 @@ A few comments:
 
 **Use case for visual selection:** as far as I know, the most common use case for the visual placeholder is to quickly surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command, to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
 
-Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a blank insert node.
+Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` dynamic node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a blank insert node.
 
 **Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not itself mentioned in the LuaSnip docs, but you can read about `SELECT_RAW` individually at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
 The `store_selection_keys` config key is documented in the [LuaSnip README's config section](https://github.com/L3MON4D3/LuaSnip#config).
 
-### The missing piece: conditional snippet expansion
+## Conditional snippet expansion
 
-1. making certain snippets expand only when the trigger is typed in math or specific LaTeX environments, which is LuaSnip calls *conditional expansion*, and
+### The problem and the solution
 
-1. accessing characters captured by a regular expression trigger's capture group.
+If you haven't noticed already, sooner or later you'll run into **the following problem**: 
 
-#### Custom context expansion and VimTeX's syntax detection
-UltiSnips's custom context features (see `:help UltiSnips-custom-context-snippets`) give you essentially arbitrary control over when snippets expand, and one *very* useful LaTeX application is expanding a snippet only if its trigger is typed in a LaTeX math context.
+> *Short, easy-to-type snippet triggers tend to interfere with words typed in regular text.*
+
+This problem becomes particularly noticeable if you use autotrigger snippets, (which I strongly encourage if you need to type LaTeX quickly and conveniently).
+For example:
+
+- `ff` is a great choice to trigger a `\frac{}{}` snippet---it's a short, convenient trigger with good semantics---but you wouldn't want `ff` to spontaneously expand to `\frac{}{}` in the middle of typing the word "offer" in regular text, for example.
+  <!-- **TODO:** a GIF would be really nice here, e.g. -->
+  <!-- % Don't want this to happen -->
+  <!-- Unwanted snippet expansion... pisses me off! -> ... pisses me o\frac{}{} -->
+- `mm` is a nice trigger for `$ $` (inline math), but expansion would be unnacceptable when typing words like "communication", "command", etc.
+
+You get the idea---loosely, we need a way to "stop snippets from expanding when we don't want them to".
+This section gives three **solutions to this problem**:
+
+1. Regular expansion (regex) triggers
+1. Making certain snippets expand only when the trigger is typed in LaTeX math contexts
+1. Making certain snippets expand in specific LaTeX environments (e.g. only in `tikzpicture` environments)
+
+In combination, these techniques should solve your snippet expansion problems in all typical use cases.
+I'll cover regex triggers first, since they apply to any filetype workflow, and then cover math-specific and environment-specific expansion, which are more LaTeX-specific.
+
+<!-- accessing characters captured by a regular expression trigger's capture group. -->
+
+### Regex snippet triggers
+
+For our purposes, if you aren't familiar with them, regular expressions let you implement conditional pattern matching in snippet triggers.
+You could use a regular expression trigger, for example, to do something like "make the trigger `ff` expand to the fraction snippet `\frac{i(1)}{i(2)}`, but only if the `ff` does not come after an alphabetical character".
+(That would solve the problem of `ff` expanding in words like "off" or "offer".)
+
+**Technicality: Lua patterns vs. traditional regexps:** the Lua language, and thus LuaSnip, uses a flavor of regular expressions called "Lua patterns", which basically provide a simple, limited subset of what "traditional" (e.g. POSIX or Perl) regular expressions can do.
+If you're already familiar with traditional regex syntax, Lua patterns will be easy for you---for our purposes, the only meaningful difference is that Lua patterns use the percent sign instead of the backslash to escape characters, 
+and I'll use the terms "regex" and "Lua pattern" interchangeably in this article.
+
+A formal explanation of regular expressions and Lua patterns falls beyond the scope of this article, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
+Regex tutorials abound on the internet; if you need a place to start, I recommend first watching [Corey Schafer's YouTube tutorial on traditional regexes](https://www.youtube.com/watch?v=sa-TUpSx1JA), then reading the Programming in Lua book's [section on Lua patterns](https://www.lua.org/pil/20.2.html).
+
+For future reference, here are the Lua pattern keywords needed for this article:
+
+<!-- **TODO:** center the table -->
+
+| Keyword | Matched characters |
+| ------- | ------------------ |
+| `.`	 |  all characters |
+| `%d` |	digits |
+| `%l` |	lower case letters |
+| `%u` |	upper case letters |
+| `%a` |	letters |
+| `%w` |	alphanumeric characters |
+| `%s` |	white space characters |
+| `%p` |	punctuation characters |
+
+**Cookbook-style list of useful regex triggers**
+
+Here's how the following sections will work:
+
+- I'll first give the generic snippet parameter table needed to use each class of regex triggers, and use `foo` as the example trigger.
+- I'll give a short explanation of each Lua regex works.
+- I'll give a few real life examples I personally find useful when writing LaTeX.
+
+#### Expansion only at the start of a new line
+
+(This is the equivalent of the UltiSnips `b` option.)
+
+Use case: trigger environments, `\section`-stye commands, preamble commands, and anything else you define only at the start of a new line.
+Here is the snippet parameter table:
+
+```lua
+-- Snippet parameter table for new line expansion
+{trig="^([%s]*)foo", regTrig = true}
+```
+
+Explanation: `^` matches the start of a new line,
+`[%s]*` matches 0 or more white spaces,
+and `([%s]*)` saves the white spaces in a capture group, so they can be inserted back into the snippet body for proper indentation.
+Note that **you need to set `regTrig=true`** in the snippet parameter table for the trigger to be interpreted as a Lua pattern---you'll see this `regTrig=true` option in each of the snippets below.
+
+Here are a few real-life examples of this option:
+one uses the HTML-inspired trigger `h1` to create LaTeX `\section` commands (you could use `h2` for `\subsection`, and so on),
+and the other uses `new` to create a new environment.
+
+```lua
+s({trig = "^([%s]*)h1", regTrig = true, dscr = "Top-level section"},
+  fmta(
+    [[\section{i(1)}]],
+    { i(1) }
+  )
+),
+
+s({trig="^([%s]*)new", regTrig = true, dscr = "A generic new environment"},
+  fmta(
+    [[
+      \begin{<>}
+          <>
+      \end{<>}
+    ]],
+    {
+      i(1),
+      d(2, get_visual),
+      rep(1),
+    }
+  )
+),
+```
+
+#### Intermezzo: function nodes and regex captures
+
+**TLDR:** when you see weird-looking function nodes like `f( function(_, snip) return snip.captures[1] end )` popping up in future regex-triggered snippets, this node is just inserting regex capture groups from snippet's trigger back into the snippet body.
+You can now move to the next section.
+**End TLDR**.
+
+You might have noticed that **the above snippets have a problem:**
+in the new environment snippet, for example,
+the entire pattern `"^([%s]*)new"` (including leading whitespace `([%s]*)`) is interpreted as the snippet trigger, not just the string `"new"`,
+and so any leading white space is never inserted back into the snippet and disappears!
+The result looks like this...
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">% Note the indent        % You get this...   </span>|<span class="c">   % ...but probably wanted this</span>
+<span class="c">% before "new"           </span><span class="nt">\begin{document}</span>    |   <span class="nt">\begin{document}</span> 
+<span class="nt">\begin{document}</span>         <span class="nt">\begin{}</span>            |       <span class="nt">\begin{}</span>         
+    new            --&gt;       <span class="c">% cursor here</span>   |           <span class="c">% cursor here</span>
+<span class="nt">\end{document}</span>           <span class="nt">\end{}</span>              |       <span class="nt">\end{}</span>           
+                         <span class="nt">\end{document}</span>      |   <span class="nt">\end{document}</span>   
+</code></pre></div></div>
+
+Notice how the second, "correct" example saved the four spaces originally present before the `new` trigger and thus preserves indentation.
+Since this might still seem vague, try copying and triggering the above environment snippet on a new line with (say) four leading whitespaces, and notice how the whitespace disappears.
+
+**The solution:** access the leading whitespace from the trigger's regex capture group and insert it back into the snippet.
+You can access regex capture groups with LuaSnip function nodes---the syntax looks like this:
+
+```lua
+f( function(_, snip) return snip.captures[1] end ) -- return first capture group
+f( function(_, snip) return snip.captures[1] end ) -- return second capture group, etc.
+```
+
+The corrected environment snippet, with any leading whitespace preserved, would then look like this:
+
+```lua
+s({trig="^([%s]*)new", regTrig = true, dscr = "A generic new environment"},
+  fmta(
+    [[
+      <>\begin{<>}
+      <>    <>
+      <>\end{<>}
+    ]],
+    {
+      f( function(_, snip) return snip.captures[1] end ), -- line 1: for before \begin
+      i(1),
+      f( function(_, snip) return snip.captures[1] end ), -- line 2: for environment body
+      d(2, get_visual),
+      f( function(_, snip) return snip.captures[1] end ), -- line 3: for before \end
+      rep(1),
+    }
+  )
+),
+```
+
+A bit verbose, to be sure, but in practice you basically only write the capture group function node once and then copy and paste it into your other snippets, so it's not to bad.
+
+#### Suppress expansion after alphanumeric characters.
+
+The following trigger expands after blank spaces, punctuation marks, braces and other delimiters, but not after alphanumeric characters.
+Here are the snippet parameter tables for a few variations on the same theme:
+
+```lua
+-- Won't expand if 'foo' is typed after letters
+ s({trig = "([^%a])foo", regTrig = true}
+
+-- Won't expand if 'foo' is typed after alphanumeric characters
+ s({trig = "([^%w])foo", regTrig = true}
+```
+
+Explanation: `%a` represents letters and the `^` character, *when used in square brackets*, performs negation, so `[^%a]foo` will negate (reject) all matches when `foo` is typed after a letter;
+`([^%a])` captures matched non-letter characters to insert back into the snippet body.
+
+This is by far my most-used class of regex triggers.
+Here are some example use cases:
+
+- Make `mm` expand to `$ $` (inline math), including on new lines, but not in words like "communication", "command", etc...
+```py
+snippet "(^|[^a-zA-Z])mm" "Inline LaTeX math" rA
+`!p snip.rv = match.group(1)`\$ ${1:${VISUAL:}} \$$0
+endsnippet
+```
+Note that the dollar signs used for the inline math must be escaped (i.e. written `\$` instead of just `$`) to avoid conflict with UltiSnips tabstops, as described in `:help UltiSnips-character-escaping`.
+
+- Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, `(`, `{`, and other delimiters, but not in words like "see", "feel", etc...
+```py
+snippet "([^a-zA-Z])ee" "e^{} supercript" rA
+`!p snip.rv = match.group(1)`e^{${1:${VISUAL:}}}$0
+endsnippet
+```
+
+- Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
+```py
+snippet "(^|[^a-zA-Z])ff" "\frac{}{}" rA
+`!p snip.rv = match.group(1)`\frac{${1:${VISUAL:}}}{$2}$0
+endsnippet
+```
+The line `` `!p snip.rv = match.group(1)` `` inserts the regex group captured by the trigger parentheses back into the original text.
+Since that might sound vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the snippet trigger disappears after the snippet expands.
+
+1. Expands only after letters characters and closing delimiters, but not after blank spaces or numbers.
+
+   ```lua
+   -- Only after letters
+   s({trig = '([%a])foo', regTrig = true}
+
+   -- Only after letters and closing delimiters
+   s({trig = '([%a%)%]%}])foo', regTrig = true}
+   ```
+
+   I don't use this one often, but here is one example I really like.
+   It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
+
+   ```py
+   snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
+   `!p snip.rv = match.group(1)`_{0}
+   endsnippet
+   ```
+   Here is the above snippet in action:
+
+   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
+
+   
+Combined with math-context expansion (described below), these three classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
+Note that you can do much fancier stuff than this.
+See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
+
+### Expansion only in math contexts
+
+**External dependency:** you need [**the VimTeX plugin**](https://github.com/lervag/vimtex/) (which I cover in detail [later in the series]({% link tutorials/vim-latex/vimtex.md %})) to detect math contexts.
+(But the general technique of LuaSnip conditional expansion works in any filetype workflow and does not require VimTeX, so this section should be useful even if you don't use LaTeX.)
+
+The `condition` option in a LuaSnip snippet's optional `opts` table (see `:help luasnip-snippets` and scroll down to the section on the `opts` table) gives you essentially arbitrary control over when snippets expand.
+
+Set the `condition` key to a function that returns a boolean value that determines if the snippet should expand or not.
+By writing your own condition functions, you have essentially arbitrary control over when snippets expand;
+this article covers two relatively simple, but *very* useful expansion conditions:
+expanding snippets only if the trigger is typed in:
+
+- LaTeX math contexts.
+- specific LaTeX environments.
+
+<!-- ```lua -->
+<!-- fn(line_to_cursor:string, matched_trigger:string, captures:table) -> bool -->
+<!-- ``` -->
+<!-- The function  -->
+
 As an example of why this might be useful:
 
 - Problem: good snippet triggers tend to interfere with words typed in regular text.
   For example, `ff` is a great choice for a `\frac{}{}` snippet, but you wouldn't want `ff` to expand to `\frac{}{}` in the middle of the word "offer", for example.
+
 - Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
   (Note that the `frac` expansion problem can also be solved with a regex snippet trigger, which is covered in the next section.)
 
@@ -928,88 +1180,6 @@ endsnippet
 ```
 My original source for the implementation of math-context expansion: [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context).
 
-#### Regex snippet triggers
-For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers.
-You could use a regular expression trigger, for example, to do something like "make `^` expand to a superscript snippet like `^{$1}$0`, but only if the `^` trigger immediately follows an alphanumeric character".
-
-A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
-Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial on YouTube](https://www.youtube.com/watch?v=sa-TUpSx1JA).
-
-1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
-
-   ```py
-   snippet "([^a-zA-Z])trigger" "Expands if 'trigger' is typed after characters other than a-z or A-Z" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-
-   snippet "(^|[^a-zA-Z])trigger" "Expands on a new line or after characters other than a-z or A-Z" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-
-   # This trigger suppresses numbers, too
-   snippet "(^|[\W])trigger" "Expands on a new line or after characters other than 0-9, a-z, or A-Z" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-   ```
-   This is by far my most-used class of regex triggers.
-   Here are some example use cases:
-   - Make `mm` expand to `$ $` (inline math), including on new lines, but not in words like "communication", "command", etc...
-   ```py
-   snippet "(^|[^a-zA-Z])mm" "Inline LaTeX math" rA
-   `!p snip.rv = match.group(1)`\$ ${1:${VISUAL:}} \$$0
-   endsnippet
-   ```
-   Note that the dollar signs used for the inline math must be escaped (i.e. written `\$` instead of just `$`) to avoid conflict with UltiSnips tabstops, as described in `:help UltiSnips-character-escaping`.
-
-   - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, `(`, `{`, and other delimiters, but not in words like "see", "feel", etc...
-   ```py
-   snippet "([^a-zA-Z])ee" "e^{} supercript" rA
-   `!p snip.rv = match.group(1)`e^{${1:${VISUAL:}}}$0
-   endsnippet
-   ```
-
-   - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
-   ```py
-   snippet "(^|[^a-zA-Z])ff" "\frac{}{}" rA
-   `!p snip.rv = match.group(1)`\frac{${1:${VISUAL:}}}{$2}$0
-   endsnippet
-   ```
-   The line `` `!p snip.rv = match.group(1)` `` inserts the regex group captured by the trigger parentheses back into the original text.
-   Since that might sound vague, try omitting `` `!p snip.rv = match.group(1)` `` from any of the above snippets and seeing what happens---the first character in the snippet trigger disappears after the snippet expands.
-
-1. This class of triggers expands only after alphanumerical characters (`\w`) or the characters `}`, `)`, `]`, and `|`.
-
-   ```py
-   snippet "([\w])trigger" "Expands if 'trigger' is typed after 0-9, a-z, and  A-Z" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-
-   # Of course, modify the }, ), ], and | characters as you wish
-   snippet "([\w]|[\}\)\]\|])trigger" "Expands after 0-9, a-z, A-Z and }, ), ], and |" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-
-   # This trigger suppresses expansion after numbers
-   snippet "([a-zA-Z]|[\}\)\]\|])trigger" "Expands after a-z, A-Z and }, ), ], and |" r
-   `!p snip.rv = match.group(1)`snippet body
-   endsnippet
-   ```
-   I don't use this one often, but here is one example I really like.
-   It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
-
-   ```py
-   snippet "([a-zA-Z]|[\}\)\]\|'])00" "Automatic 0 subscript" rA
-   `!p snip.rv = match.group(1)`_{0}
-   endsnippet
-   ```
-   Here is the above snippet in action:
-
-   <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
-
-   
-Combined with math-context expansion, these two classes of regex triggers cover the majority of my use cases and should give you enough to get started writing your own.
-Note that you can do much fancier stuff than this.
-See the UltiSnips documentation or look through the snippets in `vim-snippets` for inspiration.
 
 ### Tip: Refreshing snippets
 The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory.
