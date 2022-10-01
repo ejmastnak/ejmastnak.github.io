@@ -53,9 +53,11 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Suppress expansion after alphanumeric characters.](#suppress-expansion-after-alphanumeric-characters)
     * [Exand only after alphanumeric characters and closing delimiters](#exand-only-after-alphanumeric-characters-and-closing-delimiters)
   * [Expansion only in math contexts](#expansion-only-in-math-contexts)
+  * [Other LaTeX-specific contexts](#other-latex-specific-contexts)
+* [Bonus](#bonus)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
-* [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
-* [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
+  * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
+  * [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
 
 <!-- vim-markdown-toc -->
 
@@ -1123,6 +1125,8 @@ Here are some example use cases:
   ),
   ```
 
+  (Note that the `ff -> \frac{}{}` expansion problem can also be solved with a math-context expansion condition, which is covered in the next section.)
+
 #### Exand only after alphanumeric characters and closing delimiters
 
 This class of triggers expands only after letter characters and closing delimiters, but not after blank spaces or numbers.
@@ -1158,63 +1162,135 @@ And here is the above snippet in action:
 
 <image src="/assets/images/vim-latex/ultisnips/0-subscript.gif" alt="The 0 subscript snippet in action"  /> 
 
-   
 Combined with math-context expansion (described below), these three classes of regex triggers cover the majority of my use cases and should give you enough tools to get started writing your own snippets.
 
 ### Expansion only in math contexts
 
-**External dependency:** you need [**the VimTeX plugin**](https://github.com/lervag/vimtex/) (which I cover in detail [later in the series]({% link tutorials/vim-latex/vimtex.md %})) to detect math contexts in LaTeX files.
-(But the general technique of LuaSnip conditional expansion works in any filetype and does not require VimTeX, so this section should be useful even if you don't use LaTeX.)
+The `condition` option in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`) gives you essentially arbitrary control over when snippets expand.
+Here's how to use it:
 
-The `condition` option in a LuaSnip snippet's optional `opts` table (see `:help luasnip-snippets` and scroll down to the section on the `opts` table) gives you essentially arbitrary control over when snippets expand.
+1. In a snippet file, write a Lua function that returns a boolean value: `true` when a snippet should expand and `false` when it should not.
+   Here is a silly example that uses Vim's `line()` function (documented at `:help line()`) and the Lua modulo operator to only expand snippets on even-numbered lines.
+   
+   ```lua
+   -- Silly example: returns true when the cursor is on an even-numbered line
+   is_even_line = function()
+     local line_number = vim.fn['line']('.')
+     if ((line_number % 2) == 0) then  -- an even-numbered line
+       return true
+     else  -- an odd-numbered line
+       return false
+     end
+   end
+   -- (Yes, I know I could have written `return ((line_number % 2) == 0)`,
+   -- but I wanted to make the if/else logic extra clear.)
+   ```
 
-Set the `condition` key to a function that returns a boolean value that determines if the snippet should expand or not.
-By writing your own condition functions, you have essentially arbitrary control over when snippets expand;
-this article covers two relatively simple, but *very* useful expansion conditions:
-expanding snippets only if the trigger is typed in:
+1. Set the `condition` key to the `should_expand` function.
+   Use the `opts` table.
 
-- LaTeX math contexts.
-- specific LaTeX environments.
+   ```lua
+   s(
+       {trig="test", snippetType="autosnippet"},
+       {t("The current line number is even")},
+       {condition = is_even_line}
+   ),
+   ```
 
-<!-- ```lua -->
-<!-- fn(line_to_cursor:string, matched_trigger:string, captures:table) -> bool -->
-<!-- ``` -->
-<!-- The function  -->
+The `condition` key gives you a lot of power, especially if you leverage built-in Vim functions (e.g. `line()`, `col()`, `nvim_get_current_line()`, etc.) to get information about the current line and cursor position for use in the `condition` function.
+LuaSnip even passes a few convenience variables to the `condition` function for you---see the `opts` section in `:help luasnip-snippets` for details.
 
-As an example of why this might be useful:
+To **implement math-specific snippet expansion**, you basically need a function that returns `true` in math contexts and `false` otherwise.
+The excellent [**VimTeX plugin**](https://github.com/lervag/vimtex/) provides exactly such a function---the `in_mathzone()` function in `vimtex/autoload/vimtex/syntax.vim`.
+<!-- This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim). -->
+<!-- (which I cover in detail [later in the series]({% link tutorials/vim-latex/vimtex.md %})) -->
+You can integrate VimTeX's math zone detection with LuaSnip's `condition` feature as follows:
 
-- Problem: good snippet triggers tend to interfere with words typed in regular text.
-  For example, `ff` is a great choice for a `\frac{}{}` snippet, but you wouldn't want `ff` to expand to `\frac{}{}` in the middle of the word "offer", for example.
+```lua
+-- Include this `in_mathzone` function at the start of a snippets file...
+local in_mathzone = function()
+  -- The `in_mathzone` function requires the VimTeX plugin
+  return vim.fn['vimtex#syntax#in_mathzone']() == 1
+end
+-- Then pass the table `{condition = in_mathzone}` to any snippet you want to
+-- expand only in math contexts.
 
-- Solution: make `ff` expand to `\frac{}{}` only in math context, where it won't conflict with regular text.
-  (Note that the `frac` expansion problem can also be solved with a regex snippet trigger, which is covered in the next section.)
-
-You will need GitHub user `lervag`'s [VimTeX plugin](https://github.com/lervag/vimtex) for math-context expansion.
-(I cover VimTeX in much more detail in the [fourth article in this series]({% link tutorials/vim-latex/vimtex.md %}).)
-The VimTeX plugin, among many other things, provides the user with the function `vimtex#syntax#in_mathzone()`, which returns `1` if the cursor is inside a LaTeX math zone (e.g. between `$ $` for inline math, inside an `equation` environment, etc...) and `0` otherwise.
-This function isn't explicitly mentioned in the VimTeX documentation, but you can find it in the VimTeX source code at [`vimtex/autoload/vimtex/syntax.vim`](https://github.com/lervag/vimtex/blob/master/autoload/vimtex/syntax.vim).
-
-You can integrate VimTeX's math zone detection with UltiSnips's `context` feature as follows:
-
-```py
-# include this code block at the top of a *.snippets file...
-# ----------------------------- #
-global !p
-def math():
-  return vim.eval('vimtex#syntax#in_mathzone()') == '1'
-endglobal
-# ----------------------------- #
-# ...then place 'context "math()"' above any snippets you want to expand only in math mode
-
-context "math()"
-snippet ff "This \frac{}{} snippet expands only a LaTeX math context"
-\frac{$1}{$2}$0
-endsnippet
+-- Another take on the fraction snippet without using a regex trigger
+s({trig = "ff"},
+  fmta(
+    "\\frac{<>}{<>}",
+    {
+      i(1),
+      i(2),
+    }
+  ),
+  {condition = in_mathzone}  -- `condition` option passed in the snippet `opts` table 
+),
 ```
-My original source for the implementation of math-context expansion: [https://castel.dev/post/lecture-notes-1/#context](https://castel.dev/post/lecture-notes-1/#context).
 
+### Other LaTeX-specific contexts
+
+Thank you to [@evesdropper](https://github.com/evesdropper) and [@lervag](https://github.com/lervag) for the good ideas and discussion in [VimTeX issue #2501](https://github.com/lervag/vimtex/issues/2501).
+
+So for example
+
+```lua
+local tex_utils = {}  -- useful VimTeX-based context-detection functions
+tex_utils.in_mathzone = function()  -- math context detection
+  return vim.fn['vimtex#syntax#in_mathzone']() == 1
+end
+tex_utils.in_text = function()
+  return not tex_utils.in_mathzone()
+end
+tex_utils.in_comment = function()  -- comment detection
+  return vim.fn['vimtex#syntax#in_comment']() == 1
+end
+tex_utils.in_env = function(name)  -- generic environment detection
+    local is_inside = vim.fn['vimtex#env#is_inside'](name)
+    return (is_inside[1] > 0 and is_inside[2] > 0)
+end
+-- Some concrete examples---adapt as needed
+tex_utils.in_equation = function()  -- equation environment detection
+    return tex_utils.in_env('equation')
+end
+tex_utils.in_itemize = function()  -- itemize environment detection
+    return tex_utils.in_env('itemize')
+end
+tex_utils.in_tikz = function()  -- TikZ picture environment detection
+    return tex_utils.in_env('tikzpicture')
+end
+```
+
+Then do something like:
+
+```lua
+-- Expand 'dd' into \draw, but only in TikZ environments
+s({trig = "dd"},
+  fmta(
+    "\\draw [<>] ",
+    {
+      i(1, "draw_params"),
+    }
+  ),
+  { condition = tex_utils.in_tikz }
+),
+
+-- Expand 'ii' into \item, but only in itemize environments
+s({trig="^([%s]*)ii", regTrig = true},
+  {
+    f( function(_, snip) return snip.captures[1] end ),
+    t("\\item "),
+  },
+  {condition = tex_utils.in_itemize}
+),
+```
+
+See `:help vimtex#env#is_inside` in `:help vimtex-code-api`.
+
+## Bonus 
 
 ### Tip: Refreshing snippets
+
 The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory.
 Here's an example use case:
 
@@ -1230,13 +1306,14 @@ nnoremap <leader>u <Cmd>call UltiSnips#RefreshSnippets()<CR>
 ```
 In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
-## (Subjective) practical tips for fast editing
+### (Subjective) practical tips for fast editing
+
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
 In no particular order, here are some useful tips based on my personal experience:
 
 - Use automatic completion whenever possible.
   This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware.
-  For example, I regularly use 100+ auto-trigger snippets on a 2.5 GHz dual-core i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
+  For example, I regularly use 150+ auto-trigger snippets on a 2.5 GHz, dual-core, third-gen i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
 
 - Use *short* snippet triggers.
   Like one-, two-, or and *maybe* three-character triggers.
@@ -1290,7 +1367,7 @@ In no particular order, here are some useful tips based on my personal experienc
   Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown.
   (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
 
-## Tip: A snippet for writing snippets
+### Tip: A snippet for writing snippets
 The following snippet makes it easier to write more snippets.
 To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
 
