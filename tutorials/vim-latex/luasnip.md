@@ -55,9 +55,8 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Bonus: expansion only at the start of a new line](#bonus-expansion-only-at-the-start-of-a-new-line)
   * [Context-specific expansion for LaTeX](#context-specific-expansion-for-latex)
 * [Bonus](#bonus)
-  * [Tip: Refreshing snippets](#tip-refreshing-snippets)
   * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
-  * [Tip: A snippet for writing snippets](#tip-a-snippet-for-writing-snippets)
+  * [Tip: Refreshing snippets from a separate Vim instance](#tip-refreshing-snippets-from-a-separate-vim-instance)
 
 <!-- vim-markdown-toc -->
 
@@ -829,6 +828,8 @@ See the end of `:help luasnip-insertnode` for documentation of insert node place
 
 ### The visual placeholder and a few advanced nodes
 
+<!-- https://github.com/L3MON4D3/LuaSnip/issues/511 -->
+
 We've barely scratched the surface of what LuaSnip can do.
 Using three nodes called *function nodes*, *dynamic nodes*, and *snippet nodes*, you can create nodes that call custom Lua functions and even recursively return other nodes, which opens up a world of possibilities.
 This section explains, cookbook-style, how to port an UltiSnips feature called the *visual placeholder* to LuaSnip.
@@ -1274,30 +1275,13 @@ my original source for math-context expansion is [the famous Gilles Castel artic
 
 ## Bonus 
 
-### Tip: Refreshing snippets
-
-The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory.
-Here's an example use case:
-
-- Problem: you're editing `myfile.tex` in one Vim instance, make some changes `tex.snippets` in a separate Vim instance, and want the updates to be immediately available in `myfile.tex` without having to restart Vim.
-
-- Solution: call `UltiSnips#RefreshSnippets` using `:call UltiSnips#RefreshSnippets()`.
-
-This workflow comes up regularly if you use snippets often, and I suggest writing a key mapping in your `vimrc` to call the `UltiSnips#RefreshSnippets()` function, for example
-
-```vim
-" Use <leader>u in normal mode to refresh UltiSnips snippets
-nnoremap <leader>u <Cmd>call UltiSnips#RefreshSnippets()<CR>
-```
-In case it looks unfamiliar, the above code snippet is a Vim *key mapping*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
-
 ### (Subjective) practical tips for fast editing
 
 I'm writing this with math-heavy LaTeX in real-time university lectures in mind, where speed is crucial; these tips might be overkill for more relaxed use cases.
 In no particular order, here are some useful tips based on my personal experience:
 
 - Use automatic completion whenever possible.
-  This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware.
+  This technically makes your snippet engine use more computing resources, but I am yet to notice a perceptible slow-down on modern hardware.
   For example, I regularly use 150+ auto-trigger snippets on a 2.5 GHz, dual-core, third-gen i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
 
 - Use *short* snippet triggers.
@@ -1317,10 +1301,11 @@ In no particular order, here are some useful tips based on my personal experienc
   Here are two examples I use all the time:
   1. I first define the LaTeX command `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
 
-     ```py
-     snippet "([^a-zA-Z0-9])df" "\diff (A personal command I universally use for differentials)" rA
-     `!p snip.rv = match.group(1)`\diff 
-     endsnippet
+     ```lua
+     s({trig = "df", snippetType = "autosnippet"},
+       { t("\\diff") },
+       { condition = tex.in_mathzone }
+     ),
      ```
      This `df` snippet makes typing differentials a breeze, with correct spacing, upright font, and all that.
      Happily, in this case using `df` for a differential also makes semantic sense.
@@ -1333,64 +1318,62 @@ In no particular order, here are some useful tips based on my personal experienc
 
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
 
-     ```py
-     # Test
-     snippet "([\w]|[\}\)\]\|])sd" "Subscript with upright text" rA
-     `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
-     endsnippet
+     ```lua
+     s({trig = 'sd', snippetType="autosnippet", wordTrig=false},
+       fmta("_{\\mathrm{<>}}",
+         { d(1, get_visual) }
+       ),
+       {condition = tex.in_mathzone}
+     ),
      ```
-     This snippet triggers after alphanumeric characters and closing delimiters, and includes a visual placeholder.
+     This snippet triggers in math contexts and includes a visual placeholder.
 
      Please keep in mind: I'm not suggesting you should stop what you're doing, fire up your Vim config, and start using `sd` to trigger upright-text subscripts just like me.
      The point here is just to get you thinking about using the home-row keys as efficient snippet triggers.
      Try experimenting for yourself---you might significantly speed up your editing.
      Or maybe this tip doesn't work for you, and that's fine, too.
 
-- Try using `jk` as your `g:UltiSnipsJumpForwardTrigger` key, i.e. for moving forward through tabstops.
+- Try using `jk` as your `<Plug>luasnip-jump-next` key, i.e. for jumping forward through tabstops:
+
+  ```vim
+  imap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+  smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+  ```
+
   The other obvious choice is the Tab key, but I found the resulting pinky reach away from the home row to be a hindrance in real-time LaTeX editing.
-  
   Of course `jk` is two key presses instead of one, but it rolls of the fingers so quickly that I don't notice a slowdown.
   (And you don't have `jk` reserved for exiting Vim's insert mode because you've [remapped Caps Lock to Escape on a system-wide level](https://www.dannyguo.com/blog/remap-caps-lock-to-escape-and-control/) and use that to exit insert mode, right?)
 
-### Tip: A snippet for writing snippets
-The following snippet makes it easier to write more snippets.
-To use it, create the file `~/.vim/UltiSnips/snippets.snippets`, and inside it paste the following code:
+### Tip: Refreshing snippets from a separate Vim instance
 
-```py
-snippet snip "A snippet for writing Ultisnips snippets" b
-`!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:options}
-$4
-`!p snip.rv = "endsnippet"`
-$0
-endsnippet
+In addition to initially loading snippets, the Lua loader functions `load` and `lazy_load` (covered [at the start of this article](#loading-snippets-and-directory-structure)) will refresh the snippets in the current Vim instance to reflect the contents of your snippets directory.
+Here's an example use case:
+
+- Problem: you're editing `foobar.tex` in one Vim instance, make some changes to the snippets file `tex.lua` in a *separate* Vim instance, and want the updates to be immediately available in `foobar.tex` without having to restart Vim.
+  (Any snippet edits made in the *current* Vim instance should already be automatically available.)
+
+- Solution: call Lua loader function with the Vim command
+
+  ```vim
+  lua require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})<CR>
+  ```
+
+Since this workflow comes up regularly if you use snippets often, and the above command is inconvenient to type manually, and I suggest writing a key mapping to do it for you.
+The following mapping, for example, makes `<Leader>L` reload your LuaSnip snippets.
+
+```lua
+-- In Lua
+vim.keymap.set('n', '<Leader>L', '<Cmd>lua require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})<CR>')
 ```
-This will insert a snippet template when you type `snip`, followed by the snippet trigger key stored in `g:UltiSnipsExpandTrigger`, at the beginning of a line in a `*.snippets` file in insert mode.
-Here's what this looks like in practice:
 
- <image src="/assets/images/vim-latex/ultisnips/snip-snippet.gif" alt="The snippet-writing snippet in action"  /> 
-
-The use of `` `!p snip.rv = "snippet"` `` needs some explanation---this uses the UltiSnips Python interpolation feature, described in the section on [dynamically-evaluated code inside snippets](#dynamically-evaluated-code-inside-snippets)---to insert the literal string `snippet` in place of `` `!p snip.rv = "snippet"` ``.
-The naive implementation would be to write
-
-```py
-# THIS SNIPPET WON'T WORK---IT'S JUST FOR EXPLANATION!
-snippet snip "A snippet for writing Ultisnips snippets" b
-snippet ${1:trigger} "${2:Description}" ${3:options}
-$4
-endsnippet
-$0
-endsnippet
+```vim
+" In Vimscript
+nnoremap <leader>L <Cmd>lua require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})<CR>
 ```
-but this would make the UltiSnips parser think that the line `snippet ${1:trigger}...` starts a new snippet definition, when the goal is to insert the literal string `snippet ${1:trigger}...` into another file.
-In any case, this problem is specific to using the string `snippet` inside a snippet, and most snippets are much easier to write than this.
 
-{% include vim-latex-navbar.html %}
+Of course, if needed, you should update `~/.config/nvim/LuaSnip/` to your own snippet directory, covered [at the start of this article](#loading-snippets-and-directory-structure).
 
-{% include vim-latex-license.html %}
-
-<!-- Extras: -->
-<!-- - Filetype loading https://github.com/L3MON4D3/LuaSnip/blob/master/DOC.md#filetype_functions -->
-<!-- YOU CANT HAVE UNESCAPED BACKSLASHES IN DSCR -->
+In case they look unfamiliar, the above code snippets are Vim *key mappings*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
 <!-- ### Extending snippets: -->
 <!---->
