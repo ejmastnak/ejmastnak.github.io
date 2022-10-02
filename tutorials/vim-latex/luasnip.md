@@ -448,16 +448,17 @@ That's all for setting snippet parameters---let's write some actual snippets!
 
 ### Text node
 
-- **Purpose:** Text nodes insert static text into a snippet.
-- **Docs:** `:help luasnip-textnode`
-- **Use case:** when used on their own, text nodes can transform a short, easy-to-type trigger into a longer, inconvenient-to-type piece of text.
-  When used with other nodes, text nodes are usually used to create static boilerplate text, into which you dynamically insert variable text using, for example, insert or dynamic nodes.
+Text nodes insert static text into a snippet.
+Here are their **common use cases**:
 
-- **How to use:** pass a string or a table of strings to `require("luasnip").text_node()` (abbreviated `t()`).
+- When used on their own, text nodes can transform a short, easy-to-type trigger into a longer, inconvenient-to-type piece of text.
+- When used with other nodes, text nodes are usually used to create static boilerplate text, into which you dynamically insert variable text with, for example, insert or dynamic nodes.
 
-Here's a barebones "Hello, world!" example that expands the trigger `hi` into the string "Hello, world!".
+You create a text node by passing a string or a table of strings to `require("luasnip").text_node()` (abbreviated `t()`).
+Here is a simple "Hello, world!" example that expands the trigger `hi` into the string "Hello, world!":
 
 ```lua
+-- A simple "Hello, world!" text node
 s(
   {trig = "hi"}, -- Table of snippet parameters
   { -- Table of snippet nodes
@@ -469,6 +470,7 @@ s(
 And here are some actual real-life examples I use to easily insert the Greek letter LaTeX commands `\alpha`, `\beta`, and `\gamma`:
 
 ```lua
+-- Examples of Greek letter snippets, auto-triggered for efficiency
 s({trig=";a", snippetType="autosnippet"},
   {
     t("\\alpha"),
@@ -488,10 +490,11 @@ s({trig=";g", snippetType="autosnippet"},
 
 Note that you have to escape the backslash character to insert it literally---for example I have to write `t("\\alpha")` to produce the string `\alpha` in the first snippet.
 
-The only other caveat with text nodes is **multiline strings**: if you want to insert multiple lines with a single text node, write each line as a separate string and wrap the strings in a Lua table.
+The only other caveat with text nodes is **multiline strings**: to insert multiple lines with a single text node, write each line as a separate string and wrap the strings in a Lua table.
 Here is a concrete example of a three-line text node.
 
 ```lua
+-- Example of a multiline text node
 s({trig = "txt1", dscr = "Demo: a text node with three lines."},
   {
     t({"Line 1", "Line 2", "Line 3"})
@@ -499,26 +502,24 @@ s({trig = "txt1", dscr = "Demo: a text node with three lines."},
 ),
 ```
 
+See `:help luasnip-textnode` for documentation of text nodes.
+
 ### Insert node
 
-Summary
-
-- **Purpose:** dynamically type text at a given position within a snippet.
-- **Docs:** `:help luasnip-insertnode`
-- **How to use:** pass a tabstop number, and optionally some initial text, to `ls.insert_node`.
-
 Insert nodes are positions within a snippet at which you can dynamically type text.
-We've seen that a text node inserts *static* pieces of text---insert nodes allow you to *dynamically* type whatever text you like.
+We've seen that text nodes insert *static* pieces of text---insert nodes allow you to *dynamically* type whatever text you like.
 If you are migrating from UltiSnips or SnipMate, LuaSnip insert nodes are analogous to other snippet engines' tabstops (`$1`, `$2`, etc.).
 
-You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
-Here are two concerete LaTeX examples using the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplace text and place insert nodes between the curly braces to dynamically type the commands' arguments:
+**Use case:** You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
+Here are two concerete LaTeX examples of snippets for the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplace text and place insert nodes between the curly braces to dynamically type the commands' arguments:
 
 <image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action" /> 
 
-And here is the corresponding code:
+You create an insert node by passing an index number, and optionally some initial text, to `require("luasnip").insert_node()` (abbreviated `i()`).
+Here is the for the above examples:
 
 ```lua
+-- Combining text and insert nodes to create basic LaTeX commands
 s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
   {
     t("\\texttt{"), -- remember: backslashes need to be escaped
@@ -539,11 +540,10 @@ s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
 ),
 ```
 
-**Insert node numbering:** notice that you can place multiple insert nodes in a snippet (the `\frac` snippet, for example, has two).
-You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and actually navigate forward and backward through the insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)).
+**Insert node numbering:** notice that you can place multiple insert nodes into a snippet (the `\frac` snippet, for example, has two).
+You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and then navigate forward and backward through the numbered insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)).
 
-<!-- Since that might sound vague, here is an example of jumping through the tabstops for figure path, caption, and label in a LaTeX `figure` environment: -->
-<!-- <image src="/assets/images/vim-latex/ultisnips/tabstops.gif" alt="Showing how snippet tabstops work"  />  -->
+See `:help luasnip-insertnode` for documentation of insert nodes.
 
 ### Format: a human-friendly syntax for writing snippets
 
@@ -568,20 +568,18 @@ s({trig="eq", dscr="A LaTeX equation environment"},
 ),
 ```
 
-<!-- *TODO:* click to see the rendered text with details/summary -->
-<!-- The snippet inserts an equation that looks like this: -->
-<!-- ```tex -->
-<!-- \begin{equation} -->
-<!--     % Cursor is here -->
-<!-- \end{equation} -->
-<!-- ``` -->
+The snippet inserts an equation that looks like this:
+```tex
+\begin{equation}
+    % Cursor is here
+\end{equation}
+```
 
-This code is not particularly human-readable---the jumble of text and insert node code does not *look like* the nicely-indented LaTeX `equation` environment the code produces.
-The code is software-friendly (it is easy for LuaSnip to parse) but it is not *human-friendly*.
+Notice that the snippet code is not particularly human-readable---the jumble of text and insert node code does not *look like* the nicely-indented LaTeX `equation` environment the code produces.
+The code is software-friendly (it is relatively easy for LuaSnip to parse) but it is not *human-friendly*.
 
 LuaSnip solves the human-readability problem with its `fmt` and `fmta` functions.
-The point of these functions is to give you a clean overview of what the rendered snippet will actually look like.
-Here is the same `equation` environment snippet written with `fmt`:
+These functions give you a clean overview of what the rendered snippet will actually look like---here is the same `equation` environment snippet written with `fmt`:
 
 <!-- (the full names are `require("luasnip.extras.fmt").fmt` and `require("luasnip.extras.fmt").fmta`). -->
 
@@ -610,7 +608,7 @@ Don't worry, we'll break the snippet down piece by piece---I just wanted to firs
 LuaSnip's `fmt` (the full name is `require("luasnip.extras.fmt").fmt`) is just a function that returns a table of nodes, and lets you create these nodes in a relatively human-readable way.
 The point is: although `fmt` is a new technique, it is not *conceptually* different from how we've been creating snippets so far---it is just another way to supply a snippet with table of nodes.
 
-Here's a big picture perspective:
+Here's the big picture perspective:
 
 ```lua
 -- What we've done so far: write a snippet by specifying node table manaully
@@ -628,8 +626,6 @@ require("luasnip").snippet(
 )
 ```
 
-I explain how to actually use the `fmt` function below.
-
 #### Using the format function
 
 The `fmt` function's call signature looks like this:
@@ -641,10 +637,10 @@ fmt(format:string, nodes:table of nodes, fmt_opts:table|nil) -> table of nodes
 The `fmta` function is almost identical to `fmt`---`fmt` uses `{}` curly braces as the default node placeholder and `fmta` uses `<>` angle brackets (this will make sense in just a moment).
 The `fmta` function is more convient for LaTeX, which itself uses curly braces to specify command and environment arguments, so I'll mostly use `fmta` below.
 
-And here's **how to call the `fmta` function**:
+Here's **how to call the `fmta` function**:
 
-1. Format string: use a Lua string (you can use quotes for single-line strings and `[[]]` for multiline strings) to create the snippet's boilerplate text, and place `<>` angle brackets at the positions where you want to place insert (or other non-text) nodes.
-   Here are examples of the earlier LaTeX snippets:
+1. Format string: place the snippet's boilerplate text in a Lua string (you can use quotes for single-line strings and `[[]]` for multiline strings), and place `<>` angle brackets at the positions where you want to place insert (or other non-text) nodes.
+   Here are example format strings for the earlier LaTeX snippets:
  
    ```lua
    -- \texttt snippet
@@ -665,11 +661,11 @@ And here's **how to call the `fmta` function**:
    Escaping delimiters: if you want to insert a delimiter character literally, just repeat it.
    For example, `<<>>` would insert literal angle brackets into a `fmta` string, and `{% raw %}{{}}{% endraw %}` would insert literal curly braces into a `fmt` string.
  
-1. Node table: Write one node for each angle bracket node placeholder in the boilerplate string.
-   Wrap the resulting list of nodes in a Lua table.
+1. Node table: create a Lua table containing one node for each angle bracket placeholder in the boilerplate string.
    The `fmta` function will insert the nodes in this table, in sequential order, into the angle bracket placeholders in the boilerplate string.
+   (Examples just below.)
  
-1. Format options: optionally create a third table of format options in `key = value` syntax.
+1. Format options: optionally create a third table of format options with `key = value` syntax.
    In practice, you will usually only ever need the `delimiter` key, which you can use with regular `fmt` to specify delimiters other than `fmt`'s default `{}` curly braces.
    See the `opts` entry in `:help luasnip-fmt` for the full list of possible keys.
  
@@ -705,7 +701,7 @@ fmta(
 ```
 
 Finally, you create a snippet by using the call to the `fmt` or `fmta` function in place of a node table.
-At the risk of getting boring---I know I'm going slowly here, but I want to make sure everyone understands---here are the `\texttt`, `\frac`, and `equation` examples as complete snippets.
+At the risk of getting boring---I know I'm going slowly here, but I want to fully list all steps---here are the `\texttt`, `\frac`, and `equation` examples as complete snippets.
 
 ```lua
 -- Examples of complete snippets using fmt and fmta
@@ -748,13 +744,13 @@ See `:help luasnip-fmt` for complete documentation of `fmt` and `fmta`, although
 #### Repeated nodes
 
 Repeated nodes (analogous to what UltiSnips calls mirrored tabstops) allow you to reuse a node's content in multiple locations throughout the snippet body.
-In practice, you might use repeated insert nodes to simultaneously fill out the `\begin` and `\end` fields of a LaTeX environment.
 
-Here is an example:
+In practice, you might use repeated insert nodes to simultaneously fill out the `\begin` and `\end` fields of a LaTeX environment.
+Here's an example:
 
 <image src="/assets/images/vim-latex/ultisnips/mirrored.gif" alt="Demonstrating repeated nodes" /> 
 
-The syntax for repeated nodes straightforward: you pass the index of the node you want to repeat to a `rep(index:number)` node, which is provided by the `luasnip.extras` module.
+The syntax for repeated nodes straightforward: you pass the index of the node you want to repeat to a `rep()` node, which is provided by the `luasnip.extras` module.
 For example, here is the code for the snippet shown in the above GIF---note how the `rep(1)` node in the environment's `\end` command repeats the `i(1)` node in the `\begin` command.
 
 ```lua
@@ -768,7 +764,7 @@ s({trig="env", snippetType="autosnippet"},
     {
       i(1),
       i(2),
-      rep(1),
+      rep(1),  -- this node repeats insert node i(1)
     }
   )
 ),
@@ -784,7 +780,7 @@ But sometimes it is convenient to complete a snippet with your cursor still insi
 
 You can specify a custom exit point using the zero-index insert node `i(0)` (which is analogous to `$0` in UltiSnips).
 The `i(0)` node is always the last node jumped to, and you use it to specify the desired cursor position when the snippet completes.
-Here is an example where an explicitly-specified `i(0)` node makes you exit a equation snippet with you cursor conveniently placed inside the environment's body.
+Here is an example where an explicitly-specified `i(0)` node makes you exit a equation snippet with your cursor conveniently placed inside the environment's body.
 
 ```lua
 s({trig="eq", dscr=""},
@@ -828,7 +824,7 @@ Here is what this snippet looks like in action:
 
 <image src="/assets/images/vim-latex/ultisnips/hyperref-tabstop-placeholder.gif" alt="Demonstrating the tabstop placeholder"  /> 
 
-See the end `:help luasnip-insertnode` for official documentation of insert node placeholder text.
+See the end of `:help luasnip-insertnode` for documentation of insert node placeholder text.
 
 ### The visual placeholder and a few advanced nodes
 
@@ -837,7 +833,16 @@ Using three nodes called *function nodes*, *dynamic nodes*, and *snippet nodes*,
 This section explains, cookbook-style, how to port an UltiSnips feature called the *visual placeholder* to LuaSnip.
 
 The visual placeholder lets you use text selected in Vim's visual mode inside the content of a snippet body.
-Visual selection is an opt-in feature;
+A typical **use case** is to quickly surround existing text with a snippet (e.g. to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
+Here's a snippet that automatically surrounds selected text in the LaTeX `\textit` command:
+
+<image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Demonstrating the visual placeholder"  /> 
+
+What happened: I selected the line of text with `V`, triggered visual selection with Tab, and after I triggered the snippet (with `tii` in this case) the `\textit{}` command's argument was automatically populated with the previously-selected text.
+
+Here's how to set up and use visual selection:
+
+**Config:** visual selection is an opt-in feature;
 to enable it, open your LuaSnip config and set the `store_selection_keys` option to the key you want to use to trigger visual selection.
  The following example uses the Tab key, but you could use any key you like.
   
@@ -862,21 +867,20 @@ Here's **how to use visual placeholder snippets** (it sounds really complicated 
 1. Type the trigger to expand the previously-written snippet that included the dynamic node calling the `get_visual` function.
    The snippet expands, and the text you had selected in visual mode and stored in `SELECT_RAW` appears in place of the dynamic node in the snippet body.
 
-As an example, following is a snippet for the LaTeX `\textit` command that uses a visual placeholder to make it easer to surround text in italics.
-Here is what this snippet looks like in action:
+Here's the above GIF again---see if you can identify steps 3 (`V`), 4 (Tab), and 5 (trigger):
 
 <image src="/assets/images/vim-latex/ultisnips/visual-placeholder.gif" alt="Demonstrating the visual placeholder"  /> 
 
-Notice how I select the text and hit Tab, and after I trigger the snippet (with `tii` in this case) the `\textit{}` command's argument is automatically populated with the previously-selected text.
+<!-- Notice how I select the text and hit Tab, and after I trigger the snippet (with `tii` in this case) the `\textit{}` command's argument is automatically populated with the previously-selected text. -->
 
 Here is the corresponding snippet code:
 
 ```lua
 -- This is the `get_visual` function I've been talking about.
 -- ----------------------------------------------------------------------------
--- Summary: If `SELECT_RAW` is populated with a visual selection, returns an
--- insert node whose initial text is set to the visual selection.
--- If `SELECT_RAW` is empty, simply returns an empty insert node.
+-- Summary: If `SELECT_RAW` is populated with a visual selection, the function
+-- returns an insert node whose initial text is set to the visual selection.
+-- If `SELECT_RAW` is empty, the function simply returns an empty insert node.
 local get_visual = function(args, parent)
   if (#parent.snippet.env.SELECT_RAW > 0) then
     return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
@@ -907,11 +911,9 @@ A few comments:
 - In the above example the dynamic node has an index of 1, but you can of course set a dynamic node's index to anything you like if other nodes come earlier.
   So, for example, you might first create a snippet that first uses an insert node `i(1)` and only then uses a visual dynamic node `d(2, get_visual)`.
 
-**Use case for visual selection:** as far as I know, the most common use case for the visual placeholder is to quickly surround existing text with a snippet (e.g. to place a sentence inside a LaTeX italics command, to surround a word with quotation marks, surround a paragraph in a LaTeX environment, etc.).
+Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` dynamic node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a regular insert node.
 
-Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` dynamic node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a blank insert node.
-
-**Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not itself mentioned in the LuaSnip docs, but you can read about `SELECT_RAW` individually at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
+**Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not mentioned in the LuaSnip docs at the time of writing, but you can read about `SELECT_RAW` at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
 The `store_selection_keys` config key is documented in the [LuaSnip README's config section](https://github.com/L3MON4D3/LuaSnip#config).
 
 ## Conditional snippet expansion
