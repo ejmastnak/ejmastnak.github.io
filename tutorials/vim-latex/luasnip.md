@@ -54,7 +54,6 @@ This article covers snippets, which are templates of commonly reused code that, 
     * [Expand only after alphanumeric characters and closing delimiters](#expand-only-after-alphanumeric-characters-and-closing-delimiters)
     * [Bonus: expansion only at the start of a new line](#bonus-expansion-only-at-the-start-of-a-new-line)
   * [Context-specific expansion for LaTeX](#context-specific-expansion-for-latex)
-  * [Other LaTeX-specific contexts](#other-latex-specific-contexts)
 * [Bonus](#bonus)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
   * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
@@ -1116,7 +1115,7 @@ This is the equivalent of the UltiSnips `b` option, and will only expand snippet
 This trigger is useful for expanding environments, `\section`-stye commands, preamble commands, which are usually defined only on new lines.
 
 You could do this manually with a regex trigger like `"^([%s]*)foo"`, but LuaSnip provides a cleaner way to do this---a built-in `line_begin` expansion condition.
-Here's a few real-life examples of how to use it:
+This will be our first use of the `condition` key in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`)---here are a few real-life examples of how to use it:
 one uses the HTML-inspired trigger `h1` to create LaTeX `\section` commands (you could use `h2` for `\subsection`, and so on),
 and the other uses `new` to create a new environment.
 
@@ -1154,8 +1153,9 @@ s({trig="new", dscr="A generic new environmennt"},
 
 ### Context-specific expansion for LaTeX
 
-The `condition` option in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`) gives you essentially arbitrary control over when snippets expand.
-Here's how to use it:
+The `condition` option in a LuaSnip snippet's `opts` table gives you essentially arbitrary control over when snippets expand.
+We used it above to implement the `line_begin` expansion condition;
+here's how to use it more generally:
 
 1. In a snippet file, write a Lua function that returns a boolean value: `true` when a snippet should expand and `false` when it should not.
    Here is a silly example that uses Vim's `line()` function (documented at `:help line()`) and the Lua modulo operator to only expand snippets on even-numbered lines.
@@ -1171,19 +1171,19 @@ Here's how to use it:
      end
    end
    -- (Yes, I know I could have written `return ((line_number % 2) == 0)`,
-   -- but I wanted to make the if/else logic extra clear.)
+   -- but I wanted to make the if/else logic explicitly clear.)
    ```
 
-1. Set the `condition` key to the `should_expand` function.
-   Use the `opts` table.
+1. Set the `condition` key in a snippet's `opts` table to the name of the expansion function:
 
    ```lua
-   s(
-       {trig="test", snippetType="autosnippet"},
-       {t("The current line number is even")},
-       {condition = is_even_line}
+   s({trig="test", snippetType="autosnippet"},
+      {t("The current line number is even")},
+      {condition = is_even_line}
    ),
    ```
+
+   The above snippet will expand only on even lines (just make sure to include the `is_even_line` function in the snippet file).
 
 The `condition` key gives you a lot of power, especially if you leverage built-in Vim functions (e.g. `line()`, `col()`, `nvim_get_current_line()`, etc.) to get information about the current line and cursor position for use in the `condition` function.
 LuaSnip even passes a few convenience variables to the `condition` function for you---see the `opts` section in `:help luasnip-snippets` for details.
@@ -1216,14 +1216,15 @@ s({trig = "ff"},
 ),
 ```
 
-### Other LaTeX-specific contexts
+You can use analogous expansion functions for any other LaTeX context, as long as you have a function that reliably detects if the cursor is currently in a given context or not, where VimTeX again comes to the rescue.
+Following are a few more examples for **conditional expansion in comments, text, and various LaTeX environments**---I've wrapped the various condition functions in a Lua table called `tex_utils` for organizational purposes.
 
-Thank you to [@evesdropper](https://github.com/evesdropper) and [@lervag](https://github.com/lervag) for the good ideas and discussion in [VimTeX issue #2501](https://github.com/lervag/vimtex/issues/2501).
-
-So for example
+Here are the expansion functions...
 
 ```lua
-local tex_utils = {}  -- useful VimTeX-based context-detection functions
+-- Some LaTeX-specific conditional expansion functions (requires VimTeX)
+
+local tex_utils = {}
 tex_utils.in_mathzone = function()  -- math context detection
   return vim.fn['vimtex#syntax#in_mathzone']() == 1
 end
@@ -1237,7 +1238,7 @@ tex_utils.in_env = function(name)  -- generic environment detection
     local is_inside = vim.fn['vimtex#env#is_inside'](name)
     return (is_inside[1] > 0 and is_inside[2] > 0)
 end
--- Some concrete examples---adapt as needed
+-- A few concrete environments---adapt as needed
 tex_utils.in_equation = function()  -- equation environment detection
     return tex_utils.in_env('equation')
 end
@@ -1249,7 +1250,7 @@ tex_utils.in_tikz = function()  -- TikZ picture environment detection
 end
 ```
 
-Then do something like:
+...and here is a simple example: expanding `dd` into the TikZ `\draw` command only in `tikzpicture` environments---you can of course use any condition you like in your own snippets.
 
 ```lua
 -- Expand 'dd' into \draw, but only in TikZ environments
@@ -1257,23 +1258,19 @@ s({trig = "dd"},
   fmta(
     "\\draw [<>] ",
     {
-      i(1, "draw_params"),
+      i(1, "params"),
     }
   ),
   { condition = tex_utils.in_tikz }
 ),
-
--- Expand 'ii' into \item, but only in itemize environments
-s({trig="^([%s]*)ii", regTrig = true},
-  {
-    f( function(_, snip) return snip.captures[1] end ),
-    t("\\item "),
-  },
-  {condition = tex_utils.in_itemize}
-),
 ```
 
-See `:help vimtex#env#is_inside` in `:help vimtex-code-api`.
+As always, make sure to define the conditional expansion functions in any snippet file you wish to use them in!
+
+**Acknowledgements:** thank you to [@evesdropper](https://github.com/evesdropper) and [@lervag](https://github.com/lervag) for the good ideas and discussion in [VimTeX issue #2501](https://github.com/lervag/vimtex/issues/2501), which is where I got the idea for environment-specific expansion;
+my original source for math-context expansion is [the famous Gilles Castel article](https://castel.dev/post/lecture-notes-1/#context).
+
+<!-- See `:help vimtex#env#is_inside` in `:help vimtex-code-api`. -->
 
 ## Bonus 
 
