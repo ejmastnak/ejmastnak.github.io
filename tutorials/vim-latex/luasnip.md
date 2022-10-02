@@ -8,6 +8,7 @@ next-display-name: "3. Vim's ftplugin system »"
 
 date: 2022-09-27 20:00:00 +0200
 date_last_mod: 2022-06-08 18:02:37 +0200
+
 ---
 
 {% include vim-latex-navbar.html %}
@@ -31,7 +32,7 @@ This article covers snippets, which are templates of commonly reused code that, 
   * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
     * [Snippet filetype subdirectories](#snippet-filetype-subdirectories)
   * [Heads up---some abbreviations](#heads-up---some-abbreviations)
-* [Writing snippets](#writing-snippets)
+* [Snippet anatomy](#snippet-anatomy)
   * [Setting snippet parameters](#setting-snippet-parameters)
     * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
 * [Writing snippets---first steps](#writing-snippets---first-steps)
@@ -48,11 +49,11 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [Conditional snippet expansion](#conditional-snippet-expansion)
   * [The problem and the solution](#the-problem-and-the-solution)
   * [Regex snippet triggers](#regex-snippet-triggers)
-    * [Expansion only at the start of a new line](#expansion-only-at-the-start-of-a-new-line)
-    * [Intermezzo: function nodes and regex captures](#intermezzo-function-nodes-and-regex-captures)
     * [Suppress expansion after alphanumeric characters.](#suppress-expansion-after-alphanumeric-characters)
-    * [Exand only after alphanumeric characters and closing delimiters](#exand-only-after-alphanumeric-characters-and-closing-delimiters)
-  * [Expansion only in math contexts](#expansion-only-in-math-contexts)
+    * [Intermezzo: function nodes and regex captures](#intermezzo-function-nodes-and-regex-captures)
+    * [Expand only after alphanumeric characters and closing delimiters](#expand-only-after-alphanumeric-characters-and-closing-delimiters)
+    * [Bonus: expansion only at the start of a new line](#bonus-expansion-only-at-the-start-of-a-new-line)
+  * [Context-specific expansion for LaTeX](#context-specific-expansion-for-latex)
   * [Other LaTeX-specific contexts](#other-latex-specific-contexts)
 * [Bonus](#bonus)
   * [Tip: Refreshing snippets](#tip-refreshing-snippets)
@@ -62,6 +63,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 <!-- vim-markdown-toc -->
 
 ## What snippets do
+
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character), easy-to-type character sequences called *triggers*.
 Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly. 
 
@@ -151,7 +153,7 @@ A few notes:
 
 1. Place the keymap code somewhere in your Neovim startup configuration (e.g. `init.lua`, `init.vim`, etc.).
    If you have a Lua-based config and need help running Vimscript from within Lua files, just enclose the Vimscript within a multiline string and pass it to `vim.cmd`, e.g.
-   
+
    ```lua
    -- Any Lua config file, e.g. init.lua
    vim.cmd[[
@@ -248,7 +250,7 @@ Here's **how to load snippets from Lua files**:
   ```
 
   Bonus: if you manually set the `paths` key when calling `load` or `lazy_load`, LuaSnip will not need to scan your entire Neovim `runtimepath` looking for `luasnippets` directories---this should save you a few milliseconds of startup time.
-    
+
 - Want to use multiple snippet directories?
   No problem---set the `paths` key's value to a table or comma-separated string of multiple directories.
   Here are two ways to load snippets from both the directory `LuaSnip1` and `LuaSnip2`:
@@ -337,7 +339,7 @@ You can find a more complete list in the LuaSnip docs just above the section `:h
 I'll use the full names the first few times for the sake of completeness,
 but will transition to the abbreviations later---just remember that the mysterious-looking `s`s and `t`s and `i`s are really just abbreviations of for LuaSnip modules and functions.
 
-## Writing snippets
+## Snippet anatomy
 
 **Think in terms of nodes:**
 LuaSnip snippets are composed of *nodes*---think of nodes as building blocks that you put together to make snippets.
@@ -920,7 +922,7 @@ The `store_selection_keys` config key is documented in the [LuaSnip README's con
 
 ### The problem and the solution
 
-If you haven't noticed already, sooner or later you'll run into **the following problem**: 
+If you haven't noticed already, sooner or later you'll run into the following problem: 
 
 > *Short, easy-to-type snippet triggers tend to interfere with words typed in regular text.*
 
@@ -934,11 +936,10 @@ For example:
 - `mm` is a nice trigger for `$ $` (inline math), but expansion would be unnacceptable when typing words like "communication", "command", etc.
 
 You get the idea---loosely, we need a way to "stop snippets from expanding when we don't want them to".
-This section gives three **solutions to this problem**:
+This section gives two solutions to this problem:
 
 1. Regular expansion (regex) triggers
-1. Making certain snippets expand only when the trigger is typed in LaTeX math contexts
-1. Making certain snippets expand in specific LaTeX environments (e.g. only in `tikzpicture` environments)
+1. Making certain snippets expand only when the trigger is typed in certain LaTeX contexts (e.g. math, comments, only in a specific environment, etc.)
 
 In combination, these techniques should solve your snippet expansion problems in all typical use cases.
 I'll cover regex triggers first, since they apply to any filetype workflow, and then cover math-specific and environment-specific expansion, which are more LaTeX-specific.
@@ -952,8 +953,8 @@ You could use a regular expression trigger, for example, to do something like "m
 (That would solve the problem of `ff` expanding in words like "off" or "offer".)
 
 **Technicality: Lua patterns vs. traditional regexps:** the Lua language, and thus LuaSnip, uses a flavor of regular expressions called "Lua patterns", which basically provide a simple, limited subset of what "traditional" (e.g. POSIX or Perl) regular expressions can do.
-If you're already familiar with traditional regex syntax, Lua patterns will be easy for you---for our purposes, the only meaningful difference is that Lua patterns use the percent sign instead of the backslash to escape characters, 
-and I'll use the terms "regex" and "Lua pattern" interchangeably in this article.
+If you're already familiar with traditional regex syntax, Lua patterns will be easy for you---for our purposes, the only meaningful difference is that Lua patterns use the percent sign instead of the backslash to escape characters.
+I'll use the terms "regex" and "Lua pattern" interchangeably in this article.
 
 A formal explanation of regular expressions and Lua patterns falls beyond the scope of this article, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
 Regex tutorials abound on the internet; if you need a place to start, I recommend first watching [Corey Schafer's YouTube tutorial on traditional regexes](https://www.youtube.com/watch?v=sa-TUpSx1JA), then reading the Programming in Lua book's [section on Lua patterns](https://www.lua.org/pil/20.2.html).
@@ -966,118 +967,18 @@ For future reference, here are the Lua pattern keywords needed for this article:
 | ------- | ------------------ |
 | `.`	 |  all characters |
 | `%d` |	digits |
-| `%l` |	lower case letters |
-| `%u` |	upper case letters |
-| `%a` |	letters |
+| `%a` |	letters (uppercase and lowercase) |
 | `%w` |	alphanumeric characters |
 | `%s` |	white space characters |
-| `%p` |	punctuation characters |
+
+<!-- | `%l` |	lower case letters | -->
+<!-- | `%u` |	upper case letters | -->
 
 **Here's how the following sections will work:**
 
 - I'll first give the generic snippet parameter table needed to use each class of regex triggers, and use `foo` as the example trigger.
 - I'll give a short explanation of each Lua regex works.
 - I'll give a few real life examples I personally find useful when writing LaTeX.
-
-#### Expansion only at the start of a new line
-
-(This is the equivalent of the UltiSnips `b` option.)
-
-Use case: trigger environments, `\section`-stye commands, preamble commands, and anything else you define only at the start of a new line.
-Here is the snippet parameter table:
-
-```lua
--- Snippet parameter table for new line expansion
-{trig="^([%s]*)foo", regTrig = true}
-```
-
-Explanation: `^` matches the start of a new line,
-`[%s]*` matches 0 or more white spaces,
-and `([%s]*)` saves the white spaces in a capture group, so they can be inserted back into the snippet body for proper indentation.
-Note that **you need to set `regTrig=true`** in the snippet parameter table for the trigger to be interpreted as a Lua pattern---you'll see this `regTrig=true` option in each of the snippets below.
-
-Here are a few real-life examples of this option:
-one uses the HTML-inspired trigger `h1` to create LaTeX `\section` commands (you could use `h2` for `\subsection`, and so on),
-and the other uses `new` to create a new environment.
-
-```lua
-s({trig = "^([%s]*)h1", regTrig = true, dscr = "Top-level section"},
-  fmta(
-    [[\section{i(1)}]],
-    { i(1) }
-  )
-),
-
-s({trig="^([%s]*)new", regTrig = true, dscr = "A generic new environment"},
-  fmta(
-    [[
-      \begin{<>}
-          <>
-      \end{<>}
-    ]],
-    {
-      i(1),
-      d(2, get_visual),
-      rep(1),
-    }
-  )
-),
-```
-
-#### Intermezzo: function nodes and regex captures
-
-**TLDR:** when you see weird-looking function nodes like `f( function(_, snip) return snip.captures[1] end )` popping up in future regex-triggered snippets, this node is just inserting regex capture groups from snippet's trigger back into the snippet body.
-You can now move to the next section.
-**End TLDR**.
-
-You might have noticed that **the above snippets have a problem:**
-in the new environment snippet, for example,
-the entire pattern `"^([%s]*)new"` (including leading whitespace `([%s]*)`) is interpreted as the snippet trigger, not just the string `"new"`,
-and so any leading white space is never inserted back into the snippet and disappears!
-The result looks like this...
-
-<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">% Note the indent        % You get this...   </span>|<span class="c">   % ...but probably wanted this</span>
-<span class="c">% before "new"           </span><span class="nt">\begin{document}</span>    |   <span class="nt">\begin{document}</span> 
-<span class="nt">\begin{document}</span>         <span class="nt">\begin{}</span>            |       <span class="nt">\begin{}</span>         
-    new            --&gt;       <span class="c">% cursor here</span>   |           <span class="c">% cursor here</span>
-<span class="nt">\end{document}</span>           <span class="nt">\end{}</span>              |       <span class="nt">\end{}</span>           
-                         <span class="nt">\end{document}</span>      |   <span class="nt">\end{document}</span>   
-</code></pre></div></div>
-
-Notice how the second, "correct" example saved the four spaces originally present before the `new` trigger and thus preserves indentation.
-Since this might still seem vague, try copying and triggering the above environment snippet on a new line with (say) four leading whitespaces, and notice how the whitespace disappears.
-
-**The solution:** access the leading whitespace from the trigger's regex capture group and insert it back into the snippet.
-You can access regex capture groups with LuaSnip function nodes---the syntax looks like this:
-
-```lua
-f( function(_, snip) return snip.captures[1] end ) -- return first capture group
-f( function(_, snip) return snip.captures[1] end ) -- return second capture group, etc.
-```
-
-The corrected environment snippet, with any leading whitespace preserved, would then look like this:
-
-```lua
-s({trig="^([%s]*)new", regTrig = true, dscr = "A generic new environment"},
-  fmta(
-    [[
-      <>\begin{<>}
-      <>    <>
-      <>\end{<>}
-    ]],
-    {
-      f( function(_, snip) return snip.captures[1] end ), -- line 1: for before \begin
-      i(1),
-      f( function(_, snip) return snip.captures[1] end ), -- line 2: for environment body
-      d(2, get_visual),
-      f( function(_, snip) return snip.captures[1] end ), -- line 3: for before \end
-      rep(1),
-    }
-  )
-),
-```
-
-A bit verbose, to be sure, but in practice you basically only write the capture group function node once and then copy and paste it into your other snippets, so it's not to bad.
 
 #### Suppress expansion after alphanumeric characters.
 
@@ -1115,6 +1016,7 @@ Here are some example use cases:
   ```
   
   The `d(1, get_visual)` node implements the visual selection [covered earlier](#the-visual-placeholder-and-a-few-advanced-nodes) in this article.
+  The weird-looking function node `f( function(_, snip) return snip.captures[1] end )` preserves the trigger's regex capture group and is explained just below.
 
 - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, delimiters, and so on, but not in words like "see", "feel", etc...
 
@@ -1147,7 +1049,31 @@ Here are some example use cases:
 
   (Note that the `ff -> \frac{}{}` expansion problem can also be solved with a math-context expansion condition, which is covered in the next section.)
 
-#### Exand only after alphanumeric characters and closing delimiters
+#### Intermezzo: function nodes and regex captures
+
+**TLDR:** Saw those weird-looking function nodes `f( function(_, snip) return snip.captures[1] end )` popping up in the above regex-triggered snippets?
+This node just inserts regex capture groups from snippet's trigger back into the snippet body.
+You can now move [to the next section](#expand-only-after-alphanumeric-characters-and-closing-delimiters)
+**End TLDR**.
+
+Longer explanation: regex-triggered snippets have a potential problem.
+In the fraction snippet, for example,
+the entire pattern `"([^%a])ff"` (including leading non-letter character `([^%a])`) is interpreted as the snippet trigger, not just the string `"ff"`,
+and so the leading non-letter character is never inserted back into the snippet and disappears!
+This might sound vague, but try copying and triggering the above regex snippets and notice how after expansion the character before the trigger disappears.
+
+The solution is to access the leading whitespace from the trigger's regex capture group and insert it back into the snippet.
+You can access regex capture groups with LuaSnip function nodes---the syntax looks like this...
+
+```lua
+f( function(_, snip) return snip.captures[1] end ) -- return first capture group
+f( function(_, snip) return snip.captures[2] end ) -- return second capture group, etc.
+```
+
+...and that is why each snippet above included a function node.
+It's bit verbose, to be sure, but in practice you basically only write the capture group function node once and then copy and paste it into your other snippets, so it's not too bad.
+
+#### Expand only after alphanumeric characters and closing delimiters
 
 This class of triggers expands only after letter characters and closing delimiters, but not after blank spaces or numbers.
 
@@ -1184,7 +1110,49 @@ And here is the above snippet in action:
 
 Combined with math-context expansion (described below), these three classes of regex triggers cover the majority of my use cases and should give you enough tools to get started writing your own snippets.
 
-### Expansion only in math contexts
+#### Bonus: expansion only at the start of a new line
+
+This is the equivalent of the UltiSnips `b` option, and will only expand snippets on new lines.
+This trigger is useful for expanding environments, `\section`-stye commands, preamble commands, which are usually defined only on new lines.
+
+You could do this manually with a regex trigger like `"^([%s]*)foo"`, but LuaSnip provides a cleaner way to do this---a built-in `line_begin` expansion condition.
+Here's a few real-life examples of how to use it:
+one uses the HTML-inspired trigger `h1` to create LaTeX `\section` commands (you could use `h2` for `\subsection`, and so on),
+and the other uses `new` to create a new environment.
+
+<!-- Source code: `LuaSnip/lua/luasnip/extras/expand_conditions.lua` -->
+
+```lua
+-- In a snippet file, first require the line_begin condition...
+local line_begin = require("luasnip.extras.expand_conditions").line_begin
+
+-- ...then add `condition=line_begin` to any snippet's `opts` table:
+s({trig = "h1", dscr="Top-level section"},
+  fmta(
+    [[\section{<>}]],
+    { i(1) }
+  ), 
+  {condition = line_begin}  -- set condition in the `opts` table
+),
+
+s({trig="new", dscr="A generic new environmennt"},
+  fmta(
+    [[
+      \begin{<>}
+          <>
+      \end{<>}
+    ]],
+    {
+      i(1),
+      i(2),
+      rep(1),
+    }
+  ),
+  {condition = line_begin}
+),
+```
+
+### Context-specific expansion for LaTeX
 
 The `condition` option in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`) gives you essentially arbitrary control over when snippets expand.
 Here's how to use it:
