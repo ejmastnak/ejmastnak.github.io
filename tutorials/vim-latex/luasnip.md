@@ -20,22 +20,24 @@ date_last_mod: 2022-06-08 18:02:37 +0200
 This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
+[There is also an UltiSnips version of this article.]({% link tutorials/vim-latex/ultisnips.md %})
+
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
 
 * [What snippets do](#what-snippets-do)
 * [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
-  * [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)
+  * [Set snippet trigger and tabstop navigation keys](#set-snippet-trigger-and-tabstop-navigation-keys)
 * [Snippet files, directories, and loaders](#snippet-files-directories-and-loaders)
   * [Snippet format](#snippet-format)
   * [Loading snippets and directory structure](#loading-snippets-and-directory-structure)
-    * [Snippet filetype subdirectories](#snippet-filetype-subdirectories)
+  * [Snippet filetype subdirectories](#snippet-filetype-subdirectories)
   * [Heads up---some abbreviations](#heads-up---some-abbreviations)
 * [Snippet anatomy](#snippet-anatomy)
   * [Setting snippet parameters](#setting-snippet-parameters)
-    * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
-* [Writing snippets---first steps](#writing-snippets---first-steps)
+  * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
+* [LuaSnip syntax to cover most use cases](#luasnip-syntax-to-cover-most-use-cases)
   * [Text node](#text-node)
   * [Insert node](#insert-node)
   * [Format: a human-friendly syntax for writing snippets](#format-a-human-friendly-syntax-for-writing-snippets)
@@ -62,6 +64,8 @@ This article covers snippets, which are templates of commonly reused code that, 
 
 ## What snippets do
 
+[I know what snippets do, next section please.](#getting-started-with-luasnip)
+
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character), easy-to-type character sequences called *triggers*.
 Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX efficiently and painlessly. 
 
@@ -72,13 +76,13 @@ Here is a simple example using snippets to create and navigate through a LaTeX f
 ## Getting started with LuaSnip
 
 This tutorial will use [the LuaSnip plugin](https://github.com/L3MON4D3/LuaSnip), which is the de-facto snippet plugin in Neovim's Lua ecosystem.
-Alternative: [UltiSnips article]({% link tutorials/vim-latex/ultisnips.md %}).
+There is also an  [UltiSnips version of this article]({% link tutorials/vim-latex/ultisnips.md %}) if you prefer.
 
-*UltiSnips or LuaSnip?*:
+*Should I use UltiSnips or LuaSnip?*
 
 - Vim users: use UltiSnips---LuaSnip only works with Neovim
-- Neovim users: I suggest LuaSnip---it integrates better into the Neovim ecosystem, is free of external dependencies (UltiSnips requires Python), and is a bit faster (no, I don't have benchmarks).
-  That said, UltiSnips still works fine in Neovim.
+- Neovim users: I suggest LuaSnip---it integrates better into the Neovim ecosystem, is free of external dependencies (UltiSnips requires Python), has more features, and is a bit faster (no, I don't have benchmarks).
+  That said, UltiSnips still works fine in Neovim, and its syntax is easier to learn.
 
 ### Installation
 
@@ -86,7 +90,7 @@ Install LuaSnip like any other Neovim plugin using your plugin installation meth
 See the [LuaSnip README's installation section](https://github.com/L3MON4D3/LuaSnip#install) for details.
 LuaSnip has no external dependencies and should be ready to go immediately after installation.
 
-LuaSnip is a snippet engine only and intentionally ships without snippets---you have to write your own or use an existing snippet database.
+LuaSnip is a snippet engine only and intentionally **ships without snippets**---you have to write your own or use an existing snippet database.
 It is possible to use existing snippet repositories (e.g. [`rafamadriz/friendly-snippets`](https://github.com/rafamadriz/friendly-snippets)) with some additional configuration---see the [LuaSnip README's add snippets section](https://github.com/L3MON4D3/LuaSnip#add-snippets) and `:help luasnip-loaders` if interested.
 I encourage you to write your own snippets,
 but whether you download someone else's snippets, write your own, or use a mixture of both, you should know:
@@ -96,7 +100,7 @@ but whether you download someone else's snippets, write your own, or use a mixtu
 
 This article answers both questions.
 
-### First steps: snippet trigger and tabstop navigation keys
+### Set snippet trigger and tabstop navigation keys
 
 After installing LuaSnip you should configure:
 
@@ -111,32 +115,34 @@ Setting these keymaps is easiest to do in Vimscript (because they use Vimscript'
 **Choose one** of the following two options:
 
 1. Option one: use a single key (e.g. Tab) to both expand snippets and to jump forward through snippet tabstops.
+   In this case add something like this to your Neovim config:
 
    ```vim
    " Expand or jump in insert mode
    imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
  
    " Jump forward through tabstops in visual mode
-   smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+   smap <silent><expr> <Tab> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<Tab>'
    ```
 
-   This code would make the `<Tab>` key trigger snippets *and* navigate forward through snippet tabstops---the decision whether to expand or jump is made by LuaSnip's `expand_or_jumpable` function.
+   This code would make the Tab key trigger snippets *and* navigate forward through snippet tabstops---the decision whether to expand or jump is made by LuaSnip's `expand_or_jumpable` function.
 
-1. Option two: use two different keys (e.g. Tab and Control-K) to expand snippets and jump forward through snippet tabstops
+1. Option two: use two different keys (e.g. Tab and Control-f) to expand snippets and jump forward through snippet tabstops.
+   In this case the code looks like this:
 
    ```vim
-   " Expand snippets in insert mode with <Tab>
+   " Expand snippets in insert mode with Tab
    imap <silent><expr> <Tab> luasnip#expandable() ? '<Plug>luasnip-expand-snippet' : '<Tab>'
 
-   " Jump forward in through tabstops in insert and visual mode with TODO
-   imap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
-   smap <silent><expr> jk luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : 'jk'
+   " Jump forward in through tabstops in insert and visual mode with Control-f
+   imap <silent><expr> <C-f> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-f>'
+   smap <silent><expr> <C-f> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-f>'
    ```
 
 **Then, set a backward-jump keymap:**
 
 ```vim
-" Jump backward
+" Jump backward through snippet tabstops with Shift-Tab (for example)
 imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
 smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
 ```
@@ -147,7 +153,7 @@ smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '
 <!-- snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr> -->
 <!-- ``` -->
 
-A few notes:
+A few notes: (or [skip to the next section](#snippet-files-directories-and-loaders))
 
 1. Place the keymap code somewhere in your Neovim startup configuration (e.g. `init.lua`, `init.vim`, etc.).
    If you have a Lua-based config and need help running Vimscript from within Lua files, just enclose the Vimscript within a multiline string and pass it to `vim.cmd`, e.g.
@@ -167,6 +173,9 @@ In the first `imap` mapping, for example, the ternary operator is used to map `<
    (Well, technically select mode and not visual mode, hence the use of `smap` and not `vmap`, but for a typical end user's purposes select and visual mode look identical.
    See `:help select-mode` for details.)
 
+   Also, `imap` and `smap` are *intentionally* used instead of `inoremap` and `snoremap`---this is standard (and necessary) practice when defining `<Plug>` mappings.
+   The `<Plug>` keyword might look unfamiliar---you can ignore it for now, or, if you're curious, take a peek at [the series's final article]({% link tutorials/vim-latex/vimscript.md %}), which explains some basic Vimscript usage, including `<Plug>` mappings.
+
 1. Power users: you can implement custom snippet expansion and navigation behavior by working directly with LuaSnip API functions controlling expand and jump behavior---see `:help luasnip-api-reference` (scroll down to the `jumpable(direction)` entry) for details.
    For most users the example mappings given above should be fine.
 
@@ -179,11 +188,7 @@ smap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' 
 ```
 
 Choice nodes are a more advanced tool that I won't cover in this article, so you can safely skip this step for now.
-You can read about choice nodes at `:help luasnip-choicenode`, but you should learn about the basic text and insert nodes in this article first.
-
-<!-- In the above GIF, I am actually using `jk` to navigate forward through snippet tabstops. -->
-<!-- I find this home-row combination more efficient than `<Tab>`, but it takes some getting used to; -->
-<!-- scroll down to the [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing) at the bottom of this article for more on using `jk` as a jump-forward key and similar tips. -->
+You can read about choice nodes at `:help luasnip-choicenode`, but you should probably learn about the basic text and insert nodes in this article first.
 
 ## Snippet files, directories, and loaders
 
@@ -200,7 +205,7 @@ You main options are:
 
 1. **Covered in this article:** Native LuaSnip snippets written in Lua (support for all LuaSnip features, best integration with the larger Neovim ecosystem).
 1. Use third-party snippets written for another snippet engine (e.g. VS Code, SnipMate) and try to parse them with LuaSnip's various snippet loaders.
-   Fewer features are available, and complex snippets may not be parseable and will not work.
+   Fewer features are available, and complex snippets may not be parsable and will not work.
 
 *The rest of this article covers only native LuaSnip snippets written in Lua.*
 I think this makes sense because:
@@ -237,7 +242,7 @@ Here's **how to load snippets from Lua files**:
   However, you can easily override the default `luasnippets` directory name and store snippets in any directory (or set of directories) on your file system---LuaSnip's loaders let you manually specify the snippet directory path(s) to load.
  I recommend using a directory in your Neovim config folder, e.g. `"${HOME}/.config/nvim/LuaSnip/"`.
 
-- Load snippets by calling the LuaSnip Lua loader's `load` fuction from somewhere in your Neovim startup config (e.g. `init.lua`, `init.vim`, etc.):
+- Load snippets by calling the LuaSnip Lua loader's `load` function from somewhere in your Neovim startup config (e.g. `init.lua`, `init.vim`, etc.):
 
   ```lua
   -- Load all snippets from the nvim/LuaSnip directory at startup
@@ -263,7 +268,7 @@ Here's **how to load snippets from Lua files**:
   
 Full syntax for the `load` call is documented in `:help luasnip-loaders`.
 
-#### Snippet filetype subdirectories
+### Snippet filetype subdirectories
 
 You might prefer to further organize `filetype`-specific snippets into multiple files of their own.
 To do so, make a subdirectory named with the target `filetype` inside your main snippets directory.
@@ -286,12 +291,12 @@ Explanation: I have a lot of `tex` snippets, so I prefer to further organize the
 
 ### Heads up---some abbreviations
 
-**TLDR:** most LuaSnip modules are a bit verbose.
-LuaSnip defines a globablly-available set of abbreviations for common (sub)modules that make writing snippets much easier.
+**TLDR:**
+LuaSnip defines a globally-available set of abbreviations for common modules that make writing snippets much easier.
 These abbreviations are listed below, and you'll see them in this document, the LuaSnip docs, and elsewhere on the Internet.
 **End TLDR**.
 
-LuaSnip provdes a set of convenient abbreviations for more compact snippet syntax.
+LuaSnip provides a set of convenient abbreviations for more compact snippet syntax.
 For example, you technically define a LuaSnip by calling `require("luasnip").snippet()`.
 Since this is a bit verbose, LuaSnip introduces the abbreviations...
 
@@ -309,27 +314,20 @@ ls.snippet()
 s()
 ```
 
-<!-- **TODO:** only use abb for this article -->
-
 Here is a list of the LuaSnip abbreviations used in this article:
 
 ```lua
 -- Abbreviations used in this article and the LuaSnip docs
+local ls = require("luasnip")
+local s = ls.snippet
 local sn = ls.snippet_node
-local isn = ls.indent_snippet_node
 local t = ls.text_node
 local i = ls.insert_node
 local f = ls.function_node
-local c = ls.choice_node
 local d = ls.dynamic_node
-local r = ls.restore_node
-local events = require("luasnip.util.events")
-local ai = require("luasnip.nodes.absolute_indexer")
 local fmt = require("luasnip.extras.fmt").fmt
 local fmta = require("luasnip.extras.fmt").fmta
-local m = require("luasnip.extras").m
-local lambda = require("luasnip.extras").l
-local postfix = require("luasnip.extras.postfix").postfix
+local rep = require("luasnip.extras").rep
 ```
 
 You can find a more complete list in the LuaSnip docs just above the section `:help luasnip-basics` and (at the time of writing) around line 120 of the source file `LuaSnip/lua/luasnip/config.lua`.
@@ -368,7 +366,7 @@ And here is an English language summary of the arguments:
    This is where you put the snippet's trigger, description, and priority level, autoexpansion policy, and so on.
 1. `nodes`: a table of nodes making up the snippet (this is the most important part!).
 1. `opts`: an *optional* table of additional arguments for more advanced workflows, for example a condition function to implementing custom logic to control snippet expansion or callback functions triggered when navigating through snippet nodes.
-   You'll leave this optional table blank for most use cases.
+   You'll leave this optional table blank for simple use cases.
 
 I'll first cover the `snip_params` table, then spend most of the remainder of this article explaining various nodes and their use cases.
 
@@ -376,7 +374,7 @@ I'll first cover the `snip_params` table, then spend most of the remainder of th
 
 **TLDR** (if you're familiar with Lua):
 `snip_params` is a Lua table;
-the data type and purpose of each table key is clearly stated in `:help luasnip-snippets` (just sroll jdown just a bit).
+the data type and purpose of each table key is clearly stated in `:help luasnip-snippets` (just scroll down just a bit).
 **End TLDR**.
 
 And if you're not yet familiar with Lua tables, you:
@@ -418,6 +416,7 @@ You usually only use a few keys and leave the rest with their default values;
 we'll only need the following parameters in this guide:
 
 <!-- *TODO:* update as needed. -->
+<!-- **TODO:** word trig -->
 
 - `trig`: the string or Lua pattern (i.e. Lua-flavored regular expression) used to trigger the snippet.
 - `regTrig`: whether the snippet trigger should be treated as a Lua pattern.
@@ -425,7 +424,7 @@ we'll only need the following parameters in this guide:
 - `snippetType`: either the string `"snippet"` (manually triggered) or `"autosnippet"` (auto-triggered); `'snippet'` by default.
   <!-- **TODO:** I suggest auto triggered yata yata -->
 
-#### A common shortcut you'll see in the wild
+### A common shortcut you'll see in the wild
 
 The `trig` key is the only required snippet key,
 and if you only need to set `trig` and leave the other keys with their default values, you can use the following shorthand syntax:
@@ -444,7 +443,14 @@ You'll see this syntax a lot in the LuaSnip docs and on the Internet, so I wante
 
 That's all for setting snippet parameters---let's write some actual snippets!
 
-## Writing snippets---first steps
+## LuaSnip syntax to cover most use cases
+
+Goal of this section: explain enough syntax to cover what a typical user will ever need from LuaSnip;
+after reading it you should have all the tools you need to set up an efficient LaTeX workflow.
+Although the section might seem a bit long, it only covers a small portion of LuaSnip's features, which I leave to [more](https://github.com/L3MON4D3/LuaSnip/blob/master/Examples/snippets.lua) [advanced](https://github.com/L3MON4D3/LuaSnip/wiki) [guides](https://www.youtube.com/watch?v=KtQZRAkgLqo).
+
+
+<!-- what a typical user would need for a good LaTeX workflow, including static text insertion, tabstops, mirrored nodes, visual placeholders. -->
 
 ### Text node
 
@@ -511,7 +517,7 @@ We've seen that text nodes insert *static* pieces of text---insert nodes allow y
 If you are migrating from UltiSnips or SnipMate, LuaSnip insert nodes are analogous to other snippet engines' tabstops (`$1`, `$2`, etc.).
 
 **Use case:** You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
-Here are two concerete LaTeX examples of snippets for the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplace text and place insert nodes between the curly braces to dynamically type the commands' arguments:
+Here are two concrete LaTeX examples of snippets for the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplate text and place insert nodes between the curly braces to dynamically type the commands' arguments:
 
 <image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action" /> 
 
@@ -635,7 +641,7 @@ fmt(format:string, nodes:table of nodes, fmt_opts:table|nil) -> table of nodes
 ```
 
 The `fmta` function is almost identical to `fmt`---`fmt` uses `{}` curly braces as the default node placeholder and `fmta` uses `<>` angle brackets (this will make sense in just a moment).
-The `fmta` function is more convient for LaTeX, which itself uses curly braces to specify command and environment arguments, so I'll mostly use `fmta` below.
+The `fmta` function is more convenient for LaTeX, which itself uses curly braces to specify command and environment arguments, so I'll mostly use `fmta` below.
 
 Here's **how to call the `fmta` function**:
 
@@ -669,7 +675,7 @@ Here's **how to call the `fmta` function**:
    In practice, you will usually only ever need the `delimiter` key, which you can use with regular `fmt` to specify delimiters other than `fmt`'s default `{}` curly braces.
    See the `opts` entry in `:help luasnip-fmt` for the full list of possible keys.
  
-Then pass the format string, node table, and optional `fmt_opts` table (if you're using one) as agruments to `fmt()` or `fmta()`.
+Then pass the format string, node table, and optional `fmt_opts` table (if you're using one) as arguments to `fmt()` or `fmta()`.
 As always, here are concrete examples---I'll continue with the `\texttt`, `\frac`, and `equation` snippets.
 
 ```lua
@@ -933,7 +939,7 @@ For example:
   <!-- **TODO:** a GIF would be really nice here, e.g. -->
   <!-- % Don't want this to happen -->
   <!-- Unwanted snippet expansion... pisses me off! -> ... pisses me o\frac{}{} -->
-- `mm` is a nice trigger for `$ $` (inline math), but expansion would be unnacceptable when typing words like "communication", "command", etc.
+- `mm` is a nice trigger for `$ $` (inline math), but expansion would be unacceptable when typing words like "communication", "command", etc.
 
 You get the idea---loosely, we need a way to "stop snippets from expanding when we don't want them to".
 This section gives two solutions to this problem:
@@ -1113,7 +1119,7 @@ Combined with math-context expansion (described below), these three classes of r
 #### Bonus: expansion only at the start of a new line
 
 This is the equivalent of the UltiSnips `b` option, and will only expand snippets on new lines.
-This trigger is useful for expanding environments, `\section`-stye commands, preamble commands, which are usually defined only on new lines.
+This trigger is useful for expanding environments, `\section`-style commands, preamble commands, which are usually defined only on new lines.
 
 You could do this manually with a regex trigger like `"^([%s]*)foo"`, but LuaSnip provides a cleaner way to do this---a built-in `line_begin` expansion condition.
 This will be our first use of the `condition` key in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`)---here are a few real-life examples of how to use it:
@@ -1388,3 +1394,11 @@ In case they look unfamiliar, the above code snippets are Vim *key mappings*, a 
 <!-- ``` -->
 <!---->
 <!-- Search docs for `filetype_extend`---there is an entry in `:help luasnip-api-reference`. -->
+
+<!-- TODO: -->
+<!-- Actually test all snippets work -->
+<!-- config for autosnippets and visual selection -->
+<!-- Search for **TODO:**  -->
+<!-- Only list LuaSnip abbreviations using in the document -->
+<!-- better TOC structure -->
+<!-- correct in-document links -->
