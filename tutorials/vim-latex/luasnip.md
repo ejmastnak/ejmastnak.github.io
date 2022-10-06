@@ -37,7 +37,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [Snippet anatomy](#snippet-anatomy)
   * [Setting snippet parameters](#setting-snippet-parameters)
   * [A common shortcut you'll see in the wild](#a-common-shortcut-youll-see-in-the-wild)
-* [LuaSnip syntax to cover most use cases](#luasnip-syntax-to-cover-most-use-cases)
+* [Enough LuaSnip syntax to cover most use cases](#enough-luasnip-syntax-to-cover-most-use-cases)
   * [Text node](#text-node)
   * [Insert node](#insert-node)
   * [Format: a human-friendly syntax for writing snippets](#format-a-human-friendly-syntax-for-writing-snippets)
@@ -71,18 +71,19 @@ Without wishing to overstate the case, good use of snippets is the single most i
 
 Here is a simple example using snippets to create and navigate through a LaTeX figure environment, quickly typeset an equation, and easily insert commands for Greek letters.
 
-<image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with auto-trigger snippets"  /> 
+<image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with autotrigger snippets"  /> 
 
 ## Getting started with LuaSnip
 
-This tutorial will use [the LuaSnip plugin](https://github.com/L3MON4D3/LuaSnip), which is the de-facto snippet plugin in Neovim's Lua ecosystem.
-There is also an  [UltiSnips version of this article]({% link tutorials/vim-latex/ultisnips.md %}) if you prefer.
+This tutorial will use [LuaSnip](https://github.com/L3MON4D3/LuaSnip), the de-facto snippet plugin in Neovim's Lua ecosystem.
 
-*Should I use UltiSnips or LuaSnip?*
+**Should I use UltiSnips or LuaSnip?**
 
 - Vim users: use UltiSnips---LuaSnip only works with Neovim
 - Neovim users: I suggest LuaSnip---it integrates better into the Neovim ecosystem, is free of external dependencies (UltiSnips requires Python), has more features, and is a bit faster (no, I don't have benchmarks).
   That said, UltiSnips still works fine in Neovim, and its syntax is easier to learn.
+
+There is also an  [UltiSnips version of this article]({% link tutorials/vim-latex/ultisnips.md %}) if you prefer.
 
 ### Installation
 
@@ -275,7 +276,8 @@ To do so, make a subdirectory named with the target `filetype` inside your main 
 LuaSnip will then load *all* `*.lua` files inside this filetype subdirectory, regardless of the individual files' basenames.
 As a concrete example, a selection of my LuaSnip directory looks like this:
 
-```sh
+```bash
+# Example LuaSnip directory structure
 ${HOME}/.config/nvim/LuaSnip/
 ├── all.lua
 ├── markdown.lua
@@ -301,6 +303,7 @@ For example, you technically define a LuaSnip by calling `require("luasnip").sni
 Since this is a bit verbose, LuaSnip introduces the abbreviations...
 
 ```lua
+-- Two common LuaSnip abbreviations
 local ls = require("luasnip")
 local s = ls.snippet
 ```
@@ -353,6 +356,7 @@ You create snippets by specifying:
 Here is the **anatomy of a LuaSnip snippet** in code:
 
 ```lua
+-- Anatomy of a LuaSnip snippet
 require("luasnip").snippet(
   snip_params:table,  -- table of snippet parameters
   nodes:table,        -- table of snippet nodes
@@ -390,7 +394,7 @@ Since that might sound vague, here is a concrete example of a "Hello, world!" sn
 require("luasnip").snippet(
   { -- Table 1: snippet parameters
     trig="hi",
-    dscr="An auto-triggering snippet that expands 'hi' into 'Hello, world!'",
+    dscr="An autotriggering snippet that expands 'hi' into 'Hello, world!'",
     regTrig=false,
     priority=100,
     snippetType="autosnippet"
@@ -415,15 +419,15 @@ You should probably read through `:help luasnip-snippets` to see the full list o
 You usually only use a few keys and leave the rest with their default values;
 we'll only need the following parameters in this guide:
 
-<!-- *TODO:* update as needed. -->
-<!-- **TODO:** word trig -->
-
-- `trig`: the string or Lua pattern (i.e. Lua-flavored regular expression) used to trigger the snippet.
+- `trig`: the string or Lua pattern (i.e. Lua-flavored regex) used to trigger the snippet.
 - `regTrig`: whether the snippet trigger should be treated as a Lua pattern.
   A `true`/`false` boolean value; `false` by default.
-- `snippetType`: either the string `"snippet"` (manually triggered) or `"autosnippet"` (auto-triggered); `'snippet'` by default.
-  <!-- **TODO:** I suggest auto triggered yata yata -->
-
+- `wordTrig`: loosely, a safety feature to prevent snippets from expanding when the snippet trigger is part of a larger word.
+  A `true`/`false` boolean value; `true` (enabled) by default.
+  Since the `wordTrig` safety feature can conflict with regular expression triggers, you often want to set `wordTrig = false` when using `regTrig = true` snippets.
+- `snippetType`: either the string `"snippet"` (manually triggered) or `"autosnippet"` (autotriggered); `'snippet'` by default.
+  I encourage autotriggered snippets for efficient typing---see the tips [at the bottom of this article](#subjective-practical-tips-for-fast-editing) for details.
+  
 ### A common shortcut you'll see in the wild
 
 The `trig` key is the only required snippet key,
@@ -443,22 +447,21 @@ You'll see this syntax a lot in the LuaSnip docs and on the Internet, so I wante
 
 That's all for setting snippet parameters---let's write some actual snippets!
 
-## LuaSnip syntax to cover most use cases
+## Enough LuaSnip syntax to cover most use cases
 
-Goal of this section: explain enough syntax to cover what a typical user will ever need from LuaSnip;
+**Goal of this section:** explain enough syntax to cover what a typical user will ever need from LuaSnip;
 after reading it you should have all the tools you need to set up an efficient LaTeX workflow.
-Although the section might seem a bit long, it only covers a small portion of LuaSnip's features, which I leave to [more](https://github.com/L3MON4D3/LuaSnip/blob/master/Examples/snippets.lua) [advanced](https://github.com/L3MON4D3/LuaSnip/wiki) [guides](https://www.youtube.com/watch?v=KtQZRAkgLqo).
-
+Keep in mind that LuaSnip has many power user features not covered in this article, which I leave to [more](https://github.com/L3MON4D3/LuaSnip/blob/master/Examples/snippets.lua) [advanced](https://github.com/L3MON4D3/LuaSnip/wiki) [guides](https://www.youtube.com/watch?v=KtQZRAkgLqo).
 
 <!-- what a typical user would need for a good LaTeX workflow, including static text insertion, tabstops, mirrored nodes, visual placeholders. -->
 
 ### Text node
 
 Text nodes insert static text into a snippet.
-Here are their **common use cases**:
+Here are **typical text node use cases**:
 
 - When used on their own, text nodes can transform a short, easy-to-type trigger into a longer, inconvenient-to-type piece of text.
-- When used with other nodes, text nodes are usually used to create static boilerplate text, into which you dynamically insert variable text with, for example, insert or dynamic nodes.
+- When used with other nodes, text nodes provide a template of static boilerplate text into which you dynamically insert variable text with, for example, insert or dynamic nodes.
 
 You create a text node by passing a string or a table of strings to `require("luasnip").text_node()` (abbreviated `t()`).
 Here is a simple "Hello, world!" example that expands the trigger `hi` into the string "Hello, world!":
@@ -476,7 +479,7 @@ s(
 And here are some actual real-life examples I use to easily insert the Greek letter LaTeX commands `\alpha`, `\beta`, and `\gamma`:
 
 ```lua
--- Examples of Greek letter snippets, auto-triggered for efficiency
+-- Examples of Greek letter snippets, autotriggered for efficiency
 s({trig=";a", snippetType="autosnippet"},
   {
     t("\\alpha"),
@@ -501,7 +504,7 @@ Here is a concrete example of a three-line text node.
 
 ```lua
 -- Example of a multiline text node
-s({trig = "txt1", dscr = "Demo: a text node with three lines."},
+s({trig = "lines", dscr = "Demo: a text node with three lines."},
   {
     t({"Line 1", "Line 2", "Line 3"})
   }
@@ -516,13 +519,15 @@ Insert nodes are positions within a snippet at which you can dynamically type te
 We've seen that text nodes insert *static* pieces of text---insert nodes allow you to *dynamically* type whatever text you like.
 If you are migrating from UltiSnips or SnipMate, LuaSnip insert nodes are analogous to other snippet engines' tabstops (`$1`, `$2`, etc.).
 
-**Use case:** You usually combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
+**Use case:** Combine insert nodes with text nodes to insert variable content (using the insert nodes) into generic surrounding boilerplate (created by the text nodes).
+
 Here are two concrete LaTeX examples of snippets for the LaTeX `\texttt` and `\frac` commands---I use text nodes to create the static boilerplate text and place insert nodes between the curly braces to dynamically type the commands' arguments:
 
 <image src="/assets/images/vim-latex/ultisnips/texttt-frac.gif" alt="The \texttt and \frac snippets in action" /> 
 
 You create an insert node by passing an index number, and optionally some initial text, to `require("luasnip").insert_node()` (abbreviated `i()`).
-Here is the for the above examples:
+Here is the code for the above examples:
+
 
 ```lua
 -- Combining text and insert nodes to create basic LaTeX commands
@@ -574,20 +579,20 @@ s({trig="eq", dscr="A LaTeX equation environment"},
 ),
 ```
 
-The snippet inserts an equation that looks like this:
+The above snippet code is not particularly human-readable.
+The snippet inserts an equation that looks like this...
+
 ```tex
 \begin{equation}
     % Cursor is here
 \end{equation}
 ```
 
-Notice that the snippet code is not particularly human-readable---the jumble of text and insert node code does not *look like* the nicely-indented LaTeX `equation` environment the code produces.
+...but the jumble of text and insert node code does not *look like* the nicely-indented LaTeX `equation` environment the code produces.
 The code is software-friendly (it is relatively easy for LuaSnip to parse) but it is not *human-friendly*.
 
 LuaSnip solves the human-readability problem with its `fmt` and `fmta` functions.
 These functions give you a clean overview of what the rendered snippet will actually look like---here is the same `equation` environment snippet written with `fmt`:
-
-<!-- (the full names are `require("luasnip.extras.fmt").fmt` and `require("luasnip.extras.fmt").fmta`). -->
 
 ```lua
 -- The same equation snippet, using LuaSnip's fmt function.
@@ -602,7 +607,7 @@ s({trig="eq", dscr="A LaTeX equation environment"},
     -- The insert node is placed in the <> angle brackets
     { i(1) },
     -- This is where I specify that angle brackets are used as node positions.
-    { delimiters = "<>" },
+    { delimiters = "<>" }
   )
 ),
 ```
@@ -637,6 +642,7 @@ require("luasnip").snippet(
 The `fmt` function's call signature looks like this:
 
 ```lua
+-- The fmt function's call signature
 fmt(format:string, nodes:table of nodes, fmt_opts:table|nil) -> table of nodes
 ```
 
@@ -716,7 +722,7 @@ At the risk of getting boring---I know I'm going slowly here, but I want to full
 s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
   fmta(
     "\\texttt{<>}",
-    { i(1) },
+    { i(1) }
   )
 ),
 -- \frac
@@ -738,7 +744,7 @@ s({trig="eq", dscr="Expands 'eq' into an equation environment"},
            <>
        \end{equation*}
      ]],
-     { i(1) },
+     { i(1) }
   )
 )
 ```
@@ -760,6 +766,7 @@ The syntax for repeated nodes straightforward: you pass the index of the node yo
 For example, here is the code for the snippet shown in the above GIF---note how the `rep(1)` node in the environment's `\end` command repeats the `i(1)` node in the `\begin` command.
 
 ```lua
+-- Code for environment snippet in the above GIF
 s({trig="env", snippetType="autosnippet"},
   fmta(
     [[
@@ -789,6 +796,7 @@ The `i(0)` node is always the last node jumped to, and you use it to specify the
 Here is an example where an explicitly-specified `i(0)` node makes you exit a equation snippet with your cursor conveniently placed inside the environment's body.
 
 ```lua
+-- Using a zero-index insert node to exit snippet in equation body
 s({trig="eq", dscr=""},
   fmta(
     [[
@@ -807,15 +815,12 @@ The zero-index insert node is documented in `:help luasnip-insertnode`.
 #### Insert node placeholder text
 
 Placeholder text is used to give an insert node a description or default text.
-You define placeholder text by passing an optional second string argument to an insert node; the call signature is
-
-```lua
-i(index:number, placeholder_text:string|nil)
-```
+You define placeholder text by passing an optional second string argument to an insert node
 
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
 
 ```lua
+-- Example use of insert node placeholder text
 s({trig="hr", dscr="The hyperref package's href{}{} command (for url links)"},
   fmta(
     [[\href{<>}{<>}]],
@@ -921,7 +926,7 @@ A few comments:
 
 Here's the great thing: you can still use any snippet that includes the `d(1, get_visual)` dynamic node without going through the select-and-Tab procedure described above---if there is no active visual selection, the dynamic node simply acts as a regular insert node.
 
-**Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not mentioned in the LuaSnip docs at the time of writing, but you can read about `SELECT_RAW` at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
+**Docs:** This use of dynamic nodes and `SELECT_RAW` to create a visual-selection snippet is not explicitly mentioned in the LuaSnip docs at the time of writing, but you can read about `SELECT_RAW` at `:help luasnip-variables` and about dynamic nodes, as mentioned earlier, at `:help luasnip-dynamicnode`.
 The `store_selection_keys` config key is documented in the [LuaSnip README's config section](https://github.com/L3MON4D3/LuaSnip#config).
 
 ## Conditional snippet expansion
@@ -936,7 +941,7 @@ This problem becomes particularly noticeable if you use autotrigger snippets, (w
 For example:
 
 - `ff` is a great choice to trigger a `\frac{}{}` snippet---it's a short, convenient trigger with good semantics---but you wouldn't want `ff` to spontaneously expand to `\frac{}{}` in the middle of typing the word "offer" in regular text, for example.
-  <!-- **TODO:** a GIF would be really nice here, e.g. -->
+  <!-- **TODO:** a GIF would be fun here, e.g. -->
   <!-- % Don't want this to happen -->
   <!-- Unwanted snippet expansion... pisses me off! -> ... pisses me o\frac{}{} -->
 - `mm` is a nice trigger for `$ $` (inline math), but expansion would be unacceptable when typing words like "communication", "command", etc.
@@ -965,20 +970,23 @@ I'll use the terms "regex" and "Lua pattern" interchangeably in this article.
 A formal explanation of regular expressions and Lua patterns falls beyond the scope of this article, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
 Regex tutorials abound on the internet; if you need a place to start, I recommend first watching [Corey Schafer's YouTube tutorial on traditional regexes](https://www.youtube.com/watch?v=sa-TUpSx1JA), then reading the Programming in Lua book's [section on Lua patterns](https://www.lua.org/pil/20.2.html).
 
-For future reference, here are the Lua pattern keywords needed for this article:
+For future reference, here the Lua pattern keywords needed for this article:
 
-<!-- **TODO:** center the table -->
+<div align="center">
 
-| Keyword | Matched characters |
-| ------- | ------------------ |
-| `.`	 |  all characters |
-| `%d` |	digits |
-| `%a` |	letters (uppercase and lowercase) |
-| `%w` |	alphanumeric characters |
-| `%s` |	white space characters |
+{{
+  "
+  | Keyword | Matched characters                |
+  | ------- | ------------------                |
+  | `.`     | all characters                    |
+  | `%d`    | digits                            |
+  | `%a`    | letters (uppercase and lowercase) |
+  | `%w`    | alphanumeric characters           |
+  | `%s`    | white space characters            |
+  "
+| markdownify }}
 
-<!-- | `%l` |	lower case letters | -->
-<!-- | `%u` |	upper case letters | -->
+</div>
 
 **Here's how the following sections will work:**
 
@@ -992,17 +1000,17 @@ The following trigger expands after blank spaces, punctuation marks, braces and 
 Here are the snippet parameter tables for a few variations on the same theme:
 
 ```lua
--- Won't expand if 'foo' is typed after letters
- s({trig = "([^%a])foo", regTrig = true}
+-- Prevents expansion if 'foo' is typed after letters
+ s({trig = "([^%a])foo", regTrig = true, wordTrig = false}
 
--- Won't expand if 'foo' is typed after alphanumeric characters
- s({trig = "([^%w])foo", regTrig = true}
+-- Prevents expansion if 'foo' is typed after alphanumeric characters
+ s({trig = "([^%w])foo", regTrig = true, wordTrig = false}
 ```
 
 Explanation: `%a` represents letters;
 the `^` character, *when used in square brackets*, performs negation, so `[^%a]foo` will negate (reject) all matches when `foo` is typed after a letter;
 and `([^%a])` captures matched non-letter characters to insert back into the snippet body.
-(You get behavior similar to this out of the box from LuaSnip's default `wordTrig` snippet parameter (mentioned in `:help luasnip-snippets`), but I prefer the above triggers for finer-grained control.)
+(You get behavior similar to this out of the box from LuaSnip's default `wordTrig` snippet parameter (mentioned in `:help luasnip-snippets`), but I prefer custom regex triggers for finer-grained control, so I've set `wordTrig = false` and will continue to do so in the remaining regex snippets.)
 
 This is by far my most-used class of regex triggers, because it prevents common snippet triggers from expanding in regular words.
 Here are some example use cases:
@@ -1010,7 +1018,7 @@ Here are some example use cases:
 - Make `mm` expand to `$ $` (inline math), but not in words like "comment", "command", etc...
 
   ```lua
-  s({trig = "([^%a])mm", regTrig = true},
+  s({trig = "([^%a])mm", wordTrig = false, regTrig = true},
     fmta(
       "<>$<>$",
       {
@@ -1027,7 +1035,7 @@ Here are some example use cases:
 - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, delimiters, and so on, but not in words like "see", "feel", etc...
 
   ```lua
-  s({trig = '([^%a])ee', regTrig = true},
+  s({trig = '([^%a])ee', regTrig = true, wordTrig = false},
     fmta(
       "<>e^{<>}",
       {
@@ -1041,9 +1049,9 @@ Here are some example use cases:
 - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
 
   ```lua
-  s({trig = '([^%a])ff', regTrig = true},
+  s({trig = '([^%a])ff', regTrig = true, wordTrig = false}, rac{}{}
     fmta(
-      "<>\frac{<>}{<>}",
+      [[<>\frac{<>}{<>}]],
       {
         f( function(_, snip) return snip.captures[1] end ),
         i(1),
@@ -1059,7 +1067,7 @@ Here are some example use cases:
 
 **TLDR:** Saw those weird-looking function nodes `f( function(_, snip) return snip.captures[1] end )` popping up in the above regex-triggered snippets?
 This node just inserts regex capture groups from snippet's trigger back into the snippet body.
-You can now move [to the next section](#expand-only-after-alphanumeric-characters-and-closing-delimiters)
+You can now move [to the next section](#expand-only-after-alphanumeric-characters-and-closing-delimiters).
 **End TLDR**.
 
 Longer explanation: regex-triggered snippets have a potential problem.
@@ -1072,6 +1080,7 @@ The solution is to access the leading whitespace from the trigger's regex captur
 You can access regex capture groups with LuaSnip function nodes---the syntax looks like this...
 
 ```lua
+-- Accessing regex capture groups with LuaSnip
 f( function(_, snip) return snip.captures[1] end ) -- return first capture group
 f( function(_, snip) return snip.captures[2] end ) -- return second capture group, etc.
 ```
@@ -1085,10 +1094,10 @@ This class of triggers expands only after letter characters and closing delimite
 
 ```lua
 -- Only after letters
-s({trig = '([%a])foo', regTrig = true}
+s({trig = '([%a])foo', regTrig = true, wordTrig = false}
 
 -- Only after letters and closing delimiters
-s({trig = '([%a%)%]%}])foo', regTrig = true}
+s({trig = '([%a%)%]%}])foo', regTrig = true, wordTrig = false}
 ```
 
 Explanation: `%a` matches letters;
@@ -1099,7 +1108,8 @@ I don't use this trigger that often, but here is one example I really like.
 It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
 
 ```lua
-s({trig = '([%a%)%]%}])00', regTrig = true},
+-- A fun zero subscript snippet
+s({trig = '([%a%)%]%}])00', regTrig = true, wordTrig = false, snippetType="autosnippet"},
   fmta(
     "<>_{<>}",
     {
@@ -1129,6 +1139,7 @@ and the other uses `new` to create a new environment.
 <!-- Source code: `LuaSnip/lua/luasnip/extras/expand_conditions.lua` -->
 
 ```lua
+-- Example: expanding a snippet on a new line only.
 -- In a snippet file, first require the line_begin condition...
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
 
@@ -1288,7 +1299,7 @@ In no particular order, here are some useful tips based on my personal experienc
 
 - Use automatic completion whenever possible.
   This technically makes your snippet engine use more computing resources, but I am yet to notice a perceptible slow-down on modern hardware.
-  For example, I regularly use 150+ auto-trigger snippets on a 2.5 GHz, dual-core, third-gen i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
+  For example, I regularly use 150+ autotrigger snippets on a 2.5 GHz, dual-core, third-gen i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
 
 - Use *short* snippet triggers.
   Like one-, two-, or and *maybe* three-character triggers.
@@ -1381,24 +1392,8 @@ Of course, if needed, you should update `~/.config/nvim/LuaSnip/` to your own sn
 
 In case they look unfamiliar, the above code snippets are Vim *key mappings*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
 
-<!-- ### Extending snippets: -->
-<!---->
-<!-- For example -->
-<!---->
-<!-- ```lua -->
-<!-- -- Use both HTML and JavaScript snippets in Vue files -->
-<!-- require('luasnip').filetype_extend("vue", {"html", "javascript"}) -->
-<!---->
-<!-- -- Use C snippets in C++ files -->
-<!-- require('luasnip').filetype_extend("c++", {"c"}) -->
-<!-- ``` -->
-<!---->
-<!-- Search docs for `filetype_extend`---there is an entry in `:help luasnip-api-reference`. -->
-
 <!-- TODO: -->
-<!-- Actually test all snippets work -->
-<!-- config for autosnippets and visual selection -->
-<!-- Search for **TODO:**  -->
-<!-- Only list LuaSnip abbreviations using in the document -->
-<!-- better TOC structure -->
+<!-- skim article and make important points boldface -->
+<!-- config for autosnippets and visual selection and update for mirrored tabstops. Put with the keymap section in intro. -->
 <!-- correct in-document links -->
+<!-- Add next section jumps to TLDRs and starts of sections -->
