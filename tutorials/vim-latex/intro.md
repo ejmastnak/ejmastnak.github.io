@@ -41,8 +41,8 @@ From that point reaching the speed in this page's GIFs would probably take month
 
 1. Cover [**prerequisites**]({% link tutorials/vim-latex/prerequisites.md %}) for getting the most out of the series, along with references that should get you up to speed if needed.
 
-1. Explain [**snippets**]({% link tutorials/vim-latex/ultisnips.md %}), the key to real-time LaTeX.
-<!-- : how to use the [UltiSnips](https://github.com/SirVer/ultisnips) plugin for writing snippets; suggestions for efficient snippet triggers; example snippets. -->
+1. Explain snippets, the key to real-time LaTeX.
+   Available in [**UltiSnips**]({% link tutorials/vim-latex/ultisnips.md %}) or [**LuaSnip**]({% link tutorials/vim-latex/luasnip.md %}) flavor.
 
 1. Introduce Vim's [**filetype plugin system**]({% link tutorials/vim-latex/ftplugin.md %}), which will help you understand the VimTeX plugin.
 

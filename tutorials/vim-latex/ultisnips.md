@@ -19,6 +19,8 @@ date_last_mod: 2022-06-08 18:02:37 +0200
 This is part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your LaTeX writing.
 
+[There is also a LuaSnip version of this article.]({% link tutorials/vim-latex/luasnip.md %})
+
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
 
@@ -56,10 +58,13 @@ Here is a simple example:
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with auto-trigger snippets"  /> 
 
 ## Getting started with UltiSnips
+
 This tutorial will use [the UltiSnips plugin](https://github.com/SirVer/ultisnips), which is the most mature out of the menagerie of Vim snippet plugins.
 If you use Neovim, note that UltiSnips's support of Neovim is "best-effort only".
-Don't let this discourage you---I and many other Neovim users daily drive Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
+Don't let this discourage you---although I have since [switched to LuaSnip]({% link tutorials/vim-latex/luasnip.md %}), both I and many other Neovim users have daily driven Ultisnips and Neovim without any issues, and things will probably be fine for you, too.
 If you use regular Vim, you should be fine in any case.
+
+Neovim users: there is also a [LuaSnip version of this article]({% link tutorials/vim-latex/luasnip.md %}) if you prefer.
 
 ### Installation
 Install UltiSnips like any other Vim plugin using your plugin installation method of choice.
