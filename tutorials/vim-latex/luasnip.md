@@ -28,6 +28,7 @@ This article covers snippets, which are templates of commonly reused code that, 
 * [What snippets do](#what-snippets-do)
 * [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
+  * [Two config settings for later](#two-config-settings-for-later)
   * [Set snippet trigger and tabstop navigation keys](#set-snippet-trigger-and-tabstop-navigation-keys)
 * [Snippet files, directories, and loaders](#snippet-files-directories-and-loaders)
   * [Snippet format](#snippet-format)
@@ -100,6 +101,25 @@ but whether you download someone else's snippets, write your own, or use a mixtu
 1. how to write, edit, and otherwise tweak snippets to suit your particular needs, so you are not stuck using someone else's without the possibility of customization.
 
 This article answers both questions.
+
+### Two config settings for later
+
+There are two LuaSnip configuration changes we'll need for later in this guide---one enables autotriggered snippets and the other enables visual selection.
+You can make these changes by placing the following code somewhere in your Neovim startup configuration, e.g. in your `init.lua`.
+
+```lua
+-- Somewhere in your Neovim startup, e.g. init.lua
+require("luasnip").config.set_config({ -- Setting LuaSnip config
+
+  -- Enable autotriggered snippets
+  enable_autosnippets = true,
+
+  -- Use Tab (or some other key if you prefer) to trigger visual selection
+  store_selection_keys = "<Tab>",
+})
+```
+
+See the [LuaSnip README's config section](https://github.com/L3MON4D3/LuaSnip#config) for full documentation of configuration options.
 
 ### Set snippet trigger and tabstop navigation keys
 
@@ -296,6 +316,7 @@ Explanation: I have a lot of `tex` snippets, so I prefer to further organize the
 **TLDR:**
 LuaSnip defines a globally-available set of abbreviations for common modules that make writing snippets much easier.
 These abbreviations are listed below, and you'll see them in this document, the LuaSnip docs, and elsewhere on the Internet.
+You can now [jump to the next section](#snippet-anatomy).
 **End TLDR**.
 
 LuaSnip provides a set of convenient abbreviations for more compact snippet syntax.
@@ -379,6 +400,7 @@ I'll first cover the `snip_params` table, then spend most of the remainder of th
 **TLDR** (if you're familiar with Lua):
 `snip_params` is a Lua table;
 the data type and purpose of each table key is clearly stated in `:help luasnip-snippets` (just scroll down just a bit).
+You can now [jump to the next section](#a-common-shortcut-youll-see-in-the-wild).
 **End TLDR**.
 
 And if you're not yet familiar with Lua tables, you:
@@ -552,7 +574,7 @@ s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
 ```
 
 **Insert node numbering:** notice that you can place multiple insert nodes into a snippet (the `\frac` snippet, for example, has two).
-You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and then navigate forward and backward through the numbered insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section [First steps: snippet trigger and tabstop navigation keys](#first-steps-snippet-trigger-and-tabstop-navigation-keys)).
+You specify the order in which you jump through insert nodes with a natural number (1, 2, 3, etc.) passed to the `i()` node as a mandatory argument and then navigate forward and backward through the numbered insert nodes by pressing the keys mapped to `<Plug>luasnip-jump-next` and `<Plug>luasnip-jump-prev`, respectively (i.e. the keys mapped at the start of this article in the section on [snippet trigger and tabstop navigation keys](#set-snippet-trigger-and-tabstop-navigation-keys)).
 
 See `:help luasnip-insertnode` for documentation of insert nodes.
 
@@ -783,6 +805,8 @@ s({trig="env", snippetType="autosnippet"},
 ),
 ```
 
+Note: for text in the repeated node **to update as you type** (e.g. like in the `\end{}` field in the above GIF) you should set `update_events = 'TextChanged,TextChangedI'` [in your LuaSnip config](#two-config-settings-for-later).
+The default update event is `InsertLeave`, which will update repeated nodes only after leaving insert mode.
 Repeated nodes are are documented, in passing, in the section `:help luasnip-extras`.
 
 #### Custom snippet exit point with the zeroth insert node
@@ -857,16 +881,15 @@ Here's how to set up and use visual selection:
 
 **Config:** visual selection is an opt-in feature;
 to enable it, open your LuaSnip config and set the `store_selection_keys` option to the key you want to use to trigger visual selection.
- The following example uses the Tab key, but you could use any key you like.
+The following example uses the Tab key, but you could use any key you like.
   
- ```lua
- -- Somewhere in your Neovim startup, e.g. init.lua
- local ls = require("luasnip")
- ls.config.set_config({ -- Setting LuaSnip config
-   -- Use <Tab> (or some other key if you prefer) to trigger visual selection
-   store_selection_keys = "<Tab>",
- })
- ```
+```lua
+-- Somewhere in your Neovim startup, e.g. init.lua
+require("luasnip").config.set_config({ -- Setting LuaSnip config
+  -- Use <Tab> (or some other key if you prefer) to trigger visual selection
+  store_selection_keys = "<Tab>",
+})
+```
 
 Pressing `<Tab>` in visual mode will then store the visually-selected text in a LuaSnip variable called `SELECT_RAW`, which we will reference later to retrieve the visual selection.
 
@@ -1067,7 +1090,7 @@ Here are some example use cases:
 
 **TLDR:** Saw those weird-looking function nodes `f( function(_, snip) return snip.captures[1] end )` popping up in the above regex-triggered snippets?
 This node just inserts regex capture groups from snippet's trigger back into the snippet body.
-You can now move [to the next section](#expand-only-after-alphanumeric-characters-and-closing-delimiters).
+You can now [jump to the next section](#expand-only-after-alphanumeric-characters-and-closing-delimiters).
 **End TLDR**.
 
 Longer explanation: regex-triggered snippets have a potential problem.
@@ -1132,7 +1155,7 @@ This is the equivalent of the UltiSnips `b` option, and will only expand snippet
 This trigger is useful for expanding environments, `\section`-style commands, preamble commands, which are usually defined only on new lines.
 
 You could do this manually with a regex trigger like `"^([%s]*)foo"`, but LuaSnip provides a cleaner way to do this---a built-in `line_begin` expansion condition.
-This will be our first use of the `condition` key in a LuaSnip snippet's `opts` table (mentioned at the [beginning of this article](#writing-snippets) and documented towards the bottom of `:help luasnip-snippets`)---here are a few real-life examples of how to use it:
+This will be our first use of the `condition` key in a LuaSnip snippet's `opts` table (mentioned in the [snippet anatomy section](#snippet-anatomy) earlier in this article and documented towards the bottom of `:help luasnip-snippets`)---here are a few real-life examples of how to use it:
 one uses the HTML-inspired trigger `h1` to create LaTeX `\section` commands (you could use `h2` for `\subsection`, and so on),
 and the other uses `new` to create a new environment.
 
@@ -1391,9 +1414,3 @@ nnoremap <leader>L <Cmd>lua require("luasnip.loaders.from_lua").load({paths = "~
 Of course, if needed, you should update `~/.config/nvim/LuaSnip/` to your own snippet directory, covered [at the start of this article](#loading-snippets-and-directory-structure).
 
 In case they look unfamiliar, the above code snippets are Vim *key mappings*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
-
-<!-- TODO: -->
-<!-- skim article and make important points boldface -->
-<!-- config for autosnippets and visual selection and update for mirrored tabstops. Put with the keymap section in intro. -->
-<!-- correct in-document links -->
-<!-- Add next section jumps to TLDRs and starts of sections -->
