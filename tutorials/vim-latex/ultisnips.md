@@ -379,7 +379,7 @@ My original source for the implementation of math-context expansion: [https://ca
 For our purposes, if you aren't familiar with them, regular expressions let you (among many other things) implement conditional pattern matching in snippet triggers.
 You could use a regular expression trigger, for example, to do something like "make `_` expand to a subscript snippet like `_{$1}$0`, but only if the `_` trigger immediately follows an alphanumeric character".
 
-A formal explanation of regular expressions falls beyond the scope of this work, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
+A formal explanation of regular expressions falls beyond the scope of this article, and I offer the examples below in a "cookbook" style in the hope that you can adapt the ideas to your own use cases.
 Regex tutorials abound on the internet; if you need a place to start, I recommend [Corey Schafer's tutorial on YouTube](https://www.youtube.com/watch?v=sa-TUpSx1JA).
 
 1. This class of triggers suppresses expansion following alphanumeric text and permits expansion after blank space, punctuation marks, braces and other delimiters, etc...
@@ -462,7 +462,7 @@ See the UltiSnips documentation or look through the snippets in `vim-snippets` f
 The function `UltiSnips#RefreshSnippets` refreshes the snippets in the current Vim instance to reflect the contents of your snippets directory.
 Here's an example use case:
 
-- Problem: you're editing `myfile.tex` in one Vim instance, make some changes `tex.snippets` in a separate Vim instance, and want the updates to be immediately available in `myfile.tex` without having to restart Vim.
+- Problem: you're editing `myfile.tex` in one Vim instance, make some changes to `tex.snippets` in a separate Vim instance, and want the updates to be immediately available in `myfile.tex` without having to restart Vim.
 
 - Solution: call `UltiSnips#RefreshSnippets` using `:call UltiSnips#RefreshSnippets()`.
 
@@ -480,7 +480,7 @@ In no particular order, here are some useful tips based on my personal experienc
 
 - Use automatic completion whenever possible.
   This technically makes UltiSnips use more computing resources---see the warning in `:help UltiSnips-autotrigger`---but I am yet to notice a perceptible slow-down on modern hardware.
-  For example, I regularly use 100+ auto-trigger snippets on a 2.5 GHz dual-core i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
+  For example, I regularly use 150+ auto-trigger snippets on a 2.5 GHz, dual-core, third-gen i5 processor and 8 gigabytes of RAM (typical, even modest specs by today's standards) without any problems.
 
 - Use *short* snippet triggers.
   Like one-, two-, or and *maybe* three-character triggers.
@@ -516,7 +516,6 @@ In no particular order, here are some useful tips based on my personal experienc
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
 
      ```py
-     # Test
      snippet "([\w]|[\}\)\]\|])sd" "Subscript with upright text" rA
      `!p snip.rv = match.group(1)`_{\mathrm{${1:${VISUAL:}}}}$0
      endsnippet

@@ -253,6 +253,7 @@ Servername: VIM
 Has clientserver: true
 Servername: undefined (vim started without --servername)
 ```
+
 Reminder: on macOS, MacVim's version of terminal Vim can misleadingly display both `Has clientserver: true` and `Servername: VIM`, but inverse search still won't work---[see the caveat above](#caveat-macvims-terminal-vim-cannot-perform-inverse-search).
 
 *That's all for the cross-platform concepts. Let's set up a PDF reader!*
@@ -275,6 +276,7 @@ Here is what to do:
   > 1  # VimTeX's PDF viewer interface is enabled!
   > 0  # VimTeX's PDF viewer interface is disabled---you'll have to enable it.
   ```
+
   Note that VimTeX's PDF viewer interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and remove it before proceeding.
   
 - Install the [`xdotool`](https://github.com/jordansissel/xdotool) program using the Linux package manager of your choice.
