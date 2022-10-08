@@ -54,10 +54,10 @@
     .o   { color: $nord4; }    /* Operator */
     .ow  { color: $nord9; }    /* Operator.Word */
     .p   { color: $nord4; }    /* Punctuation */
-    .cm  { color: $nord3; }    /* Comment.Multiline */
+    .cm  { color: $nord3_bright; }    /* Comment.Multiline */
     .cp  { color: $nord10; }   /* Comment.Preproc */
-    .c1  { color: $nord3; }    /* Comment.Single */
-    .cs  { color: $nord3; }    /* Comment.Special */
+    .c1  { color: $nord3_bright; }    /* Comment.Single */
+    .cs  { color: $nord3_bright; }    /* Comment.Special */
     .g   { color: $nord4; }    /* Generic */
     .gd  { color: $nord13; }   /* Generic.Deleted */
     .gr  { color: $nord11; }   /* Generic.Error */
