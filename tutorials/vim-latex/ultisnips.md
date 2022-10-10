@@ -16,10 +16,9 @@ date_last_mod: 2022-10-08 18:00:36 +0200
 
 {% include date.html %}
 
-This article covers snippets, which are templates of commonly reused code that, when used properly, will dramatically speed up your writing of LaTeX.
-You might be interested in the article for two reasons:
+You might be interested in this article for two reasons:
 
-1. As a standalone guide to writing snippets with the UltiSnips plugin (yes, the article is LaTeX-flavored, but it is applicable to any language).
+1. As a standalone guide to writing snippets with the LuaSnip plugin (yes, the article is LaTeX-heavy, but it is applicable to any language or workflow).
 1. As part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 
 [There is also a LuaSnip version of this article.]({% link tutorials/vim-latex/luasnip.md %})
