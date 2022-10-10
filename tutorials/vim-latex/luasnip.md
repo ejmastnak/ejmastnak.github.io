@@ -1414,3 +1414,7 @@ nnoremap <leader>L <Cmd>lua require("luasnip.loaders.from_lua").load({paths = "~
 Of course, if needed, you should update `~/.config/nvim/LuaSnip/` to your own snippet directory, covered [at the start of this article](#loading-snippets-and-directory-structure).
 
 In case they look unfamiliar, the above code snippets are Vim *key mappings*, a standard Vim configuration tool described in much more detail in the series's final article, [7. A Vimscript Primer for Filetype-Specific Workflows]({% link tutorials/vim-latex/vimscript.md %}).
+
+{% include vim-latex-navbar.html %}
+
+{% include vim-latex-license.html %}
