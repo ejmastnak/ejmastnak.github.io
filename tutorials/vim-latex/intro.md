@@ -23,6 +23,15 @@ Here is an example of what I have in mind:
 The blue bar with white text shows the keys I am typing, the bottom shows the resulting LaTeX source code, and the top is the compiled output.
 More on how this works below.
 
+<details>
+  <summary>
+  Wait, what are you talking about, what the heck is LaTeX?
+  </summary>
+  <p><a href="https://www.latex-project.org/">LaTeX</a> is the industry standard typesetting and document preparation software in mathematics, physics, computer science, and other quantitative sciences (but is mostly unknown outside this niche, so it's quite reasonable to have never heard of it).
+  LaTeX has a reputation for producing high-quality documents but being clumsy to type—this series presents a framework aimed at eliminating the clumsiness.
+  </p>
+</details>
+
 **Goal of this guide:** make writing LaTeX as easy (fast, efficient, enjoyable...) as writing math by hand.
 Tech stack: the Vim text editor using the UltiSnips snippet plugin and the VimTeX plugin's LaTeX editing features.
 The series should help if you...
