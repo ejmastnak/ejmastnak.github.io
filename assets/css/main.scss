@@ -146,10 +146,12 @@ body {
 
 .markdown-body summary {
   display: list-item;
+  padding-bottom: 1ex;
 }
 
 .markdown-body details summary {
   cursor: pointer;
+  color: $link-color;
   background-color: $background-color;
 }
 
