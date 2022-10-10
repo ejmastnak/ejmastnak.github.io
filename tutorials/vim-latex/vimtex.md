@@ -6,7 +6,7 @@ prev-display-name: "« 3. Vim's ftplugin system"
 next-filename: "compilation"
 next-display-name: "5. Compilation »"
 date: 2021-11-24 13:43:23 -0500
-date_last_mod: 2022-06-08 18:02:37 +0200
+date_last_mod: 2022-09-27 21:34:31 +0200
 ---
 
 {% include vim-latex-navbar.html %}

@@ -7,7 +7,7 @@ next-filename: "ultisnips"
 next-display-name: "2. Snippets »"
 
 date: 2022-01-24 11:22:07 -0800
-date_last_mod: 2022-06-08 18:02:37 +0200
+date_last_mod: 2022-09-27 21:34:31 +0200
 ---
 
 {% include vim-latex-navbar.html %}

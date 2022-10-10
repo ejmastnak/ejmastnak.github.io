@@ -7,7 +7,7 @@ next-filename: ftplugin
 next-display-name: "3. Vim's ftplugin system »"
 
 date: 2021-10-08 20:44:02 -0400
-date_last_mod: 2022-06-08 18:02:37 +0200
+date_last_mod: 2022-10-08 18:00:36 +0200
 ---
 
 {% include vim-latex-navbar.html %}

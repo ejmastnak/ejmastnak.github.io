@@ -11,7 +11,7 @@ carousels:
     - image: /assets/images/vim-latex/screenshots/qm.png
 
 date: 2021-10-08 20:44:02 -0400
-date_last_mod: 2022-06-08 18:02:37 +0200
+date_last_mod: 2022-10-10 19:27:42 +0200
 ---
 # Real-time LaTeX using (Neo)Vim, VimTeX, and snippets
 
