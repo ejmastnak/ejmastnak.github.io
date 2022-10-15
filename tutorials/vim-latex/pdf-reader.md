@@ -261,8 +261,12 @@ Reminder: on macOS, MacVim's version of terminal Vim can misleadingly display bo
 ## Zathura (read this on Linux)
 *If you use macOS, scroll down to the section on [configuring Skim](#skim-read-this-on-macos) or [setting up Zathura on macOS](#zathura-on-intel-macs).*
 
-Good news: VimTeX makes connecting Zathura and Vim/Neovim/gVim very easy.
-Here is what to do:
+*Caveat: at the time of writing, you'll need the X Window System (and not Wayland) to get Zathura working properly with VimTeX.
+This is because VimTeX relies on [`xdotool`](https://github.com/jordansissel/xdotool) for integration with Zathura, and `xdotool` only works with X.
+For details see [VimTeX issue #2046](https://github.com/lervag/vimtex/issues/2046).*
+
+Good news: Assuming you're using the X Window System, VimTeX makes connecting Zathura and Vim/Neovim/gVim very easy.
+Here's what to do:
 
 - You will, obviously, need Zathura installed---do this with the package manager of your choice.
   Then double check that your version of Zathura supports SyncTeX---which I explain below in the dedicated section [Ensure your Zathura is SyncTeX-enabled](#ensure-your-zathura-is-synctex-enabled).
@@ -280,7 +284,8 @@ Here is what to do:
   Note that VimTeX's PDF viewer interface is enabled by default; if `:echo g:vimtex_view_enabled` prints `0`, you have probably manually set `let g:vimtex_view_enabled = 0` somewhere in your Vim config and will have to track that down and remove it before proceeding.
   
 - Install the [`xdotool`](https://github.com/jordansissel/xdotool) program using the Linux package manager of your choice.
-  (VimTeX uses `xdotool` to make forward search work properly; see `:help vimtex-view-zathura` for reference.)
+  (VimTeX uses `xdotool` to make forward search work properly; see `:help vimtex-view-zathura` for reference.
+  And to reiterate from the beginning of this section, you'll need to use the X Window System and not Wayland for `xdotool` to work.)
   
 - Place the following code in your `ftplugin/tex.vim` file:
 
@@ -339,7 +344,8 @@ for the curious, this check is implemented in the VimTeX source code in the file
 See `:help g:vimtex_view_zathura_check_libsynctex` for reference.
 
 ### Optional tip: Return focus to Vim/Neovim after forward search
-**Relevant editors:** Vim and Neovim used with Zathura on Linux (for resolving gVim focus problems scroll down)
+**Relevant editors:** Vim and Neovim used with Zathura on Linux (for resolving gVim focus problems scroll down).
+You'll also need the X Window System (and not Wayland) for `xdotool` to work.
 
 Depending on your window manager and/or desktop environment, Vim may lose focus after performing forward search (this happens for me on i3 with both Vim and Neovim; YMMV).
 If you prefer to keep focus in Vim, you can use `xdotool` and some VimTeX autocommands to solve the problem.
@@ -390,6 +396,7 @@ Here's what to do:
 
 ### Optional tip: Return focus to gVim after forward and inverse search
 **Relevant editor:** gVim used with Zathura on Linux
+You'll also need the X Window System (and not Wayland) for `xdotool` to work.
 
 From my testing (using the i3 window manager; YMMV) gVim lost focus after forward search and failed to regain focus after inverse search.
 Here is how to fix both problems (some steps are the same as for terminal Vim/Neovim above, in which case I will refer to the above descriptions to avoid repetition):
@@ -519,7 +526,7 @@ It is possible to use Zathura with VimTeX on macOS thanks to the Homebrew formul
   </summary>
     <p>see e.g. <a href="https://github.com/lervag/vimtex/issues/2424">VimTeX issue #2424</a> for details.
     More specifically, Apple Silicon Macs seem to have difficulty activating the <code class="language-plaintext highlighter-rouge">dbus</code> service, which is required for forward search and inverse search.
-    You can still build Zathura on an Apple Silicon Mac, but it won’t support forward and inverse search, won’t work with VimTeX, and thus won’t be useful as a LaTeX PDF reader.
+    You can still build Zathura on an Apple Silicon Mac, but there is a chance it won’t support forward and inverse search, won’t work with VimTeX, and thus won’t be useful as a LaTeX PDF reader.
     If you have an Apple Silicon Mac, you should probably use Skim with VimTeX.
     That said, if anyone reading this successfully set up Zathura and VimTeX on an ARM64 Mac, I would be very interested in hearing more.</p>
 </details>
