@@ -24,11 +24,25 @@ You might be interested in this article for two reasons:
 
 [There is also an UltiSnips version of this article.]({% link tutorials/vim-latex/ultisnips.md %})
 
+## Warning: the article is long
+
+This article is *long*, which kind of sucks, I know.
+But I didn't see another way to present the information I think you need to begin writing your own snippets while actually understanding what you're doing.
+You'll find that the information is actually (hopefully) concisely presented, there's just a lot of it, and you should be learning something new with every paragraph.
+
+Here's roughly how the article is organized:
+
+1. Boring house-keeping stuff ([installation](#installation), [configuration](#two-config-settings-for-later), [file organization](#snippet-files-directories-and-loaders), [snippet syntax](#snippet-anatomy) etc.)
+1. [Actually writing snippets](#actually-writing-snippets)---you probably came for this section.
+1. [Some practical tips](#bonus) from the perspective of a real-life user.
+
+You might want to skim or skip the boring stuff and jump right to [writing snippets](#actually-writing-snippets), and will probably want to use the [table of contents](#contents-of-this-article) to navigate the article.
+
+
 ## Contents of this article
 <!-- vim-markdown-toc GFM -->
 
 * [What snippets do](#what-snippets-do)
-* [Warning: the article is long](#warning-the-article-is-long)
 * [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
   * [Two config settings for later](#two-config-settings-for-later)
@@ -77,20 +91,6 @@ Here are some [full-speed examples of real-life use-cases](https://www.youtube.c
 And here is a simple example using snippets to create and navigate through a LaTeX figure environment, quickly typeset an equation, and easily insert commands for Greek letters.
 
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with autotrigger snippets"  /> 
-
-## Warning: the article is long
-
-This article is *long*, which kind of sucks, I know.
-But I didn't see any other way to present the information I think you need to begin writing your own snippets while actually understanding what you're doing.
-You'll find that the information is actually (hopefully) concisely presented, there's just a lot of it, and you should be learning something new with every paragraph.
-
-Here's roughly how the article is organized:
-
-1. Boring house-keeping stuff ([installation](#installation), [configuration](#two-config-settings-for-later), [file organization](#snippet-files-directories-and-loaders), [snippet syntax](#snippet-anatomy) etc.)
-1. [Actually writing snippets](#actually-writing-snippets)---you probably came for this section.
-1. [Some practical tips](#bonus) from the perspective of a real-life user.
-
-You might want to skim or skip the boring stuff and jump right to [writing snippets](#actually-writing-snippets), and will probably want to use the [table of contents](#contents-of-this-article) to navigate the article.
 
 ## Getting started with LuaSnip
 
