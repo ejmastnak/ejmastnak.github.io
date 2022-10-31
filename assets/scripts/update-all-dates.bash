@@ -14,11 +14,11 @@ declare -a arr=(\
   "projects" \
   "fmf-course-pages")
 
-# for dir in "${arr[@]}"; do
-#   find "${root_dir}/${dir}" -name "*.md" | while read -r file ; do
-#       bash "${update_date_script}" "${file}"
-#   done
-# done
+for dir in "${arr[@]}"; do
+  find "${root_dir}/${dir}" -name "*.md" | while read -r file ; do
+      bash "${update_date_script}" "${file}"
+  done
+done
 
 # Root dir
 for file in "${root_dir}/"*.md; do
