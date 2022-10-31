@@ -1,7 +1,7 @@
 ---
 title: Key delay and repeat rate on X11 on Arch Linux
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-05-29 13:38:13 +0200
+date_last_mod: 2022-07-04 19:11:09 +0200
 ---
 
 # Key delay and repeat rate on X11

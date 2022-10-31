@@ -1,7 +1,7 @@
 ---
 title: Adjust volume with keyboard keys on Arch Linux
 date: 2022-05-11 08:56:27 -0400
-date_last_mod: 2022-05-29 13:38:49 +0200
+date_last_mod: 2022-07-04 19:11:14 +0200
 ---
 
 # Keyboard-based volume adjustment

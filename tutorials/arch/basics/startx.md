@@ -1,7 +1,7 @@
 ---
 title: Install and start Xorg on Arch Linux
 date: 2022-05-03 22:40:52 -0400
-date_last_mod: 2022-05-30 09:54:34 +0200
+date_last_mod: 2022-07-04 19:11:09 +0200
 ---
 # Install and start Xorg
 

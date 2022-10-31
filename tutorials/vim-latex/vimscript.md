@@ -7,7 +7,7 @@ next-filename: "intro"
 next-display-name: "Introduction"
 
 date: 2021-10-08 20:44:02 -0400
-date_last_mod: 2022-09-27 21:34:31 +0200
+date_last_mod: 2022-10-10 19:36:32 +0200
 ---
 
 {% include vim-latex-navbar.html %}

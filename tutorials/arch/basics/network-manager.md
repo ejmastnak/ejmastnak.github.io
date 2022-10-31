@@ -1,7 +1,7 @@
 ---
 title: First steps with NetworkManager on Linux
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-05-29 17:06:28 +0200
+date_last_mod: 2022-07-04 19:11:09 +0200
 ---
 
 # First steps with NetworkManager

@@ -1,7 +1,7 @@
 ---
 title: Transparent windows backgrounds with picom on Arch Linux
 date: 2022-05-28 19:57:29 +0200
-date_last_mod: 2022-05-29 13:38:37 +0200
+date_last_mod: 2022-07-04 19:10:58 +0200
 ---
 
 # Transparent windows with `picom`

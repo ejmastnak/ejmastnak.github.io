@@ -7,7 +7,7 @@ next-filename: "vimscript"
 next-display-name: "7. Vimscript »"
 
 date: 2021-10-08 20:44:02 -0400
-date_last_mod: 2022-10-02 13:33:09 +0200
+date_last_mod: 2022-10-18 13:12:11 +0200
 ---
 
 {% include vim-latex-navbar.html %}

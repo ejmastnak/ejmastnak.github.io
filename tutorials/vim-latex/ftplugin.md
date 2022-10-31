@@ -7,7 +7,7 @@ next-filename: "vimtex"
 next-display-name: "4. The VimTeX plugin »"
 
 date: 2022-03-20 10:08:22 -0400
-date_last_mod: 2022-09-27 21:34:31 +0200
+date_last_mod: 2022-10-11 19:55:18 +0200
 ---
 
 {% include vim-latex-navbar.html %}

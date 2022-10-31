@@ -1,7 +1,7 @@
 ---
 title: Monitor hot-plugging on Linux using X
 date: 2022-05-07 23:12:33 -0400
-date_last_mod: 2022-05-29 17:12:55 +0200
+date_last_mod: 2022-07-04 19:10:58 +0200
 ---
 
 # Monitor hot-plugging with X

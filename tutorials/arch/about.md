@@ -1,7 +1,7 @@
 ---
 title: Arch Linux Post-Installation Configuration
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-06-08 17:02:41 +0200
+date_last_mod: 2022-10-31 07:57:53 +0100
 ---
 
 # Find Your Footing After Installing Arch Linux

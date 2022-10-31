@@ -1,7 +1,7 @@
 ---
 title: FMF
 date: 2021-09-17 14:16:32 +0200
-date_last_mod: 2022-06-02 20:23:38 +0200
+date_last_mod: 2022-10-31 19:35:07 +0100
 ---
 # Lecture notes and solved exercises
 

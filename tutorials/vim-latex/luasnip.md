@@ -7,7 +7,7 @@ next-filename: ftplugin
 next-display-name: "3. Vim's ftplugin system »"
 
 date: 2022-09-27 20:00:00 +0200
-date_last_mod: 2022-10-10 19:35:21 +0200
+date_last_mod: 2022-10-31 07:38:32 +0100
 
 ---
 

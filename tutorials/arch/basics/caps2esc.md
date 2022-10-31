@@ -1,7 +1,7 @@
 ---
 title: Remap Caps Lock to Escape and Control on Arch Linux
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-06-08 17:26:05 +0200
+date_last_mod: 2022-07-04 19:11:09 +0200
 ---
 
 # Remap Caps Lock to Escape and Control

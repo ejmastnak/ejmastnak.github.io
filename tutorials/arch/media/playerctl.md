@@ -1,7 +1,7 @@
 ---
 title: Media player control on Arch Linux
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-05-29 13:38:50 +0200
+date_last_mod: 2022-07-04 19:11:14 +0200
 ---
 
 # Media player control

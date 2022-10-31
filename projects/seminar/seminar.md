@@ -1,7 +1,7 @@
 ---
 title: Seminar
 date: 2021-09-19 17:20:03 +0200
-date_last_mod: 2022-04-21 22:16:55 +0200
+date_last_mod: 2022-09-27 18:06:07 +0200
 ---
 # Convolutional Neural Networks and Particle Physics
 

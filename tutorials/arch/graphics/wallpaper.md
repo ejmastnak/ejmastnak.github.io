@@ -1,7 +1,7 @@
 ---
 title: Background wallpaper with feh on Arch Linux
 date: 2022-05-07 23:12:33 -0400
-date_last_mod: 2022-05-29 13:38:37 +0200
+date_last_mod: 2022-07-04 19:10:58 +0200
 ---
 
 # Set wallpaper with feh
