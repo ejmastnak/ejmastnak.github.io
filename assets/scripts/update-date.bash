@@ -1,15 +1,9 @@
 #!/bin/bash
 # NAME
-#    update-date - updates the last-modified date of web pages
+#    update-date - updates the last-modified date of a Jekyll markdown file.
 #
 # SYNOPSIS
-#     update-date directory
+#     update-date file.md
 
-cd "${1}"
-for file in *.md; do
-
-  date_last_mod=`date --reference=${file} "+%Y-%m-%d %H:%M:%S %z"`
-
-  sed -i "s/^date_last_mod: .*$/date_last_mod: ${date_last_mod}/" ${file}
-
-done
+date_last_mod=`date --reference=${1} "+%Y-%m-%d %H:%M:%S %z"`
+sed -i "s/^date_last_mod: .*$/date_last_mod: ${date_last_mod}/" ${1}
