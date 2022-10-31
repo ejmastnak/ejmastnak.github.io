@@ -1090,7 +1090,7 @@ Here are some example use cases:
 - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
 
   ```lua
-  s({trig = '([^%a])ff', regTrig = true, wordTrig = false}, rac{}{}
+  s({trig = '([^%a])ff', regTrig = true, wordTrig = false},
     fmta(
       [[<>\frac{<>}{<>}]],
       {
