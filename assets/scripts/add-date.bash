@@ -14,7 +14,7 @@ for file in *.md; do
 
   in_frontmatter=0
   # Note the need to set IFS to an empty string to perserve leading white space
-  # And to use read -r to perserve backlashes
+  # And to use read -r to preserve backlashes
   # See e.g. https://stackoverflow.com/a/26971716
   while IFS= read -r line
   do
