@@ -13,7 +13,7 @@ For the time being, you can either view my [résumé]({% link cv/cv.pdf %}) or r
 
 [**Real-time LaTeX using (Neo)Vim**]({% link tutorials/vim-latex/intro.md %}) 
 <br>
-A professionally-written guide to turbocharged mathematical typesetting
+A guide to turbocharged mathematical typesetting
 
 [**Find your footing on Arch Linux**]({% link tutorials/arch/about.md %})
 <br>
