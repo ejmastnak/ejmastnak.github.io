@@ -18,7 +18,7 @@ date_last_mod: 2022-10-27 20:29:46 +0200
 - [ArchWiki: File systems](https://wiki.archlinux.org/title/file_systems)
 - The `man` pages for `lsblk`, `mount`, `umount`, `udisksctl`, and `udisks`.
 
-### Navigation 
+### Contents
 
 <!-- vim-markdown-toc GFM -->
 
@@ -163,13 +163,12 @@ umount /dev/sdxN      # by specifying the device partition (not preferred)
 <!-- From `man umount`, specifying the mount directory is preferred, in case the physical device is mounted to multiple directories. -->
 
 You can check the drive is unmounted using `lsblk`---the `MOUNTPOINTS` column for the drive's data partition entry should now be blank.
-At this point it's probably safe to remove the drive, but it's best practice to first **power off the drive**;
-you can do this by writing directly to the USB drive's device files [(more info on Linux device files)](https://wiki.archlinux.org/title/Device_file).
-You'll need to do this with root privileges:
+
+At this point it's probably safe to remove the drive, but it's best practice to first **power off the drive**.
+This is probably easier with `udisksctl`'s `power-off` command, described in the [next section](#modern-alternative-udisks2).
+But without third-party tools, you can power off a drive by writing directly to the USB drive's device files [(more info on Linux device files)](https://wiki.archlinux.org/title/Device_file) using root privileges:
 
 ```bash
-# You power off the drive itself (e.g. sdb) and not the data partition (e.g. sdb1)
-
 # Option 1: works from a normal user shell using sudo
 echo 1 | sudo tee /sys/block/sdx/device/delete
 
@@ -177,10 +176,11 @@ echo 1 | sudo tee /sys/block/sdx/device/delete
 echo 1 > /sys/block/sdx/device/delete
 ```
 
-This time you target the root drive device (e.g. `sdb`) and not the data partition (e.g. `sdb1`).
+Note that you target the root drive device (e.g. `sdb`) and not the data partition (e.g. `sdb1`).
 
 Note that you can't just `sudo echo 1 >` as a regular user because the sudo privileges aren't transfered through the `>` redirection operation, but you can get around this with `tee`.
 For more discussion of the power-off line see [this StackExchange answer](https://unix.stackexchange.com/a/43450) and/or [ArchWiki: USB storage/Device not shutting down after unmounting all partitions](https://wiki.archlinux.org/title/USB_storage_devices#Device_not_shutting_down_after_unmounting_all_partitions).
+
 
 
 ## Modern alternative: udisks2
@@ -195,18 +195,18 @@ I'll assume **you're familiar with the mount/unmount/eject material earlier in t
 Here is the basic operation mount/unmount/power-off workflow with `udisks2`.
 You perform all commands with the CLI tool `udisksctl`:
 
-1. If needed, install `udisks2` with `sudo pacman -S udisks2`
+1. If needed, **install** `udisks2` with `sudo pacman -S udisks2`
 
-2. Plug in a USB drive and use `udisksctl` to mount the drive's data partition:
+2. Plug in a USB drive and use `udisksctl` to **mount the drive's data partition**:
    
    ```bash
    # Mount a drive's data partition
    udisksctl mount -b /dev/sdxN
    ```
 
-   You'll find the drive's files in the directory `/run/media/$USER/$DEVICE_UUID`.
+   You'll **find the drive's files** in the directory `/run/media/$USER/$DEVICE_UUID`.
 
-3. To eject a drive, unmount its data partition and power off the drive
+3. To eject a drive, **unmount its data partition and power off the drive**:
 
    ```bash
    # Unmount a drive's data partition
@@ -219,7 +219,7 @@ You perform all commands with the CLI tool `udisksctl`:
 A few comments:
 
 - You don't need `sudo` privileges to use USB drives with `udisks2`, which is nice.
-  (`udisks2` gets around sudo privileges using access control lists (ACLs), but I don't know the details.)
+  (`udisks2` gets around sudo privileges using access control lists, but I don't know the details.)
 - The `-b` flag is used to specify a block device.
 - By default `udisks2` mounts removable drives at `/run/media/$USER/$DEVICE_UUID` and creates a mount point with the drive's alphanumeric UUID (which you can see with e.g. `lsblk -f`).
   <!-- https://wiki.archlinux.org/title/persistent_block_device_naming -->
