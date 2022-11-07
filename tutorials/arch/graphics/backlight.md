@@ -104,7 +104,7 @@ For example, from my laptop:
 852  <span class="c"># (on my laptop; might be different on yours)</span>
 
 <span class="c"># You must elevate to root privileges to change brightness</span>
-su
+<span class="nv">$ </span>su
 
 <span class="c"># Playing around with brightness as a root user</span>
 <span># </span><span class="nb">echo </span>400 <span class="o">&gt;</span> brightness   <span class="c"># half of maximum brightness</span>
