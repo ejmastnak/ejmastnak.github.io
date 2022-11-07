@@ -1,7 +1,7 @@
 ---
 title: Arch Linux Post-Installation Configuration
 date: 2022-04-29 19:15:09 -0400
-date_last_mod: 2022-10-31 07:57:53 +0100
+date_last_mod: 2022-11-07 08:52:14 +0100
 ---
 
 # Find Your Footing After Installing Arch Linux
@@ -42,9 +42,9 @@ Connect to the Internet via WiFi or Ethernet using NetworkManager.
 <br>
 Set up a minimal graphical environment using the Xorg display server and the i3 window manager.
 
-<!-- [**USB**]({% link tutorials/arch/basics/usb.md %}) -->
-<!-- <br> -->
-<!-- Read and write data from external USB drives. -->
+[**USB**]({% link tutorials/arch/basics/usb.md %})
+<br>
+Read from, write to, and safely eject external USB drives.
 
 [**Battery alert**]({% link tutorials/arch/basics/battery-alert.md %})
 <br>
