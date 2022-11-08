@@ -17,6 +17,14 @@ date_last_mod: 2022-10-31 19:35:07 +0100
   Yeah I guess it turned out that way, here's a guide to how I did it: [**Real-time LaTeX with (Neo)Vim**]({% link tutorials/vim-latex/intro.md %}).
 
   1500 pages of notes is nothing too special by the way---check out [Dexter Chua's Cambridge notes](https://dec41.user.srcf.net/notes/) for something *really* cool.
+
+<details>
+<summary>
+Si študent/študentka FMFja...
+</summary>
+  ...in te zanima karkoli v zvezi z računalniškimi orodij/workflowi za izdelavo teh zapiskov in spletne strani (hitro TeXiranje, Linux, Vim, shell scripting, GitHub Pages, Jekyll, ipd.)?
+  Če ti ni nerodno mi sam en <a href="contact.html">mail napiši</a>—rad učim na tem področju in ti z veseljem pomagam.
+</details>
   
 ## Year 3 courses
 
