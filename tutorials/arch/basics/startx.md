@@ -95,13 +95,14 @@ You really have three choices, not two:
    You get a cool window manager and maximum customizability.
    This is what I'll do in this tutorial.
 
-1. Install a DE and use its default window manager, which will do the job but might be boring.
-   Desktop bells and whistles will be set up for you without requiring much work on your part.
+1. Install a DE and use its default window manager, which will do the job but might be boring. (Every DE will have a built-in window manager.)
+   Desktop-related bells and whistles will be set up for you without requiring much work on your part.
    <br>
    Typical DE use case: you don't want to install and configure its components individually, and don't mind potentially less customizability, a larger memory footprint, and (\*shudder\*) a bit more "bloat".
 
-1. Install a DE *and* a window manager, and use this window manager instead of the default DE version.
-   You get the convenience of a DE in addition to a cool window manager, but use a bit more disk space and computing resources.
+1. Install a DE *and* a separate stand-alone window manager, and use the stand-alone window manager instead of the default DE version.
+   In principle you get the convenience of a DE and the full functionality of a cool window manager, 
+   but getting a DE and separate window manager to play nicely together is often difficult and best left to more advanced users.
 
 Need help choosing a desktop environment or window manager?
 You can browse through a bunch of options on Ermanno Ferrari's excellent [desktop customization playlist](https://www.youtube.com/playlist?list=PL-odKaUzOz3Knbk8vs_T1pItsTZtkO6ZL).
@@ -117,7 +118,7 @@ A DM will display a graphical login window at the end of the boot process instea
 You'll usually get a window with GUI text fields for your username and password, and will have the option to customize colors, background wallpaper, etc.
 You can also configure most DMs to start Xorg automatically after logging in. 
 
-My suggestion for beginners: begin without a display manager and log in using the text-based console---you'll have fewer things to set up and potentially misconfigure.
+My suggestion for beginners: log in using the text-based console and leave a display manager for later---you'll have fewer things to set up and potentially misconfigure.
 You can always install a DM after setting up your window manager and/or desktop environment.
 
 ## Installing Xorg and i3
@@ -211,7 +212,7 @@ We'll use the default `xinitrc` file in `/etc/X11/xinit/` as a starting point, a
 
 - Eye candy: install a nice-looking terminal font ([Iosevka](https://archlinux.org/packages/community/any/ttc-iosevka/) and [Source Code Pro](https://archlinux.org/packages/extra/any/adobe-source-code-pro-fonts/) are popular choices),
   install and/or customize a status bar,
-  set a background wallpaper;
+  [set a background wallpaper]({% link tutorials/arch/graphics/wallpaper.md %});
   customize your shell prompt, etc.
 
 {% include arch-notes-footer.html %}
