@@ -36,7 +36,7 @@ Here's roughly how the article is organized:
 1. [Actually writing snippets](#actually-writing-snippets)---you probably came for this section.
 1. [Some practical tips](#bonus) from the perspective of a real-life user.
 
-You might want to skim or skip the boring stuff and jump right to [writing snippets](#actually-writing-snippets), and will probably want to use the [table of contents](#contents-of-this-article) to navigate the article.
+Feel free to **skim or skip the boring stuff** and jump right to [actually writing snippets](#actually-writing-snippets).
 
 
 ## Contents of this article
@@ -87,7 +87,7 @@ You might want to skim or skip the boring stuff and jump right to [writing snipp
 Snippets are templates of commonly used code (for example the boilerplate code for typical LaTeX environments and commands) inserted into text dynamically using short (e.g. two- or three-character), easy-to-type character sequences called *triggers*.
 Without wishing to overstate the case, good use of snippets is the single most important step in the process of writing LaTeX---and any other verbose markup or programming language---efficiently and painlessly. 
 
-Here are some [full-speed examples of real-life use-cases](https://www.youtube.com/watch?v=P7iMX1lqGnU).
+Here is a [video demonstrating full-speed, real-life examples](https://www.youtube.com/watch?v=P7iMX1lqGnU).
 And here is a simple example using snippets to create and navigate through a LaTeX figure environment, quickly typeset an equation, and easily insert commands for Greek letters.
 
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with autotrigger snippets"  /> 
@@ -259,7 +259,7 @@ see `:help luasnip-loaders`, `:help luasnip-vscode` and `:help luasnip-snipmate`
 
 You have two ways to load snippets:
 
-- **Covered in this article:** store snippets in text files and load snippets from the text files using LuaSnip's Lua loader feature.
+- **Covered in this article:** write Lua snippets in dedicated snippet files and load these files using LuaSnip's Lua loader feature.
 
 - Define and load snippets in your Neovim startup files using LuaSnip's `add_snippets` function.
 
@@ -267,12 +267,18 @@ This article covers the Lua loader---I recommend this approach because using ded
 This approach is "cleaner" and more modular than writing snippets directly in, say, your `init.lua` file.
 If you want to use the `add_snippets` function instead, see the documentation in `:help luasnip-api-reference`---most of this article will still be useful to you because the syntax for writing snippets is the same whether you load snippets with `add_snippets` or LuaSnip's loader.
 
-Here's **how to load snippets from Lua files**:
+Here's an overview of **how to load snippets from Lua files**:
 
-- Store LuaSnip snippets in plain-text Lua files with the `.lua` extension.
-  (The syntax for actually writing snippets is described soon.)
+- Write LuaSnip snippets in plain-text Lua files with the `.lua` extension.
+  (Snippet syntax is described soon.)
+  
+- Wrap all snippets in a given `.lua` file inside a Lua table, and `return` this table from the Lua file. (Examples follow.)
+
+- Name each snippet file appropriately:
   The file's base name determines which Vim `filetype` the snippets apply to.
-  For example, snippets inside the file `tex.lua` would apply to files with `filetype=tex`.
+  For example, snippets inside the file `tex.lua` would apply to files with `filetype=tex`,
+  snippets inside `html.lua` to files with `filetype=html`, and so on.
+
   If you want certain snippets to apply globally to *all* file types, place these global snippets in the file `all.lua`.
   (This is the same naming scheme used by UltiSnips, in case you are migrating from UltiSnips).
 
@@ -430,20 +436,22 @@ And if you're not yet familiar with Lua tables, you:
 Since that might sound vague, here is a concrete example of a "Hello, world!" snippet with a bunch of parameters manually specified, to give you a feel for how this works.
 
 ```lua
--- Example: how to set snippet parameters
-require("luasnip").snippet(
-  { -- Table 1: snippet parameters
-    trig="hi",
-    dscr="An autotriggering snippet that expands 'hi' into 'Hello, world!'",
-    regTrig=false,
-    priority=100,
-    snippetType="autosnippet"
-  },
-  { -- Table 2: snippet nodes (don't worry about this for now---we'll cover nodes shortly)
-    t("Hello, world!"), -- A single text node
-  }
-  -- Table 3, the advanced snippet options, is left blank.
-),
+return {
+  -- Example: how to set snippet parameters
+  require("luasnip").snippet(
+    { -- Table 1: snippet parameters
+      trig="hi",
+      dscr="An autotriggering snippet that expands 'hi' into 'Hello, world!'",
+      regTrig=false,
+      priority=100,
+      snippetType="autosnippet"
+    },
+    { -- Table 2: snippet nodes (don't worry about this for now---we'll cover nodes shortly)
+      t("Hello, world!"), -- A single text node
+    }
+    -- Table 3, the advanced snippet options, is left blank.
+  ),
+}
 ```
 
 This snippet expands the trigger string `"hi"` into the string `"Hello, world!"`;
@@ -474,12 +482,14 @@ The `trig` key is the only required snippet key,
 and if you only need to set `trig` and leave the other keys with their default values, you can use the following shorthand syntax:
 
 ```lua
--- Shorthand example: the same snippet as above, but only setting the `trig` param
-s("hi", -- the snip_param table is replaced by a single string holding `trig`
-  { -- Table 2: snippet nodes
-    t("Hello, world!"),
-  }
-),
+return {
+  -- Shorthand example: the same snippet as above, but only setting the `trig` param
+  s("hi", -- the snip_param table is replaced by a single string holding `trig`
+    { -- Table 2: snippet nodes
+      t("Hello, world!"),
+    }
+  ),
+}
 ```
 
 Explanation: notice that the `snip_param` table of snippet parameters is now gone---if you only need to set the `trig` key, you can optionally replace the parameter table with a single string, and LuaSnip will interpret this string as the value of the `trig` key.
@@ -507,6 +517,7 @@ You create a text node by passing a string or a table of strings to `require("lu
 Here is a simple "Hello, world!" example that expands the trigger `hi` into the string "Hello, world!":
 
 ```lua
+return {
 -- A simple "Hello, world!" text node
 s(
   {trig = "hi"}, -- Table of snippet parameters
@@ -514,11 +525,13 @@ s(
     t("Hello, world!")
   }
 ),
+}
 ```
 
 And here are some actual real-life examples I use to easily insert the Greek letter LaTeX commands `\alpha`, `\beta`, and `\gamma`:
 
 ```lua
+return {
 -- Examples of Greek letter snippets, autotriggered for efficiency
 s({trig=";a", snippetType="autosnippet"},
   {
@@ -535,6 +548,7 @@ s({trig=";g", snippetType="autosnippet"},
     t("\\gamma"),
   }
 ),
+}
 ```
 
 Note that you have to escape the backslash character to insert it literally---for example I have to write `t("\\alpha")` to produce the string `\alpha` in the first snippet.
@@ -543,12 +557,14 @@ The only other caveat with text nodes is **multiline strings**: to insert multip
 Here is a concrete example of a three-line text node.
 
 ```lua
+return {
 -- Example of a multiline text node
 s({trig = "lines", dscr = "Demo: a text node with three lines."},
   {
     t({"Line 1", "Line 2", "Line 3"})
   }
 ),
+}
 ```
 
 See `:help luasnip-textnode` for documentation of text nodes.
@@ -570,6 +586,7 @@ Here is the code for the above examples:
 
 
 ```lua
+return {
 -- Combining text and insert nodes to create basic LaTeX commands
 s({trig="tt", dscr="Expands 'tt' into '\texttt{}'"},
   {
@@ -589,6 +606,7 @@ s({trig="ff", dscr="Expands 'ff' into '\frac{}{}'"},
     t("}")
   }
 ),
+}
 ```
 
 **Insert node numbering:** notice that you can place multiple insert nodes into a snippet (the `\frac` snippet, for example, has two).
@@ -603,6 +621,7 @@ See `:help luasnip-insertnode` for documentation of insert nodes.
 Consider, for example, this snippet for a LaTeX equation environment:
 
 ```lua
+return {
 -- Example: text and insert nodes quickly become hard to read.
 s({trig="eq", dscr="A LaTeX equation environment"},
   {
@@ -617,6 +636,7 @@ s({trig="eq", dscr="A LaTeX equation environment"},
       }),
   }
 ),
+}
 ```
 
 The above snippet code is not particularly human-readable.
@@ -635,6 +655,7 @@ LuaSnip solves the human-readability problem with its `fmt` and `fmta` functions
 These functions give you a clean overview of what the rendered snippet will actually look like---here is the same `equation` environment snippet written with `fmt`:
 
 ```lua
+return {
 -- The same equation snippet, using LuaSnip's fmt function.
 -- The snippet is not shorter, but it is more *human-readable*.
 s({trig="eq", dscr="A LaTeX equation environment"},
@@ -650,6 +671,7 @@ s({trig="eq", dscr="A LaTeX equation environment"},
     { delimiters = "<>" }
   )
 ),
+}
 ```
 
 Don't worry, we'll break the snippet down piece by piece---I just wanted to first show what the final product looks like.
@@ -756,6 +778,7 @@ Finally, you create a snippet by using the call to the `fmt` or `fmta` function 
 At the risk of getting boring---I know I'm going slowly here, but I want to fully list all steps---here are the `\texttt`, `\frac`, and `equation` examples as complete snippets.
 
 ```lua
+return {
 -- Examples of complete snippets using fmt and fmta
 
 -- \texttt
@@ -787,6 +810,7 @@ s({trig="eq", dscr="Expands 'eq' into an equation environment"},
      { i(1) }
   )
 )
+}
 ```
 
 See `:help luasnip-fmt` for complete documentation of `fmt` and `fmta`, although the above should have you covered for most use cases.
@@ -806,6 +830,7 @@ The syntax for repeated nodes straightforward: you pass the index of the node yo
 For example, here is the code for the snippet shown in the above GIF---note how the `rep(1)` node in the environment's `\end` command repeats the `i(1)` node in the `\begin` command.
 
 ```lua
+return {
 -- Code for environment snippet in the above GIF
 s({trig="env", snippetType="autosnippet"},
   fmta(
@@ -821,6 +846,7 @@ s({trig="env", snippetType="autosnippet"},
     }
   )
 ),
+}
 ```
 
 Note: for text in the repeated node **to update as you type** (e.g. like in the `\end{}` field in the above GIF) you should set `update_events = 'TextChanged,TextChangedI'` [in your LuaSnip config](#two-config-settings-for-later).
@@ -838,6 +864,7 @@ The `i(0)` node is always the last node jumped to, and you use it to specify the
 Here is an example where an explicitly-specified `i(0)` node makes you exit a equation snippet with your cursor conveniently placed inside the environment's body.
 
 ```lua
+return {
 -- Using a zero-index insert node to exit snippet in equation body
 s({trig="eq", dscr=""},
   fmta(
@@ -849,6 +876,7 @@ s({trig="eq", dscr=""},
     { i(0) }
   )
 ),
+}
 ```
 
 If `i(0)` is not explicitly defined, an `i(0)` node is implicitly placed at the very end of the snippet---in this case this would be after the `\end{equation}` command.
@@ -862,6 +890,7 @@ You define placeholder text by passing an optional second string argument to an 
 Here is a real-world example I used to remind myself the correct order for the URL and display text in the `hyperref` package's `href` command:
 
 ```lua
+return {
 -- Example use of insert node placeholder text
 s({trig="hr", dscr="The hyperref package's href{}{} command (for url links)"},
   fmta(
@@ -872,6 +901,7 @@ s({trig="hr", dscr="The hyperref package's href{}{} command (for url links)"},
     }
   )
 ),
+}
 ```
 Here is what this snippet looks like in action:
 
@@ -944,6 +974,7 @@ local get_visual = function(args, parent)
 end
 -- ----------------------------------------------------------------------------
 
+return {
 -- Example: italic font implementing visual selection
 s({trig = "tii", dscr = "Expands 'tii' into LaTeX's textit{} command."},
   fmta("\\textit{<>}",
@@ -952,6 +983,7 @@ s({trig = "tii", dscr = "Expands 'tii' into LaTeX's textit{} command."},
     }
   )
 ),
+}
 ```
 
 A few comments:
@@ -1059,6 +1091,7 @@ Here are some example use cases:
 - Make `mm` expand to `$ $` (inline math), but not in words like "comment", "command", etc...
 
   ```lua
+  return {
   s({trig = "([^%a])mm", wordTrig = false, regTrig = true},
     fmta(
       "<>$<>$",
@@ -1068,6 +1101,7 @@ Here are some example use cases:
       }
     )
   ),
+  }
   ```
   
   The `d(1, get_visual)` node implements the visual selection [covered earlier](#the-visual-placeholder-and-a-few-advanced-nodes) in this article.
@@ -1076,6 +1110,7 @@ Here are some example use cases:
 - Make `ee` expand to `e^{}` (Euler's number raised to a power) after spaces, delimiters, and so on, but not in words like "see", "feel", etc...
 
   ```lua
+  return {
   s({trig = '([^%a])ee', regTrig = true, wordTrig = false},
     fmta(
       "<>e^{<>}",
@@ -1085,11 +1120,13 @@ Here are some example use cases:
       }
     )
   ),
+  }
   ```
 
 - Make `ff` expand to `frac{}{}` but not in words like "off", "offer", etc...
 
   ```lua
+  return {
   s({trig = '([^%a])ff', regTrig = true, wordTrig = false},
     fmta(
       [[<>\frac{<>}{<>}]],
@@ -1100,6 +1137,7 @@ Here are some example use cases:
       }
     )
   ),
+  }
   ```
 
   (Note that the `ff -> \frac{}{}` expansion problem can also be solved with a math-context expansion condition, which is covered in the next section.)
@@ -1149,6 +1187,7 @@ I don't use this trigger that often, but here is one example I really like.
 It makes `00` expand to the `_{0}` subscript after letters and closing delimiters, but not in numbers like `100`:
 
 ```lua
+return {
 -- A fun zero subscript snippet
 s({trig = '([%a%)%]%}])00', regTrig = true, wordTrig = false, snippetType="autosnippet"},
   fmta(
@@ -1159,6 +1198,7 @@ s({trig = '([%a%)%]%}])00', regTrig = true, wordTrig = false, snippetType="autos
     }
   )
 ),
+}
 ```
 
 And here is the above snippet in action:
@@ -1185,6 +1225,7 @@ and the other uses `new` to create a new environment.
 local line_begin = require("luasnip.extras.expand_conditions").line_begin
 
 -- ...then add `condition=line_begin` to any snippet's `opts` table:
+return {
 s({trig = "h1", dscr="Top-level section"},
   fmta(
     [[\section{<>}]],
@@ -1208,6 +1249,7 @@ s({trig="new", dscr="A generic new environmennt"},
   ),
   {condition = line_begin}
 ),
+}
 ```
 
 ### Context-specific expansion for LaTeX
@@ -1236,10 +1278,12 @@ here's how to use it more generally:
 1. Set the `condition` key in a snippet's `opts` table to the name of the expansion function:
 
    ```lua
+   return {
    s({trig="test", snippetType="autosnippet"},
       {t("The current line number is even")},
       {condition = is_even_line}
    ),
+   }
    ```
 
    The above snippet will expand only on even lines (just make sure to include the `is_even_line` function in the snippet file).
@@ -1262,6 +1306,7 @@ end
 -- Then pass the table `{condition = in_mathzone}` to any snippet you want to
 -- expand only in math contexts.
 
+return {
 -- Another take on the fraction snippet without using a regex trigger
 s({trig = "ff"},
   fmta(
@@ -1273,6 +1318,7 @@ s({trig = "ff"},
   ),
   {condition = in_mathzone}  -- `condition` option passed in the snippet `opts` table 
 ),
+}
 ```
 
 You can use analogous expansion functions for any other LaTeX context, as long as you have a function that reliably detects if the cursor is currently in a given context or not, where VimTeX again comes to the rescue.
@@ -1312,6 +1358,7 @@ end
 ...and here is a simple example: expanding `dd` into the TikZ `\draw` command only in `tikzpicture` environments---you can of course use any condition you like in your own snippets.
 
 ```lua
+return {
 -- Expand 'dd' into \draw, but only in TikZ environments
 s({trig = "dd"},
   fmta(
@@ -1322,6 +1369,7 @@ s({trig = "dd"},
   ),
   { condition = tex_utils.in_tikz }
 ),
+}
 ```
 
 As always, make sure to define the conditional expansion functions in any snippet file you wish to use them in!
@@ -1360,10 +1408,12 @@ In no particular order, here are some useful tips based on my personal experienc
   1. I first define the LaTeX command `\newcommand{\diff}{\ensuremath{\operatorname{d}\!}}` in a system-wide preamble file, then access it with the following snippet:
 
      ```lua
+     return {
      s({trig = "df", snippetType = "autosnippet"},
        { t("\\diff") },
        { condition = tex.in_mathzone }
      ),
+     }
      ```
      This `df` snippet makes typing differentials a breeze, with correct spacing, upright font, and all that.
      Happily, in this case using `df` for a differential also makes semantic sense.
@@ -1377,12 +1427,14 @@ In no particular order, here are some useful tips based on my personal experienc
   2. I use the following snippet for upright text in subscripts---the trigger makes no semantic sense, but I got used to it and love it.
 
      ```lua
+     return {
      s({trig = 'sd', snippetType="autosnippet", wordTrig=false},
        fmta("_{\\mathrm{<>}}",
          { d(1, get_visual) }
        ),
        {condition = tex.in_mathzone}
      ),
+     }
      ```
      This snippet triggers in math contexts and includes a visual placeholder.
 
