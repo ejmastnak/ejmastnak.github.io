@@ -27,11 +27,10 @@ You might be interested in this article for two reasons:
 ## Warning: the article is long
 
 This article is *long*, which kind of sucks, I know.
-But I didn't see another way to present the information I think you need to begin writing your own snippets while actually understanding what you're doing.
-You'll find that the information is actually (hopefully) concisely presented, there's just a lot of it, and you should be learning something new with every paragraph.
+To help you out, here's how the article is organized:
 
-Here's roughly how the article is organized:
-
+1. A [short intro to snippets](#what-snippets-do) for people reading along with the LaTeX series
+1. A [TLDR example](#tldr-hello-world-example) of hello world with LuaSnip
 1. Boring house-keeping stuff ([installation](#installation), [configuration](#two-config-settings-for-later), [file organization](#snippet-files-directories-and-loaders), [snippet syntax](#snippet-anatomy) etc.)
 1. [Actually writing snippets](#actually-writing-snippets)---you probably came for this section.
 1. [Some practical tips](#bonus) from the perspective of a real-life user.
@@ -43,6 +42,7 @@ Feel free to **skim or skip the boring stuff** and jump right to [actually writi
 <!-- vim-markdown-toc GFM -->
 
 * [What snippets do](#what-snippets-do)
+* [TLDR hello world example](#tldr-hello-world-example)
 * [Getting started with LuaSnip](#getting-started-with-luasnip)
   * [Installation](#installation)
   * [Two config settings for later](#two-config-settings-for-later)
@@ -74,7 +74,7 @@ Feel free to **skim or skip the boring stuff** and jump right to [actually writi
     * [Expand only after alphanumeric characters and closing delimiters](#expand-only-after-alphanumeric-characters-and-closing-delimiters)
     * [Bonus: expansion only at the start of a new line](#bonus-expansion-only-at-the-start-of-a-new-line)
   * [Context-specific expansion for LaTeX](#context-specific-expansion-for-latex)
-* [Bonus](#bonus)
+* [Extra](#extra)
   * [(Subjective) practical tips for fast editing](#subjective-practical-tips-for-fast-editing)
   * [Tip: Refreshing snippets from a separate Vim instance](#tip-refreshing-snippets-from-a-separate-vim-instance)
 
@@ -91,6 +91,131 @@ Here is a [video demonstrating full-speed, real-life examples](https://www.youtu
 And here is a simple example using snippets to create and navigate through a LaTeX figure environment, quickly typeset an equation, and easily insert commands for Greek letters.
 
 <image src="/assets/images/vim-latex/ultisnips/demo.gif" alt="Writing LaTeX quickly with autotrigger snippets"  /> 
+
+## TLDR hello world example
+
+I'm beginning with a hello world snippet instead of a bunch of theory.
+For now feel free to just copy and paste along with the article, and we'll explain what's going on in much more detail later.
+(Or if you prefer to begin with fundamentals, you can skip this hello world example and jump to [getting started with LuaSnip](#getting-started-with-luasnip).)
+
+In a very TLDR style, here's a LuaSnip-flavored hello world:
+
+1. Install [LuaSnip](https://github.com/L3MON4D3/LuaSnip)
+   (I'm assuming you're comfortable installing Vim plugins.)
+
+1. In your `init.vim`/`init.lua`, set key bindings to trigger and navigate through snippets:
+
+   <details>
+   <summary>
+   I use an <code class="language-plaintext highlighter-rouge">init.vim</code>
+   </summary>
+   <p>Place this in your <code class="language-plaintext highlighter-rouge">init.vim</code>:</p>
+
+   <div class="language-vim highlighter-rouge">
+   <div class="highlight"><pre class="highlight"><code><span class="c">" Use Tab to expand and jump through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#expand_or_jumpable<span class="p">()</span> ? <span class="s1">'&lt;Plug&gt;luasnip-expand-or-jump'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span> 
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-next'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span>
+
+   <span class="c">" Use Shift-Tab to jump backwards through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   </code></pre></div>
+   </div>
+   </details>
+
+   <details>
+   <summary>
+   I use an <code class="language-plaintext highlighter-rouge">init.lua</code>
+   </summary>
+   <p>Place this in your <code class="language-plaintext highlighter-rouge">init.lua</code>:</p>
+
+   <div class="language-vim highlighter-rouge">
+   <div class="highlight"><pre class="highlight">
+   <span class="c">-- Yes, we're just executing a bunch of Vimscript using vim.cmd</span>
+   <code>vim.<span class="k">cmd</span><span class="s1">[[</span>
+   <span class="c">" Use Tab to expand and jump through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#expand_or_jumpable<span class="p">()</span> ? <span class="s1">'&lt;Plug&gt;luasnip-expand-or-jump'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span> 
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-next'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span>
+
+   <span class="c">" Use Shift-Tab to jump backwards through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   <span class="s1">]]</span></code>
+   </pre>
+   </div>
+   </div>
+   </details>
+
+   <!-- ```vim -->
+   <!-- " Use Tab to expand and jump through snippets -->
+   <!-- imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>'  -->
+   <!-- smap <silent><expr> <Tab> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<Tab>' -->
+   <!---->
+   <!-- " Use Shift-Tab to jump backwards through snippets -->
+   <!-- imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>' -->
+   <!-- smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>' -->
+   <!-- ``` -->
+
+1. Create a snippets directory at `${HOME}/.config/nvim/LuaSnip/`,
+   inside it create an empty snippets file called `all.lua`,
+   and inside it paste:
+
+   ```lua
+   -- Place this in ${HOME}/.config/nvim/LuaSnip/all.lua
+   return {
+     -- A snippet that expands the trigger "hi" into the string "Hello, world!".
+     require("luasnip").snippet(
+       { trig = "hi" },
+       { t("Hello, world!") }
+     ),
+   }
+   ```
+
+1. From your `init.vim`/`init.lua`, load the snippet files in the just-created snippets directory at `${HOME}/.config/nvim/LuaSnip/`:
+
+   <details>
+   <summary>
+   I use an <code class="language-plaintext highlighter-rouge">init.lua</code>
+   </summary>
+   <div class="language-lua highlighter-rouge">
+   <div class="highlight"><pre class="highlight">
+   <code><span class="c">-- Place this in your init.lua</span>
+   <span class="nb">require</span><span class="p">(</span><span class="s2">"luasnip.loaders.from_lua"</span><span class="p">).</span><span class="nb">load</span><span class="p">({</span><span class="n">paths</span> <span class="o">=</span> <span class="s2">"~/.config/nvim/LuaSnip/"</span><span class="p">})</span></code>
+   </pre>
+   </div>
+   </div>
+   </details>
+
+   <details>
+   <summary>
+   I use an <code class="language-plaintext highlighter-rouge">init.vim</code>
+   </summary>
+   <div class="language-lua highlighter-rouge">
+   <div class="highlight"><pre class="highlight">
+   <code><span class="c">" Place this in your init.vim</span>
+   <span class="nb">lua</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"luasnip.loaders.from_lua"</span><span class="p">).</span><span class="nb">load</span><span class="p">({</span><span class="n">paths</span> <span class="o">=</span> <span class="s2">"~/.config/nvim/LuaSnip/"</span><span class="p">})</span></code>
+   </pre>
+   </div>
+   </div>
+   </details>
+
+   <!-- ```lua -->
+   <!-- require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"}) -->
+   <!-- ``` -->
+
+1. Create a file, say `test.txt`, and open it with Neovim.
+   (You can use any file name/extension you like here because `all.lua` is a special snippet file that applies to all filetypes).
+
+1. Enter insert mode and write `hi` (because we wrote a snippet with trigger `trig="hi"`).
+
+1. With your cursor at the end of `hi`, press the Tab key (because the Tab key was mapped to snippet expansion a few steps up).
+   The word `hi` should expand into `Hello, world!`.
+
+I glossed over a mountain of details here for the sake of a TLDR example.
+For a more thorough introduction to LuaSnip, buckle up and read on.
+
+*Going forward, I'll perform configuration mostly in Lua.
+If you use Vimscript, I assume you know how to call Lua from within Vimscript using* `:help :lua` *and* `:help :lua-heredoc`.
 
 ## Getting started with LuaSnip
 
@@ -1379,7 +1504,7 @@ my original source for math-context expansion is [the famous Gilles Castel artic
 
 <!-- See `:help vimtex#env#is_inside` in `:help vimtex-code-api`. -->
 
-## Bonus 
+## Extra 
 
 ### (Subjective) practical tips for fast editing
 
