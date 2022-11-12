@@ -103,25 +103,7 @@ In a very TLDR style, here's a LuaSnip-flavored hello world:
 1. Install [LuaSnip](https://github.com/L3MON4D3/LuaSnip)
    (I'm assuming you're comfortable installing Vim plugins.)
 
-1. In your `init.vim`/`init.lua`, set key bindings to trigger and navigate through snippets:
-
-   <details>
-   <summary>
-   I use an <code class="language-plaintext highlighter-rouge">init.vim</code>
-   </summary>
-   <p>Place this in your <code class="language-plaintext highlighter-rouge">init.vim</code>:</p>
-
-   <div class="language-vim highlighter-rouge">
-   <div class="highlight"><pre class="highlight"><code><span class="c">" Use Tab to expand and jump through snippets</span>
-   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#expand_or_jumpable<span class="p">()</span> ? <span class="s1">'&lt;Plug&gt;luasnip-expand-or-jump'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span> 
-   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-next'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span>
-
-   <span class="c">" Use Shift-Tab to jump backwards through snippets</span>
-   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
-   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
-   </code></pre></div>
-   </div>
-   </details>
+1. In your `init.vim`/`init.lua`, set key bindings to trigger and navigate through snippets: 
 
    <details>
    <summary>
@@ -143,6 +125,24 @@ In a very TLDR style, here's a LuaSnip-flavored hello world:
    <span class="s1">]]</span></code>
    </pre>
    </div>
+   </div>
+   </details>
+
+   <details>
+   <summary>
+   I use an <code class="language-plaintext highlighter-rouge">init.vim</code>
+   </summary>
+   <p>Place this in your <code class="language-plaintext highlighter-rouge">init.vim</code>:</p>
+
+   <div class="language-vim highlighter-rouge">
+   <div class="highlight"><pre class="highlight"><code><span class="c">" Use Tab to expand and jump through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#expand_or_jumpable<span class="p">()</span> ? <span class="s1">'&lt;Plug&gt;luasnip-expand-or-jump'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span> 
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-next'</span> <span class="p">:</span> <span class="s1">'&lt;Tab&gt;'</span>
+
+   <span class="c">" Use Shift-Tab to jump backwards through snippets</span>
+   <span class="k">imap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   <span class="k">smap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;&lt;</span>expr<span class="p">&gt;</span> <span class="p">&lt;</span>S<span class="p">-</span>Tab<span class="p">&gt;</span> luasnip#jumpable<span class="p">(</span><span class="m">-1</span><span class="p">)</span> ? <span class="s1">'&lt;Plug&gt;luasnip-jump-prev'</span> <span class="p">:</span> <span class="s1">'&lt;S-Tab&gt;'</span>
+   </code></pre></div>
    </div>
    </details>
 
@@ -171,7 +171,7 @@ In a very TLDR style, here's a LuaSnip-flavored hello world:
    }
    ```
 
-1. From your `init.vim`/`init.lua`, load the snippet files in the just-created snippets directory at `${HOME}/.config/nvim/LuaSnip/`:
+1. From your `init.vim`/`init.lua`, use the following code to load the snippet files in the just-created snippets directory at `${HOME}/.config/nvim/LuaSnip/`:
 
    <details>
    <summary>
@@ -203,12 +203,10 @@ In a very TLDR style, here's a LuaSnip-flavored hello world:
    <!-- require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"}) -->
    <!-- ``` -->
 
-1. Create a file, say `test.txt`, and open it with Neovim.
-   (You can use any file name/extension you like here because `all.lua` is a special snippet file that applies to all filetypes).
+1. Open a new Neovim instance (any file name/extension will work here because `all.lua` is a special snippet file that applies to all filetypes).
 
 1. Enter insert mode and write `hi` (because we wrote a snippet with trigger `trig="hi"`).
-
-1. With your cursor at the end of `hi`, press the Tab key (because the Tab key was mapped to snippet expansion a few steps up).
+   With your cursor at the end of `hi`, press the Tab key (because the Tab key was mapped to snippet expansion a few steps up).
    The word `hi` should expand into `Hello, world!`.
 
 I glossed over a mountain of details here for the sake of a TLDR example.
