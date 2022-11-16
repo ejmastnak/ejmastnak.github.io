@@ -169,8 +169,8 @@ In a very TLDR style, here's a LuaSnip-flavored hello world:
        { t("Hello, world!") }
      ),
 
-     -- If you want to return multiple snippets from the same file, use one
-     -- `return` statement per file and return a table of Lua snippets.
+     -- To return multiple snippets, use one `return` statement per snippet file
+     -- and return a table of Lua snippets.
      require("luasnip").snippet(
        { trig = "foo" },
        { t("Another snippet.") }
