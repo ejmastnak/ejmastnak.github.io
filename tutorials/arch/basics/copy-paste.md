@@ -57,13 +57,12 @@ In most X GUI applications (e.g. a web browser):
 
 ## Alacritty
 
-For users with default key bindings...
+(This section assumes haven't changed Alacritty's default copy/paste key bindings, in which case you probably already knew what you were doing.)
 
 - Copy text into `CLIPBOARD` with `<Ctrl>-<Shift>-C` (and not `<Ctrl>-C` like most other X applications).
   Alacritty intentionally avoids `<Ctrl>-C` for copying because `<Ctrl>-C` is nearly universally used to send the interrupt signal `SIGINT` to programs in the shell.
 
 - Paste text stored in `CLIPBOARD` with `<Ctrl>-<Shift>-V` (and not `<Ctrl>-V`)
-
 
 <details>
   <summary>
@@ -74,12 +73,22 @@ For users with default key bindings...
 
   <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">key_bindings</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="pi">{</span> <span class="nv">key</span><span class="pi">:</span> <span class="nv">V</span><span class="pi">,</span> <span class="nv">mods</span><span class="pi">:</span> <span class="nv">Control|Shift</span><span class="pi">,</span> <span class="nv">action</span><span class="pi">:</span> <span class="nv">Paste</span> <span class="pi">}</span>
-    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">key</span><span class="pi">:</span> <span class="nv">C</span><span class="pi">,</span> <span class="nv">mods</span><span class="pi">:</span> <span class="nv">Control|Shift</span><span class="pi">,</span> <span class="nv">action</span><span class="pi">:</span> <span class="nv">Copy</span> <span class="pi">}</span>
-  </code></pre></div></div>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">key</span><span class="pi">:</span> <span class="nv">C</span><span class="pi">,</span> <span class="nv">mods</span><span class="pi">:</span> <span class="nv">Control|Shift</span><span class="pi">,</span> <span class="nv">action</span><span class="pi">:</span> <span class="nv">Copy</span> <span class="pi">}</span></code></pre></div></div>
   <p>The <code class="language-plaintext highlighter-rouge"># Key bindings</code> section in the default <code class="language-plaintext highlighter-rouge">alacritty.yml</code> file contains all the documentation you need to define your own bindings.
   (You can find the latest <code class="language-plaintext highlighter-rouge">alacritty.yml</code> file on the <a href="https://github.com/alacritty/alacritty/releases">Alacritty GitHub release page</a>.)
   </p>
 </details>
+
+**Bonus: Copying with Alacritty Vi mode**
+
+If you're familiar with Vim keybindings, you can also copy text in Alacritty using Alacritty's Vi mode.
+Here are the tools you need:
+
+- `<Ctrl>-<Shift>-<Space>` enters Vi mode (you can configure this key binding using the `ToggleViMode` action in `alacritty.yml`).
+- Navigate with standard Vim key bindings, e.g. `h`, `j`, `k`, `l`, `w`, `b`, etc.
+- `v` enters visual mode, from which you select the text you want to copy (`V` for visual line mode is also supported).
+- `y` in visual mode copies selected text to `CLIPBOARD`.
+- `<Ctrl>-<Shift>-<Space>` exits Vi mode.
 
 ## Vim and Neovim
 
