@@ -23,7 +23,7 @@ date_last_mod: 2022-10-31 19:35:07 +0100
 Si študent/študentka FMFja...
 </summary>
   ...in te zanima karkoli v zvezi z računalniškimi orodij/workflowi za izdelavo teh zapiskov in spletne strani (hitro TeXiranje, Linux, Vim, shell scripting, GitHub Pages, Jekyll, ipd.)?
-  Če ti ni nerodno mi sam en <a href="contact.html">mail napiši</a>—rad učim na tem področju in ti z veseljem pomagam.
+  Če ti ni nerodno mi sam en <a href="contact.html">mail napiši</a> in ti z veseljem pomagam/kaj pokažem.
 </details>
   
 ## Year 3 courses
