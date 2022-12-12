@@ -27,7 +27,7 @@ More on how this works below.
   <summary>
   Wait, what are you talking about, what is LaTeX?
   </summary>
-  <p><a href="https://www.latex-project.org/">LaTeX</a> is the industry standard typesetting and document preparation software in mathematics, physics, computer science, and other quantitative sciences (but is mostly unknown outside this niche, so it's quite reasonable to have never heard of it).
+  <p><a href="https://www.latex-project.org/">LaTeX</a> is the industry standard typesetting software for writing articles/reports/books in mathematics, physics, computer science, and other quantitative sciences (but is mostly unknown outside this niche, so it's quite reasonable to have never heard of it).
   LaTeX has a reputation for producing high-quality documents but being clumsy to type—this series presents a framework aimed at eliminating the clumsiness.
   </p>
 </details>
