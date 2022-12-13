@@ -18,7 +18,7 @@ date_last_mod: 2022-10-10 21:23:19 +0200
 
 You might be interested in this article for two reasons:
 
-1. As a standalone guide to writing snippets with the LuaSnip plugin (yes, the article is LaTeX-heavy, but it is applicable to any language or workflow).
+1. As a standalone guide to writing snippets with the UltiSnips plugin (this article is LaTeX-heavy, but it is applicable to any language).
 1. As part two in a [seven-part series]({% link tutorials/vim-latex/intro.md %}) explaining how to use the Vim or Neovim text editors to efficiently write LaTeX documents.
 
 [There is also a LuaSnip version of this article.]({% link tutorials/vim-latex/luasnip.md %})

@@ -200,6 +200,10 @@ and will know what to do when told to install a Vim plugin.
 </details>
 
 ### Python 3 installation
+
+(Python is only required if you plan on using UltiSnips for snippets.
+You can ignore the Python dependency if you plan on using Luasnip as a snippet plugin.)
+
 **Prerequisite:** you have a working Python 3+ installation and are able to use `pip/pip3` to install Python packages.
 
 <details>
