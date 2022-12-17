@@ -44,9 +44,9 @@ This article explains, for both Linux and macOS, how to set up a PDF reader for 
   * [Optional tip: Return focus to Vim/Neovim after forward search](#optional-tip-return-focus-to-vimneovim-after-forward-search)
   * [Optional tip: Return focus to gVim after forward and inverse search](#optional-tip-return-focus-to-gvim-after-forward-and-inverse-search)
 * [Skim (read this on macOS)](#skim-read-this-on-macos)
-* [Zathura on Intel Macs](#zathura-on-intel-macs)
-  * [Building Zathura and dependencies on macOS (Intel Macs)](#building-zathura-and-dependencies-on-macos-intel-macs)
-  * [Setting up Zathura on macOS (Intel Macs)](#setting-up-zathura-on-macos-intel-macs)
+* [Zathura on macOS](#zathura-on-macos)
+  * [Building Zathura and dependencies on macOS](#building-zathura-and-dependencies-on-macos)
+  * [Setting up Zathura on macOS](#setting-up-zathura-on-macos)
 * [Fixing focus loss problems on macOS](#fixing-focus-loss-problems-on-macos)
   * [Returning focus to Neovim after inverse search on macOS](#returning-focus-to-neovim-after-inverse-search-on-macos)
   * [Returning focus to MacVim after inverse search on macOS](#returning-focus-to-macvim-after-inverse-search-on-macos)
@@ -80,8 +80,11 @@ Note, however, that many more Linux-compatible PDF readers exist---see the VimTe
 The canonical option on macOS is [Skim](https://skim-app.sourceforge.io/), which you can download as a macOS `dmg` file from its [homepage](https://skim-app.sourceforge.io/) or from [SourceForge](https://sourceforge.net/projects/skim-app/).
 (The default macOS PDF reader, Preview, does not listen for document changes, nor, to the best of my knowledge, does it integrate nicely with SyncTeX.)
 
-On Intel Macs, it is also possible to set up Zathura to work with VimTeX using the Homebrew formula provided by [`homebrew-zathura` GitHub page](https://github.com/zegervdv/homebrew-zathura), so I have included a section for setting up Zathura on macOS at the end of this article.
-Unfortunately this method does not seem to work on Apple Silicon Macs, i.e. Macs using the ARM64 processor architecture.
+You *might* also have success using Zathura on macOS thanks to the Homebrew formula provided by [`homebrew-zathura` GitHub page](https://github.com/zegervdv/homebrew-zathura) and the instructions in `:help vimtex-faq-zathura-macos`.
+I've personally managed to get Zathura and VimTeX working on an Intel MacBook Pro (and have included a section at the end of this article explaining how), but many VimTeX users have reported issues following the same instructions, particularly with Apple Silicon Macs.
+
+TLDR: Zathura might work on macOS, but seems to be very finicky; you should probably use Skim unless you really know your way around Homebrew and macOS.
+Use at your own risk.
 
 ### A PDF reader on Windows
 I have not tested PDF readers on Windows (reminder of the [series prerequisites for operating system]({% link tutorials/vim-latex/prerequisites.md %})),
@@ -120,6 +123,8 @@ I tested 9 combinations of editor, OS, and PDF reader when preparing this articl
 | MacVim | ✅ | ✅ | ✅ | ✅ |
 
 #### Zathura on macOS (Intel-based MacBook Pro 11,5; macOS 12.1; Zathura 0.4.9 built from [`homebrew-zathura`](https://github.com/zegervdv/homebrew-zathura))
+
+*Zathura on macOS is unreliable; use at your own risk.*
 
 | Editor | Forward search works | Inverse search works | Editor keeps focus after forward search | Focus returns to editor after inverse search |
 | - | - | - | - | - |
@@ -259,7 +264,7 @@ Reminder: on macOS, MacVim's version of terminal Vim can misleadingly display bo
 *That's all for the cross-platform concepts. Let's set up a PDF reader!*
 
 ## Zathura (read this on Linux)
-*If you use macOS, scroll down to the section on [configuring Skim](#skim-read-this-on-macos) or [setting up Zathura on macOS](#zathura-on-intel-macs).*
+*If you use macOS, scroll down to the section on [configuring Skim](#skim-read-this-on-macos) or [setting up Zathura on macOS](#zathura-on-macos).*
 
 *Caveat: at the time of writing, you'll need the X Window System (and not Wayland) to get Zathura working properly with VimTeX.
 This is because VimTeX relies on [`xdotool`](https://github.com/jordansissel/xdotool) for integration with Zathura, and `xdotool` only works with X.
@@ -449,7 +454,7 @@ Here is how to fix both problems (some steps are the same as for terminal Vim/Ne
    Again, you may want to tweak the forward search delay time (somewhere from from 50ms to 300ms should suit most users) until refocus works properly on your window manager and hardware.
 
 ## Skim (read this on macOS)
-*It is also possible to use Zathura on macOS for Macs with Intel processors; if you would prefer this, scroll down to the section [Zathura on Intel Macs](#zathura-on-intel-macs).*
+*It is also possible to use Zathura on macOS for Macs with Intel processors; if you would prefer this, scroll down to the section [Zathura on Intel Macs](#zathura-on-macos).*
 
 Here is how to set up Skim to work with Vim/Neovim running VimTeX.
 Some of the steps are the same as for Zathura on Linux, so excuse the repetition:
@@ -517,25 +522,28 @@ Some of the steps are the same as for Zathura on Linux, so excuse the repetition
   Note: during my testing, Neovim failed to regain focus after inverse search;
   if you would prefer for Neovim to focus after inverse search, scroll down to [Returning focus to Neovim after inverse search on macOS](#returning-focus-to-neovim-after-inverse-search-on-macos).
 
-## Zathura on Intel Macs
-It is possible to use Zathura with VimTeX on macOS thanks to the Homebrew formulae provided by [github.com/zegervdv/homebrew-zathura](https://github.com/zegervdv/homebrew-zathura).
+## Zathura on macOS
 
+You *might* have luck with Zathura and VimTeX on macOS using to the Homebrew formulae provided by [github.com/zegervdv/homebrew-zathura](https://github.com/zegervdv/homebrew-zathura).
 
 <details>
   <summary>
-    <em>Unfortunately, this process does not seem to work on Macs with Apple Silicon processors;</em>
+    <em>I'm repeating myself here, but Zathura and macOS don't seem to play nicely together; try this at your own risk or use Skim, which should "just work".
+</em>
   </summary>
-    <p>see e.g. <a href="https://github.com/lervag/vimtex/issues/2424">VimTeX issue #2424</a> for details.
-    More specifically, Apple Silicon Macs seem to have difficulty activating the <code class="language-plaintext highlighter-rouge">dbus</code> service, which is required for forward search and inverse search.
-    You can still build Zathura on an Apple Silicon Mac, but there is a chance it won’t support forward and inverse search, won’t work with VimTeX, and thus won’t be useful as a LaTeX PDF reader.
-    If you have an Apple Silicon Mac, you should probably use Skim with VimTeX.
-    That said, if anyone reading this successfully set up Zathura and VimTeX on an ARM64 Mac, I would be very interested in hearing more.</p>
+    <p>See e.g. VimTeX issues <a href="https://github.com/lervag/vimtex/issues/2424">#2424</a> and <a href="https://github.com/lervag/vimtex/issues/2581">#2581</a> for details of macOS-Zathura troubles.
+    More specifically, Macs seem to have difficulty activating the <code class="language-plaintext highlighter-rouge">dbus</code> service, which is required for forward search and inverse search.
+    You can still build Zathura on a Macs without much difficulty, but there is a chance it won’t support forward and inverse search, won’t work with VimTeX, and thus won’t be useful as a LaTeX PDF reader.</p>
 </details>
+
+### Building Zathura and dependencies on macOS
 
 For Intel Macs, building Zathura is described in the VimTeX documentation at `:help vimtex-faq-zathura-macos`, and I can confirm the process works (at least from my own testing on an Intel CPU MacBook Pro 11,5 running macOS 12.1).
 
-### Building Zathura and dependencies on macOS (Intel Macs)
-Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how to build Zathura on macOS (reminder: this seems to work only on Intel Macs):
+*For Apple Silicon Macs, a slightly more complicated process setting up Zathura is described in [Homebrew Zathura issue 99](https://github.com/zegervdv/homebrew-zathura/issues/99#issuecomment-1356384136).*
+
+Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how to build Zathura on macOS (reminder: see [Homebrew Zathura issue 99](https://github.com/zegervdv/homebrew-zathura/issues/99#issuecomment-1356384136) if you have an Apple Silicon chip):
+
 1. Check if you already have Zathura installed using e.g. `which zathura`.
    If you have Zathura installed, I recommend uninstalling it and repeating from scratch to ensure all dependencies are correctly sorted out.
 
@@ -614,12 +622,14 @@ Quoting more or less directly from `:help vimtex-faq-zathura-macos`, here is how
    - Ensure you use `brew install zathura --HEAD --with-synctex` to get a Zathura with SyncTeX support;
    the `homebrew-zathura` GitHub page only suggests `brew install zathura --HEAD`.
    
-1. Reboot and enjoy Zathura.
+1. Reboot and test if Zathura starts and SyncTeX works.
 
 For the original GitHub discussion that produced the instructions in `:help vimtex-faq-zathura-macos`, see the VimTeX issue [Viewer cannot find Zathura window ID on macOS #1737](https://github.com/lervag/vimtex/issues/1737).
 
-### Setting up Zathura on macOS (Intel Macs)
-Here is how to set up Zathura on macOS (many steps are similar to those for [setting up Zathura on Linux](#zathura-read-this-on-linux); please excuse any repetition):
+### Setting up Zathura on macOS
+
+Assuming your build succeeded, here is how to set up Zathura on macOS (many steps are similar to those for [setting up Zathura on Linux](#zathura-read-this-on-linux); please excuse any repetition):
+
 - Install the [`xdotool`](https://github.com/jordansissel/xdotool) program with `brew install xdotool`.
   (VimTeX uses `xdotool` to make forward search work properly; see `:help vimtex-view-zathura` for reference.)
   
