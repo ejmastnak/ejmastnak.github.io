@@ -1194,7 +1194,7 @@ For future reference, here the Lua pattern keywords needed for this article:
 **Here's how the following sections will work:**
 
 - I'll first give the generic snippet parameter table needed to use each class of regex triggers, and use `foo` as the example trigger.
-- I'll give a short explanation of each Lua regex works.
+- I'll give a short explanation of how each Lua regex works.
 - I'll give a few real life examples I personally find useful when writing LaTeX.
 
 #### Suppress expansion after alphanumeric characters.
