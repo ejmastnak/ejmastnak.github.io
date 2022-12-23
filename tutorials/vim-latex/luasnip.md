@@ -370,7 +370,7 @@ I'll try my best to guide you through your options and give a sensible recommend
 
 LuaSnip supports multiple snippet formats.
 Your first step is to decide which format you will write your snippets in.
-You main options are:
+Your main options are:
 
 1. **Covered in this article:** Native LuaSnip snippets written in Lua (support for all LuaSnip features, best integration with the larger Neovim ecosystem).
 1. Use third-party snippets written for another snippet engine (e.g. VS Code, SnipMate) and try to parse them with LuaSnip's various snippet loaders.
