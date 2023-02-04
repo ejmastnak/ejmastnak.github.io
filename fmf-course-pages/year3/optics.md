@@ -5,8 +5,7 @@ date_last_mod: 2022-06-08 17:54:24 +0200
 ---
 # Optics
 
-- [Solved exercises]({% link fmf-pdfs/year3/optics/optics-exercises.pdf %})
-- [Condensed lecture notes]({% link fmf-pdfs/year3/optics/optics-equation-sheet.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Optika* is an elective course in wave optics for third-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2020-21 academic year, when the course was taught by professor Irena Drevenšek Olenik (lecture) and dr. Andrej Petelin (exercises). Material covered in the course includes:

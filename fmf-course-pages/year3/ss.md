@@ -5,8 +5,7 @@ date_last_mod: 2022-06-08 17:54:24 +0200
 ---
 # Solid state physics
 
-- [Solved exercises]({% link fmf-pdfs/year3/ss/ss-exercises.pdf %})
-- [Condensed lecture notes]({% link fmf-pdfs/year3/ss/ss-equation-sheet.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Fizika trdne snovi* is a required course in solid state physics for third-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2020-21 academic year, when the course was taught by professor Janez Bonča (lecture) and asst. professor Tomaž Rejec (exercises). The course is based on Ashcroft and Mermin's *Solid State Physics*. Material covered in the course includes:

@@ -5,9 +5,7 @@ date_last_mod: 2022-06-08 17:54:24 +0200
 ---
 # Measurement of ionizing radiation
 
-- [Solved exercises]({% link fmf-pdfs/year3/meris/meris-exercises.pdf %})
-- [Lecture notes]({% link fmf-pdfs/year3/meris/meris-lecture.pdf %})
-- [Equation sheet]({% link fmf-pdfs/year3/meris/meris-equation-sheet.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Merjenje ionizirajočega sevanja* is an elective course for third-year undergraduates in the FMF physics program, with a focus on students considering a career in experimental particle physics. These notes are from the summer semester of the 2020-21 academic year, when the course was taught by professor Boštjan Golob (lecture) and dr. Luka Šantelj (exercises). Material covered in the course includes:

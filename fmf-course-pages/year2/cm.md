@@ -5,8 +5,7 @@ date_last_mod: 2022-10-31 19:35:34 +0100
 ---
 # Classical mechanics
 
-- [Lecture notes]({% link fmf-pdfs/year2/cm/cm-lecture.pdf %})
-- [Oral exam notes]({% link fmf-pdfs/year2/cm/cm-oral-notes.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Klasična mehanika* is a required course for second-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2019-20 academic year, when the course was taught by professor Anton Ramšak (lecture); and dr. Jernej Mravlje and mag. fiz. Lara Ulčakar. The course covers Lagrangian mechanics at an upper-undergraduate level; specific material includes

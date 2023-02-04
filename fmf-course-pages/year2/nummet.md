@@ -5,8 +5,7 @@ date_last_mod: 2022-06-08 17:54:22 +0200
 ---
 # Numerical methods
 
-- [Lecture notes]({% link fmf-pdfs/year2/nummet/nummet-lecture.pdf %})
-- [Equation sheet]({% link fmf-pdfs/year2/nummet/nummet-equation-sheet.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Numerične metode* is an elective course offered to second-year undergraduates in the FMF physics program. These notes are from the summer semester of the 2019-20 academic year, when the course was taught by professor Emil Žagar. The course covers numerical methods at an introductory level; specific material includes

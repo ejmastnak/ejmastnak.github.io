@@ -5,8 +5,7 @@ date_last_mod: 2022-06-08 17:54:22 +0200
 ---
 # Mathematics 4
 
-- [Lecture notes]({% link fmf-pdfs/year2/mat4/mat4-lecture.pdf %})
-- [Oral exam notes]({% link fmf-pdfs/year2/mat4/mat4-oral-notes.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Matematika 4* is a required course for second-year undergraduates in the FMF physics program. These notes are from the winter semester of the 2019-20 academic year, when the course was taught by professor Bojan Magajna (lecture) and asst. professor Janez Šter (exercises). Material covered in the course includes:

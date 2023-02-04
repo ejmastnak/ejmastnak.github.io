@@ -5,8 +5,7 @@ date_last_mod: 2022-06-08 17:54:24 +0200
 ---
 # Quantum mechanics
 
-- [Solved exercises]({% link fmf-pdfs/year3/qm/qm-exercises.pdf %})
-- [Oral exam notes]({% link fmf-pdfs/year3/qm/qm-oral-notes.pdf %})
+[Notes are on my up-to-date website](https://www.ejmastnak.com/notes/fmf/fmf/)
 
 ## Course description
 *Kvantna mehanika* is a required course for third-year undergraduates in the FMF physics program. These notes are from the winter semester of the 2020-21 academic year, when the course was taught by professor Anton Ramšak (lecture) and asst. professor Tomaž Rejec (exercises). The course covers the Copenhagen interpretation of quantum mechanics at an upper-undergraduate level; specific material includes:
